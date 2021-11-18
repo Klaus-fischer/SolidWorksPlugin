@@ -1,27 +1,62 @@
-﻿// <copyright file="Interface1.cs" company="SIM Automation">
+﻿// <copyright file="DocumentManager.cs" company="SIM Automation">
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
 namespace SIM.SolidWorksPlugin
 {
-    using SolidWorks.Interop.sldworks;
-    using SolidWorks.Interop.swconst;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using SolidWorks.Interop.sldworks;
+    using SolidWorks.Interop.swconst;
 
+    /// <summary>
+    /// The Document manager holds a reference to all open documents.
+    /// It handles all Open Save Close operations.
+    /// </summary>
     internal class DocumentManager : IDocumentManager, IDisposable
     {
         private readonly SldWorks swApplication;
         private readonly SwDocumentFactory documentFactory;
         private readonly Dictionary<IModelDoc2, SwDocument> openDocuments;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DocumentManager"/> class.
+        /// </summary>
+        /// <param name="swApplication">The current solid works application.</param>
         public DocumentManager(SldWorks swApplication)
         {
             this.swApplication = swApplication;
             this.documentFactory = new SwDocumentFactory();
             this.openDocuments = new Dictionary<IModelDoc2, SwDocument>(
                 new SwModelPointerEqualityComparer(swApplication));
+        }
+
+        /// <summary>
+        /// Raises an event, if a Document was created on <see cref="GetDocument"/> call.
+        /// </summary>
+        internal event EventHandler<SwDocument>? OnDocumentCreated;
+
+        /// <inheritdoc/>
+        public SwDocument? ActiveDocument
+        {
+            get
+            {
+                if (this.swApplication.ActiveDoc is IModelDoc2 model)
+                {
+                    return this.GetDocument(model);
+                }
+
+                return null;
+            }
+
+            set
+            {
+                if (value is not null)
+                {
+                    this.swApplication.ActivateDoc(value.Filename);
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -33,31 +68,72 @@ namespace SIM.SolidWorksPlugin
             }
         }
 
-        public SwDocument? ActiveDocument { get; set; }
-
-        public void CloseDocument(SwDocument document)
-        {
-        }
-
-        public IEnumerable<SwDocument> GetOpenDocuments() => this.openDocuments.Values;
-
+        /// <inheritdoc/>
         public SwDocument OpenDocument(string filename, out bool wasOpen, swOpenDocOptions_e options = swOpenDocOptions_e.swOpenDocOptions_Silent)
         {
+            var modelDoc = this.swApplication.GetOpenDocumentByName(filename) as IModelDoc2;
             wasOpen = true;
-            return new SwDocument(null);
+
+            if (modelDoc == null)
+            {
+                wasOpen = false;
+                modelDoc = this.OpenDocument(filename, options);
+            }
+
+            return this.GetDocument(modelDoc);
         }
 
-        public SwDocument SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false)
+        /// <inheritdoc/>
+        public void RebuildDocument(SwDocument document, bool topOnly)
+            => document.Model.ForceRebuild3(topOnly);
+
+        /// <inheritdoc/>
+        public void SetSaveIndicatorFlag(SwDocument document)
+            => document.Model.SetSaveFlag();
+
+        /// <inheritdoc/>
+        public void SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false, object? exportData = null)
         {
-            return new SwDocument(null);
+            int error = 0, warnings = 0;
+            var options = saveAsCopy
+                ? swSaveAsOptions_e.swSaveAsOptions_Copy | swSaveAsOptions_e.swSaveAsOptions_Silent
+                : swSaveAsOptions_e.swSaveAsOptions_Silent;
+
+            if (filename is null)
+            {
+                document.Model.Save3((int)options, ref error, ref warnings);
+            }
+            else
+            {
+                document.Model.Extension.SaveAs2(
+                    Name: filename,
+                    Version: (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
+                    Options: (int)options,
+                    ExportData: exportData,
+                    ReferencePrefixOrSuffixText: null,
+                    AddTextAsPrefix: false,
+                    Errors: ref error,
+                    Warnings: ref warnings);
+            }
         }
 
-        public bool TryOpenDocument(string filename, out SwDocument swDocument)
+        /// <inheritdoc/>
+        public void Reload(SwDocument document, bool readOnly)
         {
-            swDocument = new SwDocument(null);
-            return false;
+            document.Model.ReloadOrReplace(readOnly, document.FilePath, true);
         }
 
+        /// <inheritdoc/>
+        public void CloseDocument(SwDocument document)
+        {
+            this.swApplication.CloseDoc(document.FilePath);
+        }
+
+        /// <summary>
+        /// Look for all open documents in solid works and returns all, documents that are not the open list yet.
+        /// After returning the item, it will be added to the <see cref="openDocuments"/> collection.
+        /// </summary>
+        /// <returns>The collection of all unknown documents.</returns>
         internal IEnumerable<SwDocument> GetAllUnknownDocuments()
         {
             var swDocument = this.swApplication.GetFirstDocument();
@@ -75,6 +151,53 @@ namespace SIM.SolidWorksPlugin
 
                 swDocument = modelDocument.GetNext();
             }
+        }
+
+        /// <summary>
+        /// Enumerates all open documents.
+        /// </summary>
+        /// <returns>Collection of open documents.</returns>
+        internal IEnumerable<SwDocument> GetOpenDocuments() => this.openDocuments.Values;
+
+        private SwDocument GetDocument(IModelDoc2 model)
+        {
+            if (this.openDocuments.TryGetValue(model, out var document))
+            {
+                return document;
+            }
+
+            var result = this.documentFactory.Create(model: model);
+            this.openDocuments.Add(model, result);
+            this.OnDocumentCreated?.Invoke(this, result);
+
+            return result;
+        }
+
+        private IModelDoc2 OpenDocument(string filename, swOpenDocOptions_e options)
+        {
+            int error = 0, warning = 0;
+            int type = FileExtensions.GetDocumentType(filename);
+            int loopCount = 0;
+
+            ModelDoc2 doc;
+            do
+            {
+                doc = this.swApplication.OpenDoc6(
+                        filename,
+                        type,
+                        (int)options,
+                        string.Empty,
+                        ref error,
+                        ref warning);
+
+                if (++loopCount == 10)
+                {
+                    break;
+                }
+            }
+            while (error == (int)swFileLoadError_e.swApplicationBusy);
+
+            return doc;
         }
     }
 }

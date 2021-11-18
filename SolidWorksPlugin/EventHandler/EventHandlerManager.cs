@@ -60,21 +60,32 @@ namespace SIM.SolidWorksPlugin
 
         private void AttachAllEvents()
         {
+            this.documentManager.OnDocumentCreated += this.OnOpenDocumentAdded;
             this.swApplication.FileNewNotify2 += this.OnNewFile;
             this.swApplication.FileOpenPostNotify += this.OnFileOpen;
+        }
+
+        private void OnOpenDocumentAdded(object? sender, SwDocument document)
+        {
+            this.AttachEventsToDocument(document);
         }
 
         private void AttachEventsToAllOpenedDocument()
         {
             foreach (var document in this.documentManager.GetAllUnknownDocuments())
             {
-                foreach (var docEventHandler in this.documentEventHandlers)
-                {
-                    docEventHandler.AttachDocumentEvents(document);
-                }
-
-                document.OnDestroy += this.DetachEventsFromDocument;
+                this.AttachEventsToDocument(document);
             }
+        }
+
+        private void AttachEventsToDocument(SwDocument document)
+        {
+            foreach (var docEventHandler in this.documentEventHandlers)
+            {
+                docEventHandler.AttachDocumentEvents(document);
+            }
+
+            document.OnDestroy += this.DetachEventsFromDocument;
         }
 
         private int DetachEventsFromDocument(SwDocument document, swDestroyNotifyType_e destroyType)

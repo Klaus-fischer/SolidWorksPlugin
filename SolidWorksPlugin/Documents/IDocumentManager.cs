@@ -5,20 +5,21 @@
 namespace SIM.SolidWorksPlugin
 {
     using SolidWorks.Interop.swconst;
-    using System.Collections.Generic;
 
     public interface IDocumentManager
     {
-        IEnumerable<SwDocument> GetOpenDocuments();
+        SwDocument? ActiveDocument { get; set; }
 
         SwDocument OpenDocument(string filename, out bool wasOpen, swOpenDocOptions_e options = swOpenDocOptions_e.swOpenDocOptions_Silent);
 
-        bool TryOpenDocument(string filename, out SwDocument swDocument);
+        void RebuildDocument(SwDocument document, bool topOnly);
 
-        SwDocument SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false);
+        void SetSaveIndicatorFlag(SwDocument document);
+
+        void SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false, object? exportData = null);
+
+        void Reload(SwDocument document, bool readOnly);
 
         void CloseDocument(SwDocument document);
-
-        SwDocument? ActiveDocument { get; set; }
     }
 }

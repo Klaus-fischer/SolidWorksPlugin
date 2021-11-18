@@ -9,18 +9,23 @@ namespace SIM.SolidWorksPlugin
 
     internal class SwDocumentFactory
     {
+        /// <summary>
+        /// Creates a <see cref="SwDocument"/> based on the model type.
+        /// </summary>
+        /// <param name="model">SolidWorks model to check.</param>
+        /// <returns>The created document.</returns>
         public SwDocument Create(IModelDoc2 model)
         {
             switch (model)
             {
-                //case IPartDoc part:
-                //    return new SwPart(part, manager);
+                case PartDoc part:
+                    return new SwPart(part);
 
-                //case IAssemblyDoc assembly:
-                //    return new SwAssembly(assembly, manager);
+                case AssemblyDoc assembly:
+                    return new SwAssembly(assembly);
 
-                //case IDrawingDoc drawing:
-                //    return new SwDrawing(drawing, manager);
+                case DrawingDoc drawing:
+                    return new SwDrawing(drawing);
 
                 default:
                     throw new InvalidCastException();

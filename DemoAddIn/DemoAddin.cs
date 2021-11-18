@@ -40,6 +40,10 @@ namespace SIM.DemoAddin
             commandManager.AddCommandGroup<Commands>(this.BuildCommands);
         }
 
+        protected override void RegisterEventHandler(IEventHandlerManager eventHandlerManager)
+        {
+        }
+
         private void BuildCommands(ICommandHandler<Commands> commandHandler)
         {
             commandHandler.RegisterCommand(
