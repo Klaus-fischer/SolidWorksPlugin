@@ -2,8 +2,11 @@
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
+#pragma warning disable SA1401 // Fields should be private
+
 namespace SIM.SolidWorksPlugin
 {
+    using System;
     using System.IO;
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swconst;
@@ -13,6 +16,11 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     public class SwDocument
     {
+        /// <summary>
+        /// Callback to get the get the property manager.
+        /// </summary>
+        internal Func<IModelDoc2, IPropertyManager>? PropertyManagerCallBack;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SwDocument"/> class.
         /// </summary>
@@ -48,6 +56,11 @@ namespace SIM.SolidWorksPlugin
         /// Pre-notifies the user program when a part document is about to be destroyed.
         /// </summary>
         public event DocumentEventHandler<swDestroyNotifyType_e>? OnDestroy;
+
+        /// <summary>
+        /// Gets the property manager of this document.
+        /// </summary>
+        public IPropertyManager PropertyManager => this.PropertyManagerCallBack!(this.Model);
 
         /// <summary>
         /// Gets the model of the document.

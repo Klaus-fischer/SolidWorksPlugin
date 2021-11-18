@@ -7,8 +7,13 @@ namespace SIM.SolidWorksPlugin
     using System;
     using SolidWorks.Interop.sldworks;
 
+    /// <summary>
+    /// Factory of <see cref="SwDocument"/> classes.
+    /// </summary>
     internal class SwDocumentFactory
     {
+        private readonly PropertyManager propertyManager = new();
+
         /// <summary>
         /// Creates a <see cref="SwDocument"/> based on the model type.
         /// </summary>
@@ -16,20 +21,31 @@ namespace SIM.SolidWorksPlugin
         /// <returns>The created document.</returns>
         public SwDocument Create(IModelDoc2 model)
         {
-            switch (model)
+            return model switch
             {
-                case PartDoc part:
-                    return new SwPart(part);
+                PartDoc part => new SwPart(part)
+                {
+                    PropertyManagerCallBack = this.GetPropertyManager,
+                },
 
-                case AssemblyDoc assembly:
-                    return new SwAssembly(assembly);
+                AssemblyDoc assembly => new SwAssembly(assembly)
+                {
+                    PropertyManagerCallBack = this.GetPropertyManager,
+                },
 
-                case DrawingDoc drawing:
-                    return new SwDrawing(drawing);
+                DrawingDoc drawing => new SwDrawing(drawing)
+                {
+                    PropertyManagerCallBack = this.GetPropertyManager,
+                },
 
-                default:
-                    throw new InvalidCastException();
-            }
+                _ => throw new InvalidCastException(),
+            };
+        }
+
+        private IPropertyManager GetPropertyManager(IModelDoc2 model)
+        {
+            this.propertyManager.ActiveModel = model;
+            return this.propertyManager;
         }
     }
 }
