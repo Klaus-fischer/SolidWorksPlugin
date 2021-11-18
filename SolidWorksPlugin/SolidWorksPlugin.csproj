@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <Folder Include="Documents\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
 
 

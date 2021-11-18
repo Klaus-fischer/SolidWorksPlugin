@@ -49,8 +49,6 @@ namespace SIM.SolidWorksPlugin
 
                 this.commandHandler = new CommandHandler(this.SwApplication, this.documentManager, this.addInCookie);
 
-                this.GetCommandManagerInfos(out var tooltip, out var icons, out var mainIcon, out var position);
-
                 this.RegisterCommands(this.commandHandler);
 
                 // this.RegisterDocumentHandler(this.DocumentManager);
@@ -63,8 +61,6 @@ namespace SIM.SolidWorksPlugin
 
             return true;
         }
-
-        protected abstract void GetCommandManagerInfos(out string tooltip, out string[] iconList, out string[] mainIcon, out int position);
 
         protected abstract void RegisterCommands(ICommandGroupHandler commandGroupHandler);
 

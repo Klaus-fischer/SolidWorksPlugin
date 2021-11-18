@@ -138,8 +138,8 @@ namespace SIM.SolidWorksPlugin
 
             if (icons is not null)
             {
-                swCommandGroup.IconList = icons.IconList.Split("|");
-                swCommandGroup.MainIconList = icons.MainIconsList.Split("|");
+                swCommandGroup.IconList = icons.GetIconsList();
+                swCommandGroup.MainIconList = icons.MainIconPath.Split("|");
             }
 
             var commandHandler = new CommandHandler<T>(this, swCommandGroup, title, info.CommandGroupId);
