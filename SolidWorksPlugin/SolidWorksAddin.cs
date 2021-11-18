@@ -38,6 +38,11 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         public SldWorks SwApplication => this.swApplication!;
 
+        /// <summary>
+        /// Gets the document manager.
+        /// </summary>
+        public IDocumentManager DocumentManager => this.documentManager!;
+
         /// <inheritdoc/>
         public bool ConnectToSW(object ThisSW, int cookie)
         {
