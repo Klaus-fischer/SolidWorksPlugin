@@ -5,6 +5,7 @@
 namespace SIM.SolidWorksPlugin
 {
     using System;
+    using System.Linq;
 
     public class CommandGroupInfoAttribute : Attribute
     {
@@ -32,8 +33,20 @@ namespace SIM.SolidWorksPlugin
 
     public class CommandGroupIconsAttribute : Attribute
     {
-        public string IconList { get; set; } = string.Empty;
+        public string IconsPath { get; set; } = string.Empty;
 
-        public string MainIconsList { get; set; } = string.Empty;
+        public string MainIconPath { get; set; } = string.Empty;
+
+        internal string[] GetIconsList()
+        {
+            var result = this.IconsPath.Split("|");
+            return result.Select(o => Extensions.FilePathExtensions.GetAbsolutePath(SolidWorksAddin.AssemblyPath, o)).ToArray();
+        }
+
+        internal string[] GetMainIconList()
+        {
+            var result = this.MainIconPath.Split("|");
+            return result.Select(o => Extensions.FilePathExtensions.GetAbsolutePath(SolidWorksAddin.AssemblyPath, o)).ToArray();
+        }
     }
 }

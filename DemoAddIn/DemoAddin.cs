@@ -22,9 +22,10 @@ namespace SIM.DemoAddin
 #else
     [Guid("C0E8D5B0-5773-4FDD-9ECE-C2C570CA1F65")]
     [ComVisible(true)]
-    [SolidWorksPlugin("Demo Addin", "first working demo add-in")]
+    [DisplayName("Demo Addin")]
+    [Description("Default description.")]
 
-    public class DemoAddin : SwAddin<Commands>
+    public class DemoAddin : SolidWorksAddin
 #endif
     {
         [ComRegisterFunction]
@@ -34,41 +35,18 @@ namespace SIM.DemoAddin
         public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
 
         /// <inheritdoc/>
-        public override int MainCommandId => 1;
-
-        /// <inheritdoc/>
-        public override string Title => "SIM-QuickDraw";
-
-        /// <inheritdoc/>
-        protected override void GetCommandManagerInfos(out string tooltip, out string[] iconList, out string[] mainIcon, out int position)
+        protected override void RegisterCommands(ICommandGroupHandler commandManager)
         {
-            tooltip = this.Title;
-            position = -1;
-            iconList = new string[]
-            {
-                @$"{AssemblyPath}\Icons\Toolbar20.png",
-                @$"{AssemblyPath}\Icons\Toolbar32.png",
-                @$"{AssemblyPath}\Icons\Toolbar40.png",
-                @$"{AssemblyPath}\Icons\Toolbar64.png",
-            };
-
-            mainIcon = new string[]
-            {
-                @$"{AssemblyPath}\Icons\Icon20.png",
-                @$"{AssemblyPath}\Icons\Icon32.png",
-                @$"{AssemblyPath}\Icons\Icon40.png",
-                @$"{AssemblyPath}\Icons\Icon64.png",
-            };
+            commandManager.AddCommandGroup<Commands>(this.BuildCommands);
         }
 
-        /// <inheritdoc/>
-        protected override void RegisterCommands(ICommandManager<Commands> commandManager)
+        private void BuildCommands(ICommandHandler<Commands> commandHandler)
         {
-            commandManager.RegisterCommand(
-                Commands.TrialCommand,
-                new RelaySwCommand(this.TrialExecuted));
+            commandHandler.RegisterCommand(
+                 Commands.TrialCommand,
+                 new RelaySwCommand(this.TrialExecuted));
 
-            commandManager.RegisterCommand(
+            commandHandler.RegisterCommand(
                 Commands.TrialCommand2,
                 new RelaySwCommand(this.TrialExecuted));
         }
@@ -79,12 +57,16 @@ namespace SIM.DemoAddin
         }
     }
 
+    [CommandGroupInfo(1, "Main Commands", ToolTip = "Mein erstes Demo Projekt")]
+    [CommandGroupIcons(
+        IconsPath = @".\Icons\Toolbar20.png|.\Icons\Toolbar32.png|.\Icons\Toolbar40.png|.\Icons\Toolbar64.png",
+        MainIconPath = @".\Icons\Icon20.png|.\Icons\Icon32.png|.\Icons\Icon40.png|.\Icons\Icon64.png")]
     public enum Commands
     {
-        [CommandInfo(ImageIndex = 1, HasMenu = true, HasToolbar = true)]
+        [CommandInfo("Trial Command", ImageIndex = 1, HasMenu = true, HasToolbar = true)]
         TrialCommand,
 
-        [CommandInfo(ImageIndex = 2, HasMenu = true, HasToolbar = true, Text = "MainMenu@Trial2")]
+        [CommandInfo("Trial Command 2", ImageIndex = 2, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
         TrialCommand2,
     }
 }

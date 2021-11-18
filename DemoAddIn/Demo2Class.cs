@@ -14,7 +14,6 @@ namespace SIM.DemoAddin
 
     [Guid("217A321E-E54D-4658-ABEB-EDE9E15A86CF")]
     [ComVisible(true)]
-    [SolidWorksPlugin("Demo Addin 2", "first working demo add-in")]
     [Description("Demo 2 description")]
     [DisplayName("Demo 2")]
     public class Demo2Class : ISwAddin
