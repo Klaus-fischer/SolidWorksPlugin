@@ -4,17 +4,48 @@
 
 namespace SIM.SolidWorksPlugin
 {
+    using SolidWorks.Interop.swconst;
     using System;
 
     [AttributeUsage(AttributeTargets.Field)]
     public class CommandInfoAttribute : Attribute
     {
-        public int ImageIndex { get; set; }
+        public CommandInfoAttribute(string title)
+        {
+            this.Name = title;
+        }
 
-        public bool HasMenu { get; set; }
+        public int ImageIndex { get; set; } = -1;
 
-        public bool HasToolbar { get; set; }
-        
-        public string? Text { get; set; }
+        public bool HasMenu { get; set; } = true;
+
+        public bool HasToolbar { get; set; } = true;
+
+        public string Name { get; }
+
+        public int Position { get; set; } = -1;
+
+        /// <summary>
+        /// Gets or sets the tool-tip of the command.
+        /// </summary>
+        public string Tooltip { get; set; }
+
+        public string Hint { get; set; }
+
+        internal int GetSwCommandItemType_e()
+        {
+            swCommandItemType_e menuOptions = 0;
+            if (this.HasMenu == true)
+            {
+                menuOptions |= swCommandItemType_e.swMenuItem;
+            }
+
+            if (this.HasToolbar == true)
+            {
+                menuOptions |= swCommandItemType_e.swToolbarItem;
+            }
+
+            return (int)menuOptions;
+        }
     }
 }

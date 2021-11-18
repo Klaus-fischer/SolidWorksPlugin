@@ -7,16 +7,6 @@ namespace SIM.SolidWorksPlugin
     public interface ISwCommand
     {
         /// <summary>
-        /// Gets the command title.
-        /// </summary>
-        string Title { get; }
-
-        /// <summary>
-        /// Gets the tool-tip of the command.
-        /// </summary>
-        string Description { get; }
-
-        /// <summary>
         /// Validates if command can be executed.
         /// </summary>
         /// <returns>True on valid call.</returns>
