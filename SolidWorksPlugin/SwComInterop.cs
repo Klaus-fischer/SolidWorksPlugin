@@ -25,7 +25,7 @@ namespace SIM.SolidWorksPlugin
             RegistryKey addinKey = hklm.CreateSubKey(GetAddinKey(t.GUID));
             addinKey.SetValue(null, 0);
 
-            var description = "";
+            var description = string.Empty;
             var title = t.Name;
 
             if (t.GetCustomAttribute<DescriptionAttribute>() is DescriptionAttribute desc)
@@ -36,12 +36,6 @@ namespace SIM.SolidWorksPlugin
             if (t.GetCustomAttribute<DisplayNameAttribute>() is DisplayNameAttribute name)
             {
                 title = name.DisplayName;
-            }
-
-            if (t.GetCustomAttributes<SolidWorksPluginAttribute>() is SolidWorksPluginAttribute attribute)
-            {
-                description = attribute.Description;
-                title = attribute.Title;
             }
 
             addinKey.SetValue("Description", description);
