@@ -17,7 +17,8 @@ namespace SIM.SolidWorksPlugin
     {
         private int addInCookie;
         private CommandHandler? commandHandler;
-        private IDocumentManager? documentManager;
+        private EventHandlerManager? eventHandlerManager;
+        private DocumentManager? documentManager;
         private SldWorks? swApplication;
 
         /// <summary>
@@ -45,13 +46,14 @@ namespace SIM.SolidWorksPlugin
                 this.swApplication = (SldWorks)ThisSW;
                 this.addInCookie = cookie;
 
-                this.documentManager = new DocumentManager();
+                this.documentManager = new DocumentManager(this.swApplication);
 
                 this.commandHandler = new CommandHandler(this.SwApplication, this.documentManager, this.addInCookie);
-
                 this.RegisterCommands(this.commandHandler);
 
-                // this.RegisterDocumentHandler(this.DocumentManager);
+                this.eventHandlerManager = new EventHandlerManager(this.swApplication, this.documentManager);
+                this.RegisterEventHandler(this.eventHandlerManager);
+
                 AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
             }
             catch (Exception ex)
@@ -62,23 +64,17 @@ namespace SIM.SolidWorksPlugin
             return true;
         }
 
-        protected abstract void RegisterCommands(ICommandGroupHandler commandGroupHandler);
-
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            // this.LogException(e.ExceptionObject as Exception);
-        }
-
         /// <inheritdoc/>
         public bool DisconnectFromSW()
         {
-            //this.UnregisterAllSolidWorksEventHandler();
-
-            //this.documentManager?.Dispose();
-            //this.documentManager = null;
+            this.eventHandlerManager?.Dispose();
+            this.eventHandlerManager = null;
 
             this.commandHandler?.Dispose();
             this.commandHandler = null;
+
+            this.documentManager?.Dispose();
+            this.documentManager = null;
 
             this.swApplication = null;
 
@@ -92,6 +88,10 @@ namespace SIM.SolidWorksPlugin
             return true;
         }
 
+        protected abstract void RegisterCommands(ICommandGroupHandler commandGroupHandler);
+
+        protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
+
         /// <summary>
         /// Registers a window to be top most on the solid works screen.
         /// </summary>
@@ -104,6 +104,11 @@ namespace SIM.SolidWorksPlugin
                 var interopHelper = Activator.CreateInstance(interopHelperType, new object[] { window });
                 pi.SetValue(interopHelper, System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle);
             }
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            // this.LogException(e.ExceptionObject as Exception);
         }
     }
 }
