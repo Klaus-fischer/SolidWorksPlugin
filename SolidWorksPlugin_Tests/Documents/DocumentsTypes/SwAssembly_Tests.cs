@@ -9,7 +9,7 @@
     [TestClass]
     public class SwAssembly_Tests
     {
-        public interface AsmDoc : AssemblyDoc, ModelDoc2 { };
+        public interface AsmDoc : AssemblyDoc, IModelDoc2 { };
 
         [TestMethod]
         public void Constructor()

@@ -7,7 +7,10 @@ namespace SIM.SolidWorksPlugin
     using System;
     using SolidWorks.Interop.sldworks;
 
-    public sealed class SwAssembly: SwDocument, IDisposable
+    /// <summary>
+    /// Document class for <see cref="AssemblyDoc"/> models.
+    /// </summary>
+    public sealed class SwAssembly : SwDocument, IDisposable
     {
         private readonly AssemblyDoc model;
 

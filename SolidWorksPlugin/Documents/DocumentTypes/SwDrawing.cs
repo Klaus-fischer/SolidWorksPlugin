@@ -7,6 +7,9 @@ namespace SIM.SolidWorksPlugin
     using System;
     using SolidWorks.Interop.sldworks;
 
+    /// <summary>
+    /// Document class for <see cref="DrawingDoc"/> models.
+    /// </summary>
     public sealed class SwDrawing : SwDocument, IDisposable
     {
         private readonly DrawingDoc model;

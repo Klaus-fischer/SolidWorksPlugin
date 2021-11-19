@@ -14,7 +14,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// The base document class.
     /// </summary>
-    public class SwDocument
+    public abstract class SwDocument
     {
         /// <summary>
         /// Callback to get the get the property manager.
@@ -60,7 +60,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the property manager of this document.
         /// </summary>
-        public IPropertyManager PropertyManager => this.PropertyManagerCallBack!(this.Model);
+        public IPropertyManager Properties => this.PropertyManagerCallBack!(this.Model);
 
         /// <summary>
         /// Gets the model of the document.

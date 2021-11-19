@@ -9,7 +9,7 @@
     [TestClass]
     public class SwPart_Tests
     {
-        public interface PrtDoc : PartDoc, ModelDoc2 { };
+        public interface PrtDoc : PartDoc, IModelDoc2 { };
 
         [TestMethod]
         public void Constructor()

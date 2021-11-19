@@ -9,7 +9,7 @@
     [TestClass]
     public class SwDrawing_Tests
     {
-        public interface DrwDoc : DrawingDoc, ModelDoc2 { };
+        public interface DrwDoc : DrawingDoc, IModelDoc2 { };
 
         [TestMethod]
         public void Constructor()
