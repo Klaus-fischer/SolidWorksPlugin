@@ -143,14 +143,12 @@ namespace SIM.SolidWorksPlugin
         /// <returns>0 on success.</returns>
         protected int OnChangeCustomPropertyNotify(string propName, string configuration, string? oldValue, string? newValue, int valueType)
         {
-            var args = new PropertyChangedEventArgs()
-            {
-                PropertyName = propName,
-                Configuration = configuration,
-                OldValue = oldValue,
-                NewValue = newValue,
-                ValueType = (swCustomInfoType_e)valueType,
-            };
+            var args = new PropertyChangedEventArgs(
+                propertyName: propName,
+                configuration: configuration,
+                oldValue: oldValue,
+                newValue: newValue,
+                valueType: (swCustomInfoType_e)valueType);
 
             return this.OnPropertyChanged?.Invoke(this, args) ?? 0;
         }
