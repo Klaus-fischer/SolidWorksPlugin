@@ -4,16 +4,22 @@
 
 namespace SIM.SolidWorksPlugin
 {
-    using System.Collections;
     using System.Collections.Generic;
     using SolidWorks.Interop.sldworks;
-    using SolidWorks.Interop.swconst;
 
-    public class SwPointerEqualityComparer<T> : SwPointerEqualityComparer, IEqualityComparer<T>
+    /// <summary>
+    /// Generic implementation of a <see cref="SwPointerEqualityComparer"/> class.
+    /// </summary>
+    /// <typeparam name="T">Type of the objects to validate.</typeparam>
+    public abstract class SwPointerEqualityComparer<T> : SwPointerEqualityComparer, IEqualityComparer<T>
         where T : class
     {
-        internal SwPointerEqualityComparer(ISldWorks app)
-            : base(app)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SwPointerEqualityComparer{T}"/> class.
+        /// </summary>
+        /// <param name="swApplication">The current solid works application.</param>
+        protected SwPointerEqualityComparer(ISldWorks swApplication)
+            : base(swApplication)
         {
         }
 
@@ -23,55 +29,22 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public int GetHashCode(T obj) => base.GetHashCode(obj);
 
-        protected virtual bool IsAlive(T obj) => base.IsAlive(obj);
-    }
-
-    public class SwPointerEqualityComparer : IEqualityComparer
-    {
-        private readonly ISldWorks m_App;
-
-        internal SwPointerEqualityComparer(ISldWorks app)
-        {
-            this.m_App = app;
-        }
+        /// <summary>
+        /// Tests if solid works object is alive.
+        /// </summary>
+        /// <param name="obj">Object to test.</param>
+        /// <returns>True on success.</returns>
+        protected abstract bool IsAlive(T obj);
 
         /// <inheritdoc/>
-        public new bool Equals(object x, object y)
+        protected sealed override bool IsAlive(object obj)
         {
-            if (ReferenceEquals(x, y))
+            if (obj is T o)
             {
-                return true;
+                return this.IsAlive(o);
             }
 
-            if (x == null || y == null)
-            {
-                return false;
-            }
-
-            try
-            {
-                // Note: ISldWorks::IsSame can crash if pointer is disconnected
-                if (this.IsAlive(x) && this.IsAlive(y))
-                {
-                    return this.m_App.IsSame(x, y) == (int)swObjectEquality.swObjectSame;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        protected virtual bool IsAlive(object obj) => true;
-
-        /// <inheritdoc/>
-        public int GetHashCode(object obj)
-        {
-            return obj?.GetHashCode() ?? 0;
+            return false;
         }
     }
 }

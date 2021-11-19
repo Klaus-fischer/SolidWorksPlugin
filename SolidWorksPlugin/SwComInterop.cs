@@ -49,7 +49,7 @@ namespace SIM.SolidWorksPlugin
         public static void UnregisterFunction(Type t)
         {
             RegistryKey hklm = Registry.LocalMachine;
-            hklm.DeleteSubKey(GetAddinKey(t.GUID));
+            hklm.DeleteSubKeyTree(GetAddinKey(t.GUID));
         }
 
         private static string GetAddinKey(Guid guid) => @$"SOFTWARE\SolidWorks\Addins\{{{guid}}}";
