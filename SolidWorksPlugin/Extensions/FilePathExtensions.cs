@@ -4,8 +4,6 @@
 
 namespace SIM.SolidWorksPlugin.Extensions
 {
-    using System;
-    using System.IO;
     using System.Text.RegularExpressions;
 
     public static class FilePathExtensions
@@ -31,48 +29,6 @@ namespace SIM.SolidWorksPlugin.Extensions
             }
 
             return result;
-        }
-
-        public static string GetAbsolutePathSpan(this string root, string relative)
-        {
-            int relativeUpCount = 0;
-
-            var relSpan = relative.AsSpan();
-
-            while (relSpan[0] == '.' || relSpan[0] == '\\')
-            {
-                if (relSpan[0] == '\\')
-                {
-                    relSpan = relSpan.Slice(1);
-                }
-
-                if (relSpan[0] == '.')
-                {
-                    if (relSpan[1] == '.')
-                    {
-                        relativeUpCount++;
-                        relSpan = relSpan.Slice(2);
-                    }
-                    else
-                    {
-                        relSpan = relSpan.Slice(1);
-                    }
-                }
-            }
-
-            var rootSpan = root.AsSpan().TrimEnd('\\');
-
-            while (relativeUpCount > 0 && !rootSpan.IsEmpty)
-            {
-                if (rootSpan[rootSpan.Length - 1] == '\\')
-                {
-                    relativeUpCount--;
-                }
-
-                rootSpan = rootSpan.Slice(0, rootSpan.Length - 1);
-            }
-
-            return string.Concat(rootSpan, "\\", relSpan);
         }
     }
 }
