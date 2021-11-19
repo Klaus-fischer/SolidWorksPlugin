@@ -21,15 +21,9 @@ namespace SIM.SolidWorksPlugin.Commands
         /// <param name="canExecute">Handler to validate command state.</param>
         public RelaySwCommand(Action<SwDocument?> onExecute, Func<SwDocument?, bool>? canExecute = null)
         {
+            this.onExecute = onExecute ?? throw new ArgumentNullException(nameof(onExecute));
             this.canExecute = canExecute ?? new Func<SwDocument?, bool>(d => true);
-            this.onExecute = onExecute;
         }
-
-        /// <inheritdoc/>
-        public string Title { get; set; } = string.Empty;
-
-        /// <inheritdoc/>
-        public string Description { get; set; } = string.Empty;
 
         /// <inheritdoc/>
         public bool CanExecute(SwDocument? document) => this.canExecute(document);
