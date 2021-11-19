@@ -4,6 +4,7 @@
 
 namespace SIM.SolidWorksPlugin
 {
+    using System;
     using System.Diagnostics;
 
     /// <summary>
@@ -23,9 +24,9 @@ namespace SIM.SolidWorksPlugin
         /// <param name="imageIndex">The <see cref="ImageIndex"/>.</param>
         internal CommandInfo(ISwCommand command, int id, int commandGroupId, string name,  int userId, int imageIndex)
         {
+            this.Command = command ?? throw new ArgumentNullException(nameof(command));
             this.Id = id;
             this.CommandGroupId = commandGroupId;
-            this.Command = command;
             this.Name = name;
             this.UserId = userId;
             this.ImageIndex = imageIndex;
