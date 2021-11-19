@@ -10,7 +10,11 @@ namespace SIM.SolidWorksPlugin
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swconst;
 
-    internal class EventHandlerManager : IEventHandlerManager, IDisposable
+    /// <summary>
+    /// The event manager holds all event handlers.
+    /// It will register each document at the document event handler at creation time.
+    /// </summary>
+    internal class EventHandlerManager : IEventHandlerManagerInternals, IEventHandlerManager, IDisposable
     {
         private readonly ICollection<IDocumentEventHandler> documentEventHandlers
             = new Collection<IDocumentEventHandler>();
@@ -19,14 +23,14 @@ namespace SIM.SolidWorksPlugin
             = new Collection<ISolidWorksEventHandler>();
 
         private readonly SldWorks swApplication;
-        private readonly DocumentManager documentManager;
+        private readonly IDocumentManagerInternals documentManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventHandlerManager"/> class.
         /// </summary>
         /// <param name="swApplication">The current solid works application.</param>
         /// <param name="documentManager">The current used document manager.</param>
-        public EventHandlerManager(SldWorks swApplication, DocumentManager documentManager)
+        public EventHandlerManager(SldWorks swApplication, IDocumentManagerInternals documentManager)
         {
             this.swApplication = swApplication;
             this.documentManager = documentManager;

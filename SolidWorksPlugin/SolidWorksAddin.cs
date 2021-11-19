@@ -10,15 +10,22 @@ namespace SIM.SolidWorksPlugin
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swpublished;
 
+#if DEPENDENCY_INJECTION
+    using Microsoft.Extensions.DependencyInjection;
+#endif
+
     /// <summary>
     /// The base class for a solid works add-in.
     /// </summary>
     public abstract partial class SolidWorksAddin : ISwAddin
     {
-        private int addInCookie;
-        private CommandHandler? commandHandler;
-        private EventHandlerManager? eventHandlerManager;
-        private DocumentManager? documentManager;
+#if DEPENDENCY_INJECTION
+        private readonly IServiceProvider? serviceProvider;
+#endif
+        private Cookie addInCookie;
+        private ICommandHandlerInternals? commandHandler;
+        private IEventHandlerManagerInternals? eventHandlerManager;
+        private IDocumentManagerInternals? documentManager;
         private SldWorks? swApplication;
 
         /// <summary>
@@ -27,6 +34,17 @@ namespace SIM.SolidWorksPlugin
         public SolidWorksAddin()
         {
         }
+
+#if DEPENDENCY_INJECTION
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SolidWorksAddin"/> class.
+        /// </summary>
+        /// <param name="serviceProvider">Service provider to inject dependencies.</param>
+        internal SolidWorksAddin(IServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
+        }
+#endif
 
         /// <summary>
         /// Gets the path to the current assembly directory.
@@ -49,14 +67,27 @@ namespace SIM.SolidWorksPlugin
             try
             {
                 this.swApplication = (SldWorks)ThisSW;
-                this.addInCookie = cookie;
+                this.addInCookie = new Cookie(cookie);
 
-                this.documentManager = new DocumentManager(this.swApplication);
+#if DEPENDENCY_INJECTION
+                if (this.serviceProvider is null)
+#endif
+                {
+                    this.documentManager = new DocumentManager(this.swApplication);
+                    this.commandHandler = new CommandHandler(this.SwApplication, this.documentManager, this.addInCookie);
+                    this.eventHandlerManager = new EventHandlerManager(this.swApplication, this.documentManager);
+                }
+#if DEPENDENCY_INJECTION
+                else
+                {
+                    this.documentManager = this.serviceProvider.GetRequiredService<IDocumentManagerInternals>();
+                    this.commandHandler = this.serviceProvider.GetRequiredService<ICommandHandlerInternals>();
+                    this.eventHandlerManager = this.serviceProvider.GetRequiredService<IEventHandlerManagerInternals>();
+                }
+#endif
 
-                this.commandHandler = new CommandHandler(this.SwApplication, this.documentManager, this.addInCookie);
                 this.RegisterCommands(this.commandHandler);
 
-                this.eventHandlerManager = new EventHandlerManager(this.swApplication, this.documentManager);
                 this.RegisterEventHandler(this.eventHandlerManager);
 
                 AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;

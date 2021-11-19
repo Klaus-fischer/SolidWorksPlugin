@@ -14,7 +14,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// Manages commands and their behavior.
     /// </summary>
-    public class CommandHandler : ICommandGroupHandler, IDisposable
+    public class CommandHandler : ICommandHandlerInternals, ICommandGroupHandler, IDisposable
     {
         private readonly Dictionary<string, ICommandHandler> commandHandlers;
         private readonly IDocumentManager documentManager;
@@ -25,15 +25,11 @@ namespace SIM.SolidWorksPlugin
         /// <param name="swApplication">The current solid works application.</param>
         /// <param name="documentManager">The current used document manager.</param>
         /// <param name="cookie">The cookie of the add-in.</param>
-        internal CommandHandler(ISldWorks swApplication, IDocumentManager documentManager, int cookie)
+        internal CommandHandler(ISldWorks swApplication, IDocumentManager documentManager, Cookie cookie)
         {
             this.commandHandlers = new Dictionary<string, ICommandHandler>();
             this.documentManager = documentManager;
             this.SwCommandManager = swApplication.GetCommandManager(cookie);
-
-            // Setup callbacks mit be assigned to a public, non generic object.
-            // SolidWorks will crash otherwise.
-            _ = swApplication.SetAddinCallbackInfo2(0, this, cookie);
         }
 
         /// <summary>
@@ -139,7 +135,7 @@ namespace SIM.SolidWorksPlugin
             if (icons is not null)
             {
                 swCommandGroup.IconList = icons.GetIconsList();
-                swCommandGroup.MainIconList = icons.MainIconPath.Split("|");
+                swCommandGroup.MainIconList = icons.MainIconPath.Split('|');
             }
 
             var commandHandler = new CommandHandler<T>(this, swCommandGroup, title, info.CommandGroupId);
@@ -208,7 +204,6 @@ namespace SIM.SolidWorksPlugin
 
             return (info, icons);
         }
-
 
     }
 }

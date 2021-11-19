@@ -14,7 +14,7 @@ namespace SIM.SolidWorksPlugin
     /// The Document manager holds a reference to all open documents.
     /// It handles all Open Save Close operations.
     /// </summary>
-    internal class DocumentManager : IDocumentManager, IDisposable
+    internal class DocumentManager : IDocumentManagerInternals, IDocumentManager, IDisposable
     {
         private readonly SldWorks swApplication;
         private readonly SwDocumentFactory documentFactory;
@@ -29,13 +29,13 @@ namespace SIM.SolidWorksPlugin
             this.swApplication = swApplication;
             this.documentFactory = new SwDocumentFactory();
             this.openDocuments = new Dictionary<IModelDoc2, SwDocument>(
-                new SwModelPointerEqualityComparer(swApplication));
+                new SwModelDocPointerEqualityComparer(swApplication));
         }
 
         /// <summary>
         /// Raises an event, if a Document was created on <see cref="GetDocument"/> call.
         /// </summary>
-        internal event EventHandler<SwDocument>? OnDocumentCreated;
+        public event EventHandler<SwDocument>? OnDocumentCreated;
 
         /// <inheritdoc/>
         public SwDocument? ActiveDocument
@@ -129,12 +129,8 @@ namespace SIM.SolidWorksPlugin
             this.swApplication.CloseDoc(document.FilePath);
         }
 
-        /// <summary>
-        /// Look for all open documents in solid works and returns all, documents that are not the open list yet.
-        /// After returning the item, it will be added to the <see cref="openDocuments"/> collection.
-        /// </summary>
-        /// <returns>The collection of all unknown documents.</returns>
-        internal IEnumerable<SwDocument> GetAllUnknownDocuments()
+        /// <inheritdoc/>
+        public IEnumerable<SwDocument> GetAllUnknownDocuments()
         {
             var swDocument = this.swApplication.GetFirstDocument();
 
@@ -153,11 +149,8 @@ namespace SIM.SolidWorksPlugin
             }
         }
 
-        /// <summary>
-        /// Enumerates all open documents.
-        /// </summary>
-        /// <returns>Collection of open documents.</returns>
-        internal IEnumerable<SwDocument> GetOpenDocuments() => this.openDocuments.Values;
+        /// <inheritdoc/>
+        public IEnumerable<SwDocument> GetOpenDocuments() => this.openDocuments.Values;
 
         private SwDocument GetDocument(IModelDoc2 model)
         {
