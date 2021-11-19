@@ -106,8 +106,9 @@ namespace SIM.SolidWorksPlugin
                     FieldValue: value,
                     OverwriteExisting: (int)swCustomPropertyAddOption_e.swCustomPropertyReplaceValue);
 
-                this.ActiveModel.SetSaveFlag();
             }
+
+            this.ActiveModel.SetSaveFlag();
         }
 
         /// <inheritdoc/>
@@ -135,6 +136,7 @@ namespace SIM.SolidWorksPlugin
         public void DeleteProperty(string propertyName)
         {
             this.SwPropertyManager.Delete2(propertyName);
+            this.ActiveModel.SetSaveFlag();
         }
 
         /// <inheritdoc/>
@@ -152,6 +154,8 @@ namespace SIM.SolidWorksPlugin
                     FieldValue: value.Value.ToString("dd.MM.yyyy"),
                     OverwriteExisting: (int)swCustomPropertyAddOption_e.swCustomPropertyReplaceValue);
             }
+
+            this.ActiveModel.SetSaveFlag();
         }
 
         /// <inheritdoc/>
@@ -183,6 +187,8 @@ namespace SIM.SolidWorksPlugin
                     Value: weight,
                     Config_option: (int)swInConfigurationOpts_e.swAllConfiguration,
                     Config_names: string.Empty);
+
+                this.ActiveModel.SetSaveFlag();
             }
         }
 
