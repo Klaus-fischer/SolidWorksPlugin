@@ -31,7 +31,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the model of the document as <see cref="IDrawingDoc"/>.
         /// </summary>
-        public IDrawingDoc Part => this.model;
+        public IDrawingDoc Drawing => this.model;
 
         /// <inheritdoc/>
         public void Dispose()
