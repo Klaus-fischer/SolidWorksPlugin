@@ -1,6 +1,7 @@
 ﻿namespace SIM.SolidWorksPlugin.Tests.Attributes
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using SolidWorks.Interop.swconst;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -63,15 +64,15 @@
 
             ci = new CommandInfoAttribute("name2") { HasMenu = true, HasToolbar = false, };
 
-            Assert.AreEqual(1, ci.GetSwCommandItemType_e());
+            Assert.AreEqual((int)swCommandItemType_e.swMenuItem, ci.GetSwCommandItemType_e());
 
             ci = new CommandInfoAttribute("name2") { HasMenu = false, HasToolbar = true, };
 
-            Assert.AreEqual(2, ci.GetSwCommandItemType_e());
+            Assert.AreEqual((int)swCommandItemType_e.swToolbarItem, ci.GetSwCommandItemType_e());
 
             ci = new CommandInfoAttribute("name2") { HasMenu = true, HasToolbar = true, };
 
-            Assert.AreEqual(3, ci.GetSwCommandItemType_e());
+            Assert.AreEqual((int)(swCommandItemType_e.swMenuItem | swCommandItemType_e.swToolbarItem), ci.GetSwCommandItemType_e());
         }
     }
 }

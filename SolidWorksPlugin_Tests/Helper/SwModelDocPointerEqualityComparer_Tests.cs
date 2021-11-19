@@ -3,6 +3,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using SolidWorks.Interop.sldworks;
+    using SolidWorks.Interop.swconst;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -44,19 +45,19 @@
                 o.IsSame(
                     It.Is<object>(o => o == swModel1.Object),
                     It.Is<object>(o => o == swModel2.Object)))
-                .Returns(0); // not same
+                .Returns((int)swObjectEquality.swObjectNotSame); // not same
 
             swApp.Setup(o =>
                 o.IsSame(
                     It.Is<object>(o => o == swModel1.Object),
                     It.Is<object>(o => o == swModel1.Object)))
-                .Returns(1); // same
+                .Returns((int)swObjectEquality.swObjectSame); // same
 
             swApp.Setup(o =>
                o.IsSame(
                    It.Is<object>(o => o == swModel1.Object),
                    It.Is<object>(o => o == swModel3.Object)))
-               .Returns(1); // same 
+               .Returns((int)swObjectEquality.swObjectSame); // same 
 
             #endregion
 

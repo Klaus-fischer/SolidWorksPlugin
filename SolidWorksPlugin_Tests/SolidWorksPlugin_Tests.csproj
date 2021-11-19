@@ -28,6 +28,9 @@
     <Reference Include="SolidWorks.Interop.sldworks">
       <HintPath>..\..\..\Program Files\Solidworks_2016\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll</HintPath>
     </Reference>
+    <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>..\..\..\Program Files\SOLIDWORKS_2016\SOLIDWORKS\api\redist\SolidWorks.Interop.swconst.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
