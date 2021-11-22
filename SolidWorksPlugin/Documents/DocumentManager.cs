@@ -35,7 +35,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Raises an event, if a Document was created on <see cref="GetDocument"/> call.
         /// </summary>
-        public event EventHandler<ISwDocumentEvents>? OnDocumentAdded;
+        public event EventHandler<ISwDocument>? OnDocumentAdded;
 
         /// <inheritdoc/>
         public SwDocument? ActiveDocument
@@ -84,14 +84,6 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void RebuildDocument(SwDocument document, bool topOnly)
-            => document.Model.ForceRebuild3(topOnly);
-
-        /// <inheritdoc/>
-        public void SetSaveIndicatorFlag(SwDocument document)
-            => document.Model.SetSaveFlag();
-
-        /// <inheritdoc/>
         public void SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false, object? exportData = null)
         {
             int error = 0, warnings = 0;
@@ -130,7 +122,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public IEnumerable<ISwDocumentEvents> GetAllUnknownDocuments()
+        public IEnumerable<ISwDocument> GetAllUnknownDocuments()
         {
             var swDocument = this.swApplication.GetFirstDocument();
 
@@ -150,7 +142,13 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public IEnumerable<ISwDocumentEvents> GetOpenDocuments() => this.openDocuments.Values;
+        public IEnumerable<ISwDocument> GetOpenDocuments() => this.openDocuments.Values;
+
+        /// <inheritdoc/>
+        public void DisposeDocument(ISwDocument swDocument)
+        {
+            this.openDocuments.Remove(swDocument.Model);
+        }
 
         private SwDocument GetDocument(IModelDoc2 model)
         {

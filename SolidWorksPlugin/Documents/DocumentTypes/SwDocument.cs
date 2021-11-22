@@ -14,7 +14,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// The base document class.
     /// </summary>
-    public abstract class SwDocument : ISwDocumentEvents
+    public abstract class SwDocument : ISwDocument
     {
         /// <summary>
         /// Callback to get the get the property manager.

@@ -12,9 +12,6 @@ namespace SIM.SolidWorksPlugin
 
         SwDocument OpenDocument(string filename, out bool wasOpen, swOpenDocOptions_e options = swOpenDocOptions_e.swOpenDocOptions_Silent);
 
-        void RebuildDocument(SwDocument document, bool topOnly);
-
-        void SetSaveIndicatorFlag(SwDocument document);
 
         void SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false, object? exportData = null);
 

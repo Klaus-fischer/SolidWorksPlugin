@@ -22,7 +22,7 @@
 
             swApplicationMock.SetupAdd(o => o.FileNewNotify2 += It.IsAny<DSldWorksEvents_FileNewNotify2EventHandler>());
             swApplicationMock.SetupAdd(o => o.FileOpenPostNotify += It.IsAny<DSldWorksEvents_FileOpenPostNotifyEventHandler>());
-            documentManagerMock.SetupAdd(o => o.OnDocumentAdded += It.IsAny<EventHandler<ISwDocumentEvents>>());
+            documentManagerMock.SetupAdd(o => o.OnDocumentAdded += It.IsAny<EventHandler<ISwDocument>>());
 
             var eman = new EventHandlerManager(swApplicationMock.Object, documentManagerMock.Object);
 
@@ -30,7 +30,7 @@
 
             swApplicationMock.VerifyAdd(o => o.FileNewNotify2 += It.IsAny<DSldWorksEvents_FileNewNotify2EventHandler>(), Times.Once);
             swApplicationMock.VerifyAdd(o => o.FileOpenPostNotify += It.IsAny<DSldWorksEvents_FileOpenPostNotifyEventHandler>(), Times.Once);
-            documentManagerMock.VerifyAdd(o => o.OnDocumentAdded += It.IsAny<EventHandler<ISwDocumentEvents>>(), Times.Once);
+            documentManagerMock.VerifyAdd(o => o.OnDocumentAdded += It.IsAny<EventHandler<ISwDocument>>(), Times.Once);
         }
 
         [TestMethod]
@@ -39,10 +39,10 @@
             var swApplicationMock = new Mock<SldWorks>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var swEventHandlerMock = new Mock<ISolidWorksEventHandler>();
-            var documentMock = new Mock<ISwDocumentEvents>();
+            var documentMock = new Mock<ISwDocument>();
 
             swEventHandlerMock.Setup(o => o.AttachSwEvents(swApplicationMock.Object));
-            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocumentEvents[] { documentMock.Object });
+            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocument[] { documentMock.Object });
             documentMock.SetupAdd(o => o.OnDestroy += It.IsAny<DocumentEventHandler<swDestroyNotifyType_e>>());
 
             var eman = new EventHandlerManager(swApplicationMock.Object, documentManagerMock.Object);
@@ -65,10 +65,10 @@
             var swApplicationMock = new Mock<SldWorks>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var swEventHandlerMock = new Mock<IDocumentEventHandler>();
-            var documentMock = new Mock<ISwDocumentEvents>();
+            var documentMock = new Mock<ISwDocument>();
 
             swEventHandlerMock.Setup(o => o.AttachDocumentEvents(documentMock.Object));
-            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocumentEvents[] { documentMock.Object });
+            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocument[] { documentMock.Object });
             documentMock.SetupAdd(o => o.OnDestroy += It.IsAny<DocumentEventHandler<swDestroyNotifyType_e>>());
 
             var eman = new EventHandlerManager(swApplicationMock.Object, documentManagerMock.Object);
@@ -92,10 +92,10 @@
             var swApplicationMock = new Mock<SldWorks>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var swEventHandlerMock = new Mock<IDocumentEventHandler>();
-            var documentMock = new Mock<ISwDocumentEvents>();
+            var documentMock = new Mock<ISwDocument>();
 
             swEventHandlerMock.Setup(o => o.AttachDocumentEvents(documentMock.Object));
-            documentManagerMock.Setup(o => o.GetAllUnknownDocuments()).Returns(new ISwDocumentEvents[] { documentMock.Object });
+            documentManagerMock.Setup(o => o.GetAllUnknownDocuments()).Returns(new ISwDocument[] { documentMock.Object });
 
             var eman = new EventHandlerManager(swApplicationMock.Object, documentManagerMock.Object);
             eman.RegisterDocumentEventHandler(swEventHandlerMock.Object);
@@ -112,10 +112,10 @@
             var swApplicationMock = new Mock<SldWorks>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var swEventHandlerMock = new Mock<IDocumentEventHandler>();
-            var documentMock = new Mock<ISwDocumentEvents>();
+            var documentMock = new Mock<ISwDocument>();
 
             swEventHandlerMock.Setup(o => o.AttachDocumentEvents(documentMock.Object));
-            documentManagerMock.Setup(o => o.GetAllUnknownDocuments()).Returns(new ISwDocumentEvents[] { documentMock.Object });
+            documentManagerMock.Setup(o => o.GetAllUnknownDocuments()).Returns(new ISwDocument[] { documentMock.Object });
 
             var eman = new EventHandlerManager(swApplicationMock.Object, documentManagerMock.Object);
             eman.RegisterDocumentEventHandler(swEventHandlerMock.Object);
@@ -132,10 +132,10 @@
             var swApplicationMock = new Mock<SldWorks>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var swEventHandlerMock = new Mock<IDocumentEventHandler>();
-            var documentMock = new Mock<ISwDocumentEvents>();
+            var documentMock = new Mock<ISwDocument>();
 
             swEventHandlerMock.Setup(o => o.AttachDocumentEvents(documentMock.Object));
-            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocumentEvents[0]);
+            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocument[0]);
             documentMock.SetupAdd(o => o.OnDestroy += It.IsAny<DocumentEventHandler<swDestroyNotifyType_e>>());
 
             var eman = new EventHandlerManager(swApplicationMock.Object, documentManagerMock.Object);
@@ -159,9 +159,10 @@
             var swApplicationMock = new Mock<SldWorks>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var swEventHandlerMock = new Mock<IDocumentEventHandler>();
-            var documentMock = new Mock<ISwDocumentEvents>();
+            var documentMock = new Mock<ISwDocument>();
 
-            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocumentEvents[] { documentMock.Object });
+            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocument[] { documentMock.Object });
+            documentManagerMock.Setup(o => o.DisposeDocument(documentMock.Object));
             swEventHandlerMock.Setup(o => o.DetachDocumentEvents(documentMock.Object));
 
             var eman = new EventHandlerManager(swApplicationMock.Object, documentManagerMock.Object);
@@ -170,9 +171,11 @@
 
             documentMock.Raise(o => o.OnDestroy += null, documentMock.Object, swDestroyNotifyType_e.swDestroyNotifyHidden);
             swEventHandlerMock.Verify(o => o.DetachDocumentEvents(documentMock.Object), Times.Never);
+            documentManagerMock.Verify(o => o.DisposeDocument(documentMock.Object), Times.Never);
 
             documentMock.Raise(o => o.OnDestroy += null, documentMock.Object, swDestroyNotifyType_e.swDestroyNotifyDestroy);
             swEventHandlerMock.Verify(o => o.DetachDocumentEvents(documentMock.Object), Times.Once);
+            documentManagerMock.Verify(o => o.DisposeDocument(documentMock.Object), Times.Once);
         }
 
         [TestMethod]
@@ -182,13 +185,13 @@
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var swEventHandlerMock = new Mock<IDocumentEventHandler>();
             var swSwEventHandlerMock = new Mock<ISolidWorksEventHandler>();
-            var documentMock = new Mock<ISwDocumentEvents>();
+            var documentMock = new Mock<ISwDocument>();
 
             swApplicationMock.SetupRemove(o => o.FileNewNotify2 -= It.IsAny<DSldWorksEvents_FileNewNotify2EventHandler>());
             swApplicationMock.SetupRemove(o => o.FileOpenPostNotify -= It.IsAny<DSldWorksEvents_FileOpenPostNotifyEventHandler>());
-            documentManagerMock.SetupRemove(o => o.OnDocumentAdded -= It.IsAny<EventHandler<ISwDocumentEvents>>());
+            documentManagerMock.SetupRemove(o => o.OnDocumentAdded -= It.IsAny<EventHandler<ISwDocument>>());
 
-            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocumentEvents[] { documentMock.Object });
+            documentManagerMock.Setup(o => o.GetOpenDocuments()).Returns(new ISwDocument[] { documentMock.Object });
 
             swEventHandlerMock.Setup(o => o.DetachDocumentEvents(documentMock.Object));
             swSwEventHandlerMock.Setup(o => o.DetachSwEvents(swApplicationMock.Object));
@@ -202,7 +205,7 @@
 
             swApplicationMock.VerifyRemove(o => o.FileNewNotify2 -= It.IsAny<DSldWorksEvents_FileNewNotify2EventHandler>(), Times.Once);
             swApplicationMock.VerifyRemove(o => o.FileOpenPostNotify -= It.IsAny<DSldWorksEvents_FileOpenPostNotifyEventHandler>(), Times.Once);
-            documentManagerMock.VerifyRemove(o => o.OnDocumentAdded -= It.IsAny<EventHandler<ISwDocumentEvents>>(), Times.Once);
+            documentManagerMock.VerifyRemove(o => o.OnDocumentAdded -= It.IsAny<EventHandler<ISwDocument>>(), Times.Once);
 
             documentManagerMock.Verify(o => o.GetOpenDocuments(), Times.AtLeastOnce);
 

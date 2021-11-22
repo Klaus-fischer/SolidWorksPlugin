@@ -74,7 +74,7 @@ namespace SIM.SolidWorksPlugin
             }
         }
 
-        private void OnOpenDocumentAdded(object? sender, ISwDocumentEvents document)
+        private void OnOpenDocumentAdded(object? sender, ISwDocument document)
         {
             this.AttachEventsToDocument(document);
         }
@@ -87,7 +87,7 @@ namespace SIM.SolidWorksPlugin
             }
         }
 
-        private void AttachEventsToDocument(ISwDocumentEvents document)
+        private void AttachEventsToDocument(ISwDocument document)
         {
             foreach (var docEventHandler in this.documentEventHandlers)
             {
@@ -97,7 +97,7 @@ namespace SIM.SolidWorksPlugin
             document.OnDestroy += this.DetachEventsFromDocument;
         }
 
-        private int DetachEventsFromDocument(ISwDocumentEvents document, swDestroyNotifyType_e destroyType)
+        private int DetachEventsFromDocument(ISwDocument document, swDestroyNotifyType_e destroyType)
         {
             if (destroyType == swDestroyNotifyType_e.swDestroyNotifyDestroy)
             {
@@ -105,6 +105,9 @@ namespace SIM.SolidWorksPlugin
                 {
                     docEventHandler.DetachDocumentEvents(document);
                 }
+
+                document.OnDestroy -= this.DetachEventsFromDocument;
+                this.documentManager.DisposeDocument(document);
             }
 
             return 0;
