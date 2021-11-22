@@ -7,7 +7,7 @@ namespace SIM.SolidWorksPlugin
     using System;
 
     /// <summary>
-    /// Defines return values of <see cref="CommandManager{T}.CanExecute(string)"/> method.
+    /// Defines return values of <see cref="CommandHandler.CanExecute(string)"/> method.
     /// </summary>
     [Flags]
     internal enum CommandCanExecuteState : int

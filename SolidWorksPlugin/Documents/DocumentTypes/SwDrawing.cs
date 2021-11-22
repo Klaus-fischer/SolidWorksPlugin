@@ -7,6 +7,9 @@ namespace SIM.SolidWorksPlugin
     using System;
     using SolidWorks.Interop.sldworks;
 
+    /// <summary>
+    /// Document class for <see cref="DrawingDoc"/> models.
+    /// </summary>
     public sealed class SwDrawing : SwDocument, IDisposable
     {
         private readonly DrawingDoc model;
@@ -31,7 +34,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the model of the document as <see cref="IDrawingDoc"/>.
         /// </summary>
-        public IDrawingDoc Part => this.model;
+        public IDrawingDoc Drawing => this.model;
 
         /// <inheritdoc/>
         public void Dispose()

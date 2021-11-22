@@ -14,7 +14,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// The base document class.
     /// </summary>
-    public class SwDocument
+    public abstract class SwDocument : ISwDocument
     {
         /// <summary>
         /// Callback to get the get the property manager.
@@ -60,7 +60,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the property manager of this document.
         /// </summary>
-        public IPropertyManager PropertyManager => this.PropertyManagerCallBack!(this.Model);
+        public IPropertyManager Properties => this.PropertyManagerCallBack!(this.Model);
 
         /// <summary>
         /// Gets the model of the document.
@@ -73,9 +73,9 @@ namespace SIM.SolidWorksPlugin
         public string FilePath => this.Model.GetPathName();
 
         /// <summary>
-        /// Gets the filename without extensions.
+        /// Gets the filename of the model.
         /// </summary>
-        public string Filename => Path.GetFileNameWithoutExtension(this.Model.GetPathName());
+        public string Filename => Path.GetFileName(this.Model.GetPathName());
 
         /// <summary>
         /// Gets the file extension of the current document.
@@ -143,14 +143,12 @@ namespace SIM.SolidWorksPlugin
         /// <returns>0 on success.</returns>
         protected int OnChangeCustomPropertyNotify(string propName, string configuration, string? oldValue, string? newValue, int valueType)
         {
-            var args = new PropertyChangedEventArgs()
-            {
-                PropertyName = propName,
-                Configuration = configuration,
-                OldValue = oldValue,
-                NewValue = newValue,
-                ValueType = (swCustomInfoType_e)valueType,
-            };
+            var args = new PropertyChangedEventArgs(
+                propertyName: propName,
+                configuration: configuration,
+                oldValue: oldValue,
+                newValue: newValue,
+                valueType: (swCustomInfoType_e)valueType);
 
             return this.OnPropertyChanged?.Invoke(this, args) ?? 0;
         }

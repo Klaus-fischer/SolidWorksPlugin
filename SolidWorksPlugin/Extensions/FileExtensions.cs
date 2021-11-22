@@ -40,9 +40,11 @@ namespace SIM.SolidWorksPlugin
                 case ".DRWDOT":
                     return (int)swDocumentTypes_e.swDocDRAWING;
 
+                case AsmExt:
                 case ".ASMDOT":
                     return (int)swDocumentTypes_e.swDocASSEMBLY;
 
+                case PrtExt:
                 case ".SLDLFT":
                     return (int)swDocumentTypes_e.swDocPART;
 

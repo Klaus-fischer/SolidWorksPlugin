@@ -6,6 +6,9 @@ namespace SIM.SolidWorksPlugin.Extensions
 {
     using System.Text.RegularExpressions;
 
+    /// <summary>
+    /// Extensions for strings that represents a file path.
+    /// </summary>
     public static class FilePathExtensions
     {
         /// <summary>

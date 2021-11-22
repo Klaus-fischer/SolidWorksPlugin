@@ -10,7 +10,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// Factory of <see cref="SwDocument"/> classes.
     /// </summary>
-    internal class SwDocumentFactory
+    internal class SwDocumentFactory : ISwDocumentFactory
     {
         private readonly PropertyManager propertyManager = new();
 

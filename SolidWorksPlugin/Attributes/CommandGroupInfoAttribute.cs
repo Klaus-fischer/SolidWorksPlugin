@@ -1,12 +1,15 @@
-﻿// <copyright file="CommandGroupInfo.cs" company="SIM Automation">
+﻿// <copyright file="CommandGroupInfoAttribute.cs" company="SIM Automation">
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
 namespace SIM.SolidWorksPlugin
 {
     using System;
-    using System.Linq;
 
+    /// <summary>
+    /// Attribute to describe a command enumeration.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Enum)]
     public class CommandGroupInfoAttribute : Attribute
     {
         /// <summary>
@@ -20,33 +23,29 @@ namespace SIM.SolidWorksPlugin
             this.Title = title ?? throw new ArgumentNullException(nameof(title));
         }
 
+        /// <summary>
+        /// Gets the command group id.
+        /// </summary>
         public int CommandGroupId { get; }
 
+        /// <summary>
+        /// Gets the title.
+        /// </summary>
         public string Title { get; }
 
+        /// <summary>
+        /// Gets or sets the tool tip.
+        /// </summary>
         public string ToolTip { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the hint.
+        /// </summary>
         public string Hint { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the relative position in the command group.
+        /// </summary>
         public int Position { get; set; } = -1;
-    }
-
-    public class CommandGroupIconsAttribute : Attribute
-    {
-        public string IconsPath { get; set; } = string.Empty;
-
-        public string MainIconPath { get; set; } = string.Empty;
-
-        internal string[] GetIconsList()
-        {
-            var result = this.IconsPath.Split("|");
-            return result.Select(o => Extensions.FilePathExtensions.GetAbsolutePath(SolidWorksAddin.AssemblyPath, o)).ToArray();
-        }
-
-        internal string[] GetMainIconList()
-        {
-            var result = this.MainIconPath.Split("|");
-            return result.Select(o => Extensions.FilePathExtensions.GetAbsolutePath(SolidWorksAddin.AssemblyPath, o)).ToArray();
-        }
     }
 }

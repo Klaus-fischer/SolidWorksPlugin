@@ -7,6 +7,9 @@ namespace SIM.SolidWorksPlugin
     using System;
     using SolidWorks.Interop.sldworks;
 
+    /// <summary>
+    /// Document class for <see cref="PartDoc"/> models.
+    /// </summary>
     public sealed class SwPart : SwDocument, IDisposable
     {
         private readonly PartDoc model;

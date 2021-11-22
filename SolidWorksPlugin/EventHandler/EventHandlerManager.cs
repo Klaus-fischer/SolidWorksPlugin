@@ -64,12 +64,17 @@ namespace SIM.SolidWorksPlugin
 
         private void AttachAllEvents()
         {
-            this.documentManager.OnDocumentCreated += this.OnOpenDocumentAdded;
+            this.documentManager.OnDocumentAdded += this.OnOpenDocumentAdded;
             this.swApplication.FileNewNotify2 += this.OnNewFile;
             this.swApplication.FileOpenPostNotify += this.OnFileOpen;
+
+            foreach (var document in this.documentManager.GetOpenDocuments())
+            {
+                document.OnDestroy += this.DetachEventsFromDocument;
+            }
         }
 
-        private void OnOpenDocumentAdded(object? sender, SwDocument document)
+        private void OnOpenDocumentAdded(object? sender, ISwDocument document)
         {
             this.AttachEventsToDocument(document);
         }
@@ -82,7 +87,7 @@ namespace SIM.SolidWorksPlugin
             }
         }
 
-        private void AttachEventsToDocument(SwDocument document)
+        private void AttachEventsToDocument(ISwDocument document)
         {
             foreach (var docEventHandler in this.documentEventHandlers)
             {
@@ -92,7 +97,7 @@ namespace SIM.SolidWorksPlugin
             document.OnDestroy += this.DetachEventsFromDocument;
         }
 
-        private int DetachEventsFromDocument(SwDocument document, swDestroyNotifyType_e destroyType)
+        private int DetachEventsFromDocument(ISwDocument document, swDestroyNotifyType_e destroyType)
         {
             if (destroyType == swDestroyNotifyType_e.swDestroyNotifyDestroy)
             {
@@ -100,6 +105,9 @@ namespace SIM.SolidWorksPlugin
                 {
                     docEventHandler.DetachDocumentEvents(document);
                 }
+
+                document.OnDestroy -= this.DetachEventsFromDocument;
+                this.documentManager.DisposeDocument(document);
             }
 
             return 0;
@@ -121,6 +129,7 @@ namespace SIM.SolidWorksPlugin
         {
             this.swApplication.FileNewNotify2 -= this.OnNewFile;
             this.swApplication.FileOpenPostNotify -= this.OnFileOpen;
+            this.documentManager.OnDocumentAdded -= this.OnOpenDocumentAdded;
 
             foreach (var swEventHandler in this.solidWorksEventHandlers)
             {

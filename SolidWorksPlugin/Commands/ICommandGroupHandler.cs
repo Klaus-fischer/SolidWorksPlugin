@@ -9,7 +9,6 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// Declares the command manager for add in callback.
     /// </summary>
-    /// <typeparam name="T">Type of the command enumeration.</typeparam>
     public interface ICommandGroupHandler
     {
         /// <summary>

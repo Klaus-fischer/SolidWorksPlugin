@@ -16,26 +16,32 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     internal class DocumentManager : IDocumentManagerInternals, IDocumentManager, IDisposable
     {
-        private readonly SldWorks swApplication;
-        private readonly SwDocumentFactory documentFactory;
+        private readonly ISldWorks swApplication;
+        private readonly ISwDocumentFactory documentFactory;
         private readonly Dictionary<IModelDoc2, SwDocument> openDocuments;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentManager"/> class.
         /// </summary>
         /// <param name="swApplication">The current solid works application.</param>
-        public DocumentManager(SldWorks swApplication)
+        /// <param name="factory">The <see cref="ISwDocumentFactory"/> to use.</param>
+        /// <param name="comparer">The comparer to determine equal <see cref="IModelDoc2"/> objects.</param>
+        public DocumentManager(ISldWorks swApplication, ISwDocumentFactory factory, IEqualityComparer<IModelDoc2> comparer)
         {
             this.swApplication = swApplication;
-            this.documentFactory = new SwDocumentFactory();
-            this.openDocuments = new Dictionary<IModelDoc2, SwDocument>(
-                new SwModelDocPointerEqualityComparer(swApplication));
+            this.documentFactory = factory;
+            this.openDocuments = new Dictionary<IModelDoc2, SwDocument>(comparer);
+
+            // loop through all unknown documents to add them to the dictionary.
+            foreach (var doc in this.GetAllUnknownDocuments())
+            {
+            }
         }
 
         /// <summary>
         /// Raises an event, if a Document was created on <see cref="GetDocument"/> call.
         /// </summary>
-        public event EventHandler<SwDocument>? OnDocumentCreated;
+        public event EventHandler<ISwDocument>? OnDocumentAdded;
 
         /// <inheritdoc/>
         public SwDocument? ActiveDocument
@@ -84,14 +90,6 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void RebuildDocument(SwDocument document, bool topOnly)
-            => document.Model.ForceRebuild3(topOnly);
-
-        /// <inheritdoc/>
-        public void SetSaveIndicatorFlag(SwDocument document)
-            => document.Model.SetSaveFlag();
-
-        /// <inheritdoc/>
         public void SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false, object? exportData = null)
         {
             int error = 0, warnings = 0;
@@ -118,7 +116,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void Reload(SwDocument document, bool readOnly)
+        public void ReloadDocument(SwDocument document, bool readOnly)
         {
             document.Model.ReloadOrReplace(readOnly, document.FilePath, true);
         }
@@ -130,7 +128,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public IEnumerable<SwDocument> GetAllUnknownDocuments()
+        public IEnumerable<ISwDocument> GetAllUnknownDocuments()
         {
             var swDocument = this.swApplication.GetFirstDocument();
 
@@ -150,7 +148,13 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public IEnumerable<SwDocument> GetOpenDocuments() => this.openDocuments.Values;
+        public IEnumerable<ISwDocument> GetOpenDocuments() => this.openDocuments.Values;
+
+        /// <inheritdoc/>
+        public void DisposeDocument(ISwDocument swDocument)
+        {
+            this.openDocuments.Remove(swDocument.Model);
+        }
 
         private SwDocument GetDocument(IModelDoc2 model)
         {
@@ -161,7 +165,7 @@ namespace SIM.SolidWorksPlugin
 
             var result = this.documentFactory.Create(model: model);
             this.openDocuments.Add(model, result);
-            this.OnDocumentCreated?.Invoke(this, result);
+            this.OnDocumentAdded?.Invoke(this, result);
 
             return result;
         }
@@ -189,6 +193,11 @@ namespace SIM.SolidWorksPlugin
                 }
             }
             while (error == (int)swFileLoadError_e.swApplicationBusy);
+
+            if (doc == null)
+            {
+                throw new InvalidOperationException($"Document could not be opened.\n Error:{(swFileLoadError_e)error}\n Warning:{(swFileLoadWarning_e)warning}");
+            }
 
             return doc;
         }

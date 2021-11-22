@@ -3,6 +3,7 @@
 // </copyright>
 
 #pragma warning disable SA1202 // Elements should be ordered by access
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
 namespace SIM.SolidWorksPlugin
 {
@@ -17,7 +18,7 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     internal class PropertyManager : IPropertyManager
     {
-        private IModelDoc2 activeModel = null;
+        private IModelDoc2 activeModel;
         private string activeConfiguration = string.Empty;
 
         private CustomPropertyManager SwPropertyManager
@@ -105,21 +106,21 @@ namespace SIM.SolidWorksPlugin
                     FieldType: (int)swCustomInfoType_e.swCustomInfoText,
                     FieldValue: value,
                     OverwriteExisting: (int)swCustomPropertyAddOption_e.swCustomPropertyReplaceValue);
-
-                this.ActiveModel.SetSaveFlag();
             }
+
+            this.ActiveModel.SetSaveFlag();
         }
 
         /// <inheritdoc/>
         public string? GetStringProperty(string propertyName)
         {
-            swCustomInfoGetResult_e result = (swCustomInfoGetResult_e)
-                this.SwPropertyManager.Get5(
-                FieldName: propertyName,
-                UseCached: false,
-                ValOut: out string value,
-                ResolvedValOut: out string resolvedValOut,
-                WasResolved: out _);
+            swCustomInfoGetResult_e result =
+                (swCustomInfoGetResult_e)this.SwPropertyManager.Get5(
+                    FieldName: propertyName,
+                    UseCached: false,
+                    ValOut: out string value,
+                    ResolvedValOut: out string resolvedValOut,
+                    WasResolved: out _);
 
             if (result == swCustomInfoGetResult_e.swCustomInfoGetResult_NotPresent)
             {
@@ -135,6 +136,7 @@ namespace SIM.SolidWorksPlugin
         public void DeleteProperty(string propertyName)
         {
             this.SwPropertyManager.Delete2(propertyName);
+            this.ActiveModel.SetSaveFlag();
         }
 
         /// <inheritdoc/>
@@ -152,6 +154,8 @@ namespace SIM.SolidWorksPlugin
                     FieldValue: value.Value.ToString("dd.MM.yyyy"),
                     OverwriteExisting: (int)swCustomPropertyAddOption_e.swCustomPropertyReplaceValue);
             }
+
+            this.ActiveModel.SetSaveFlag();
         }
 
         /// <inheritdoc/>
@@ -183,6 +187,8 @@ namespace SIM.SolidWorksPlugin
                     Value: weight,
                     Config_option: (int)swInConfigurationOpts_e.swAllConfiguration,
                     Config_names: string.Empty);
+
+                this.ActiveModel.SetSaveFlag();
             }
         }
 
