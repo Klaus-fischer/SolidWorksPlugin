@@ -17,6 +17,11 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         event EventHandler<ISwDocument>? OnDocumentAdded;
 
+        /// <summary>
+        /// Removes the document from the known documents list.
+        /// </summary>
+        /// <param name="document">The document to remove.</param>
+        void DisposeDocument(ISwDocument document);
 
         /// <summary>
         /// Look for all open documents in solid works and returns all, documents that are not the open list yet.

@@ -73,9 +73,9 @@ namespace SIM.SolidWorksPlugin
         public string FilePath => this.Model.GetPathName();
 
         /// <summary>
-        /// Gets the filename without extensions.
+        /// Gets the filename of the model.
         /// </summary>
-        public string Filename => Path.GetFileNameWithoutExtension(this.Model.GetPathName());
+        public string Filename => Path.GetFileName(this.Model.GetPathName());
 
         /// <summary>
         /// Gets the file extension of the current document.

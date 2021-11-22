@@ -15,7 +15,6 @@ namespace SIM.SolidWorksPlugin
 
         void SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false, object? exportData = null);
 
-        void Reload(SwDocument document, bool readOnly);
 
         void CloseDocument(SwDocument document);
     }

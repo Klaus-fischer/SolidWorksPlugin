@@ -26,7 +26,7 @@
 
             var mock = new SwMockDocument(model.Object);
             Assert.AreEqual(@"C:\Users\TestUser\Desktop\MyFile.moq", mock.FilePath);
-            Assert.AreEqual(@"MyFile", mock.Filename);
+            Assert.AreEqual(@"MyFile.moq", mock.Filename);
             Assert.AreEqual(@".moq", mock.FileExtension);
         }
 

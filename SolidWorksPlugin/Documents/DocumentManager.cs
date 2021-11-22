@@ -16,20 +16,26 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     internal class DocumentManager : IDocumentManagerInternals, IDocumentManager, IDisposable
     {
-        private readonly SldWorks swApplication;
-        private readonly SwDocumentFactory documentFactory;
+        private readonly ISldWorks swApplication;
+        private readonly ISwDocumentFactory documentFactory;
         private readonly Dictionary<IModelDoc2, SwDocument> openDocuments;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentManager"/> class.
         /// </summary>
         /// <param name="swApplication">The current solid works application.</param>
-        public DocumentManager(SldWorks swApplication)
+        /// <param name="factory">The <see cref="ISwDocumentFactory"/> to use.</param>
+        /// <param name="comparer">The comparer to determine equal <see cref="IModelDoc2"/> objects.</param>
+        public DocumentManager(ISldWorks swApplication, ISwDocumentFactory factory, IEqualityComparer<IModelDoc2> comparer)
         {
             this.swApplication = swApplication;
-            this.documentFactory = new SwDocumentFactory();
-            this.openDocuments = new Dictionary<IModelDoc2, SwDocument>(
-                new SwModelDocPointerEqualityComparer(swApplication));
+            this.documentFactory = factory;
+            this.openDocuments = new Dictionary<IModelDoc2, SwDocument>(comparer);
+
+            // loop through all unknown documents to add them to the dictionary.
+            foreach (var doc in this.GetAllUnknownDocuments())
+            {
+            }
         }
 
         /// <summary>
@@ -110,7 +116,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void Reload(SwDocument document, bool readOnly)
+        public void ReloadDocument(SwDocument document, bool readOnly)
         {
             document.Model.ReloadOrReplace(readOnly, document.FilePath, true);
         }
@@ -187,6 +193,11 @@ namespace SIM.SolidWorksPlugin
                 }
             }
             while (error == (int)swFileLoadError_e.swApplicationBusy);
+
+            if (doc == null)
+            {
+                throw new InvalidOperationException($"Document could not be opened.\n Error:{(swFileLoadError_e)error}\n Warning:{(swFileLoadWarning_e)warning}");
+            }
 
             return doc;
         }

@@ -21,7 +21,10 @@ namespace SIM.SolidWorksPlugin
             ICommandHandlerInternals CommandManager,
             IEventHandlerManagerInternals EventHandler) CreateInstances(SldWorks swApplication, Cookie cookie)
         {
-            var documentManager = new DocumentManager(swApplication);
+            var documentFactory = new SwDocumentFactory();
+            var iModelDocComparer = new SwModelDocPointerEqualityComparer(swApplication);
+
+            var documentManager = new DocumentManager(swApplication, documentFactory, iModelDocComparer);
             var commandHandler = new CommandHandler(swApplication, documentManager, cookie);
             var eventHandlerManager = new EventHandlerManager(swApplication, documentManager);
 
