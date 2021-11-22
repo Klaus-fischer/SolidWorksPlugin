@@ -198,7 +198,6 @@ namespace SIM.SolidWorksPlugin
 
             var icons = enumType.GetCustomAttribute<CommandGroupIconsAttribute>();
 
-
             return (info, icons);
         }
     }

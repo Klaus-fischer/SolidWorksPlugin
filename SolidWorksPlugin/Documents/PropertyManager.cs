@@ -3,6 +3,7 @@
 // </copyright>
 
 #pragma warning disable SA1202 // Elements should be ordered by access
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
 namespace SIM.SolidWorksPlugin
 {
@@ -17,7 +18,7 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     internal class PropertyManager : IPropertyManager
     {
-        private IModelDoc2 activeModel = null;
+        private IModelDoc2 activeModel;
         private string activeConfiguration = string.Empty;
 
         private CustomPropertyManager SwPropertyManager
@@ -105,7 +106,6 @@ namespace SIM.SolidWorksPlugin
                     FieldType: (int)swCustomInfoType_e.swCustomInfoText,
                     FieldValue: value,
                     OverwriteExisting: (int)swCustomPropertyAddOption_e.swCustomPropertyReplaceValue);
-
             }
 
             this.ActiveModel.SetSaveFlag();
@@ -114,13 +114,13 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public string? GetStringProperty(string propertyName)
         {
-            swCustomInfoGetResult_e result = (swCustomInfoGetResult_e)
-                this.SwPropertyManager.Get5(
-                FieldName: propertyName,
-                UseCached: false,
-                ValOut: out string value,
-                ResolvedValOut: out string resolvedValOut,
-                WasResolved: out _);
+            swCustomInfoGetResult_e result =
+                (swCustomInfoGetResult_e)this.SwPropertyManager.Get5(
+                    FieldName: propertyName,
+                    UseCached: false,
+                    ValOut: out string value,
+                    ResolvedValOut: out string resolvedValOut,
+                    WasResolved: out _);
 
             if (result == swCustomInfoGetResult_e.swCustomInfoGetResult_NotPresent)
             {

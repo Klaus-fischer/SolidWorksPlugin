@@ -15,7 +15,7 @@ namespace SIM.SolidWorksPlugin.Extensions
     internal static class IModelDoc2Extensions
     {
         /// <summary>
-        /// Calls <see cref="ModelDoc2.GetConfigurationNames()"/> and converts the result to a string enumeration.
+        /// Calls <see cref="IModelDoc2.GetConfigurationNames()"/> and converts the result to a string enumeration.
         /// </summary>
         /// <param name="model">The model to get configuration names from.</param>
         /// <returns>Collection of strings.</returns>

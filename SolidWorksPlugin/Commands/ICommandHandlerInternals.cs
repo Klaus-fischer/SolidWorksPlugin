@@ -23,7 +23,7 @@ namespace SIM.SolidWorksPlugin
         /// <typeparam name="T">Type of the command enumeration.</typeparam>
         /// <param name="factoryMethod">Method to add all commands.</param>
         /// <param name="path">relative path to build sub menus.</param>
-        void AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod, string path) 
+        void AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod, string path)
             where T : struct, Enum;
 
         /// <summary>
