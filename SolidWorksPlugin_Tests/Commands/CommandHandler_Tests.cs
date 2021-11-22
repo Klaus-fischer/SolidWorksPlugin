@@ -65,7 +65,6 @@
             swCommandGroupMock.VerifySet(o => o.MainIconList = It.IsAny<string[]>(), Times.Never);
         }
 
-
         [TestMethod]
         public void AddCommandGroupWithIcons_Test()
         {
@@ -372,12 +371,26 @@
         {
             var swApplicationMock = new Mock<ISldWorks>();
 
-            var cmd = new CommandHandler(swApplicationMock.Object, null, new Cookie(42));
+            ICommandHandlerInternals cmd = new CommandHandler(swApplicationMock.Object, null, new Cookie(42));
 
             var names = cmd.GetCallbackNames(CommandEnum.FirstCommand);
 
             Assert.AreEqual($"OnExecute({nameof(CommandEnum)}:{nameof(CommandEnum.FirstCommand)})", names.OnExecute);
             Assert.AreEqual($"CanExecute({nameof(CommandEnum)}:{nameof(CommandEnum.FirstCommand)})", names.CanExecute);
+        }
+
+        [TestMethod]
+        public void GetICommandManager()
+        {
+            var swApplicationMock = new Mock<ISldWorks>();
+            var swCommandManagerMock = new Mock<CommandManager>();
+            var documentManagerMock = new Mock<IDocumentManager>();
+
+            swApplicationMock.Setup(o => o.GetCommandManager(It.IsAny<int>())).Returns(swCommandManagerMock.Object);
+
+            ICommandHandlerInternals cmd = new CommandHandler(swApplicationMock.Object, documentManagerMock.Object, new Cookie(42));
+
+            Assert.AreSame(swCommandManagerMock.Object, cmd.SwCommandManager);
         }
 
         [CommandGroupInfo(commandGroupId: 1, title: nameof(CommandEnum), Hint = "group hint", Position = 15, ToolTip = "group tooltip")]

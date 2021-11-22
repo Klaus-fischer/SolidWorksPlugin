@@ -19,10 +19,12 @@ namespace SIM.SolidWorksPlugin
     {
         private readonly Dictionary<T, ISwCommand> registeredCommands = new Dictionary<T, ISwCommand>();
 
-        private readonly CommandHandler commandHandler;
+        private readonly ICommandHandlerInternals commandHandler;
         private readonly CommandGroup swCommandGroup;
         private readonly int id;
         private readonly string path;
+
+        private bool disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandHandler{T}"/> class.
@@ -31,7 +33,7 @@ namespace SIM.SolidWorksPlugin
         /// <param name="swCommandGroup">The current command group.</param>
         /// <param name="path">The path of command group.</param>
         /// <param name="id">The command group id.</param>
-        public CommandHandler(CommandHandler commandHandler, CommandGroup swCommandGroup, string path, int id)
+        public CommandHandler(ICommandHandlerInternals commandHandler, CommandGroup swCommandGroup, string path, int id)
         {
             this.swCommandGroup = swCommandGroup;
             this.id = id;
@@ -42,13 +44,14 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (!this.registeredCommands.Any())
+            if (this.disposed)
             {
                 return;
             }
 
             this.registeredCommands.Clear();
             this.commandHandler.SwCommandManager.RemoveCommandGroup2(this.id, true);
+            this.disposed = true;
         }
 
         /// <inheritdoc/>
@@ -102,7 +105,7 @@ namespace SIM.SolidWorksPlugin
 
         private CommandInfoAttribute GetCommandInfo(T id)
         {
-            if (typeof(T).GetField($"{id}")?.GetCustomAttribute<CommandInfoAttribute>() is not CommandInfoAttribute info)
+            if (typeof(T).GetField($"{id}")!.GetCustomAttribute<CommandInfoAttribute>() is not CommandInfoAttribute info)
             {
                 info = new CommandInfoAttribute($"{id}");
             }

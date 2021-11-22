@@ -18,6 +18,7 @@ namespace SIM.SolidWorksPlugin
     {
         private readonly Dictionary<string, ICommandHandler> commandHandlers;
         private readonly IDocumentManager documentManager;
+        private readonly ICommandManager swCommandManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandHandler"/> class.
@@ -29,14 +30,12 @@ namespace SIM.SolidWorksPlugin
         {
             this.commandHandlers = new Dictionary<string, ICommandHandler>();
             this.documentManager = documentManager;
-            this.SwCommandManager = swApplication.GetCommandManager(cookie);
+            this.swCommandManager = swApplication.GetCommandManager(cookie);
             swApplication.SetAddinCallbackInfo2(0, this, cookie);
         }
 
-        /// <summary>
-        /// Gets the command manager.
-        /// </summary>
-        internal ICommandManager SwCommandManager { get; }
+        /// <inheritdoc/>
+        ICommandManager ICommandHandlerInternals.SwCommandManager => this.swCommandManager;
 
         /// <inheritdoc/>
         public void Dispose()
@@ -104,7 +103,7 @@ namespace SIM.SolidWorksPlugin
 
         /// <inheritdoc/>
         public void AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod)
-            where T : struct, Enum => this.AddCommandGroup(factoryMethod, string.Empty);
+            where T : struct, Enum => ((ICommandHandlerInternals)this).AddCommandGroup(factoryMethod, string.Empty);
 
         /// <summary>
         /// Adds an command group to the command handler.
@@ -112,8 +111,7 @@ namespace SIM.SolidWorksPlugin
         /// <typeparam name="T">Type of the command enumeration.</typeparam>
         /// <param name="factoryMethod">Method to add all commands.</param>
         /// <param name="path">relative path to build sub menus.</param>
-        internal void AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod, string path)
-              where T : struct, Enum
+        void ICommandHandlerInternals.AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod, string path)
         {
             (var info, var icons) = this.GetIconsAndInfo(typeof(T));
 
@@ -124,7 +122,7 @@ namespace SIM.SolidWorksPlugin
 
             var title = $"{path}{info.Title}";
             var cmdGroupErr = 0;
-            var swCommandGroup = this.SwCommandManager.CreateCommandGroup2(
+            var swCommandGroup = this.swCommandManager.CreateCommandGroup2(
                 UserID: info.CommandGroupId,
                 Title: title,
                 ToolTip: info.ToolTip,
@@ -154,7 +152,7 @@ namespace SIM.SolidWorksPlugin
         /// <typeparam name="T">Type of the enumeration.</typeparam>
         /// <param name="id">Value of the enumeration.</param>
         /// <returns>both method names.</returns>
-        internal (string OnExecute, string CanExecute) GetCallbackNames<T>(T id)
+        (string OnExecute, string CanExecute) ICommandHandlerInternals.GetCallbackNames<T>(T id)
         {
             return ($"{nameof(this.OnExecute)}({typeof(T).Name}:{id})",
                     $"{nameof(this.CanExecute)}({typeof(T).Name}:{id})");
@@ -199,6 +197,7 @@ namespace SIM.SolidWorksPlugin
             }
 
             var icons = enumType.GetCustomAttribute<CommandGroupIconsAttribute>();
+
 
             return (info, icons);
         }
