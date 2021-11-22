@@ -4,5 +4,5 @@
 
 namespace SIM.SolidWorksPlugin
 {
-    public delegate int DocumentEventHandler<TArgs>(SwDocument document, TArgs args);
+    public delegate int DocumentEventHandler<TArgs>(ISwDocumentEvents document, TArgs args);
 }

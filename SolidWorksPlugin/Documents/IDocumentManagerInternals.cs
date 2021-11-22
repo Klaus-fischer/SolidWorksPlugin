@@ -15,19 +15,19 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Raises an event, if a Document was created by late access.
         /// </summary>
-        event EventHandler<SwDocument>? OnDocumentCreated;
+        event EventHandler<ISwDocumentEvents>? OnDocumentAdded;
 
         /// <summary>
         /// Look for all open documents in solid works and returns all, documents that are not the open list yet.
         /// After returning the item, it will be added to the open documents collection.
         /// </summary>
         /// <returns>The collection of all unknown documents.</returns>
-        IEnumerable<SwDocument> GetAllUnknownDocuments();
+        IEnumerable<ISwDocumentEvents> GetAllUnknownDocuments();
 
         /// <summary>
         /// Enumerates all open documents.
         /// </summary>
         /// <returns>Collection of open documents.</returns>
-        IEnumerable<SwDocument> GetOpenDocuments();
+        IEnumerable<ISwDocumentEvents> GetOpenDocuments();
     }
 }

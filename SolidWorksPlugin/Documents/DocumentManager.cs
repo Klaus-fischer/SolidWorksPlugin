@@ -35,7 +35,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Raises an event, if a Document was created on <see cref="GetDocument"/> call.
         /// </summary>
-        public event EventHandler<SwDocument>? OnDocumentCreated;
+        public event EventHandler<ISwDocumentEvents>? OnDocumentAdded;
 
         /// <inheritdoc/>
         public SwDocument? ActiveDocument
@@ -130,7 +130,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public IEnumerable<SwDocument> GetAllUnknownDocuments()
+        public IEnumerable<ISwDocumentEvents> GetAllUnknownDocuments()
         {
             var swDocument = this.swApplication.GetFirstDocument();
 
@@ -150,7 +150,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public IEnumerable<SwDocument> GetOpenDocuments() => this.openDocuments.Values;
+        public IEnumerable<ISwDocumentEvents> GetOpenDocuments() => this.openDocuments.Values;
 
         private SwDocument GetDocument(IModelDoc2 model)
         {
@@ -161,7 +161,7 @@ namespace SIM.SolidWorksPlugin
 
             var result = this.documentFactory.Create(model: model);
             this.openDocuments.Add(model, result);
-            this.OnDocumentCreated?.Invoke(this, result);
+            this.OnDocumentAdded?.Invoke(this, result);
 
             return result;
         }
