@@ -10,18 +10,17 @@ namespace SIM.SolidWorksPlugin
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swpublished;
 
-#if DEPENDENCY_INJECTION
-    using Microsoft.Extensions.DependencyInjection;
-#endif
-
     /// <summary>
     /// The base class for a solid works add-in.
     /// </summary>
     public abstract partial class SolidWorksAddin : ISwAddin
     {
-#if DEPENDENCY_INJECTION
-        private readonly IServiceProvider? serviceProvider;
-#endif
+        /// <summary>
+        /// Gets the name of the <see cref="memberInstanceFactory"/> field.
+        /// </summary>
+        internal const string NameOfMemberInstanceFactory = nameof(memberInstanceFactory);
+
+        private readonly ISolidworksAddinMemberInstanceFactory memberInstanceFactory;
         private Cookie addInCookie;
         private ICommandHandlerInternals? commandHandler;
         private IEventHandlerManagerInternals? eventHandlerManager;
@@ -31,20 +30,19 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Initializes a new instance of the <see cref="SolidWorksAddin"/> class.
         /// </summary>
-        public SolidWorksAddin()
+        /// <param name="factory">Factory to create member instances.</param>
+        internal SolidWorksAddin(ISolidworksAddinMemberInstanceFactory factory)
         {
+            this.memberInstanceFactory = factory;
         }
 
-#if DEPENDENCY_INJECTION
         /// <summary>
         /// Initializes a new instance of the <see cref="SolidWorksAddin"/> class.
         /// </summary>
-        /// <param name="serviceProvider">Service provider to inject dependencies.</param>
-        internal SolidWorksAddin(IServiceProvider serviceProvider)
+        protected SolidWorksAddin()
+            : this(new SolidworksAddinMemberInstanceFactory())
         {
-            this.serviceProvider = serviceProvider;
         }
-#endif
 
         /// <summary>
         /// Gets the path to the current assembly directory.
@@ -54,12 +52,14 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the reference to the current Solid-Works application.
         /// </summary>
-        public SldWorks SwApplication => this.swApplication!;
+        public SldWorks SwApplication => this.swApplication
+            ?? throw new NullReferenceException($"SwApplication is not defined. Call {nameof(this.ConnectToSW)} first.");
 
         /// <summary>
         /// Gets the document manager.
         /// </summary>
-        public IDocumentManager DocumentManager => this.documentManager!;
+        public IDocumentManager DocumentManager => this.documentManager
+            ?? throw new NullReferenceException($"DocumentManager is not defined. Call {nameof(this.ConnectToSW)} first.");
 
         /// <inheritdoc/>
         public bool ConnectToSW(object ThisSW, int cookie)
@@ -69,32 +69,17 @@ namespace SIM.SolidWorksPlugin
                 this.swApplication = (SldWorks)ThisSW;
                 this.addInCookie = new Cookie(cookie);
 
-#if DEPENDENCY_INJECTION
-                if (this.serviceProvider is null)
-#endif
-                {
-                    this.documentManager = new DocumentManager(this.swApplication);
-                    this.commandHandler = new CommandHandler(this.SwApplication, this.documentManager, this.addInCookie);
-                    this.eventHandlerManager = new EventHandlerManager(this.swApplication, this.documentManager);
-                }
-#if DEPENDENCY_INJECTION
-                else
-                {
-                    this.documentManager = this.serviceProvider.GetRequiredService<IDocumentManagerInternals>();
-                    this.commandHandler = this.serviceProvider.GetRequiredService<ICommandHandlerInternals>();
-                    this.eventHandlerManager = this.serviceProvider.GetRequiredService<IEventHandlerManagerInternals>();
-                }
-#endif
+                (this.documentManager, this.commandHandler, this.eventHandlerManager) =
+                    this.memberInstanceFactory.CreateInstances(this.swApplication, this.addInCookie);
 
                 this.RegisterCommands(this.commandHandler);
 
                 this.RegisterEventHandler(this.eventHandlerManager);
-
-                AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.DisconnectFromSW();
+                return false;
             }
 
             return true;
@@ -124,27 +109,16 @@ namespace SIM.SolidWorksPlugin
             return true;
         }
 
+        /// <summary>
+        /// Register all command groups to the command group manager.
+        /// </summary>
+        /// <param name="commandGroupHandler">The command group manager.</param>
         protected abstract void RegisterCommands(ICommandGroupHandler commandGroupHandler);
 
-        protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
-
         /// <summary>
-        /// Registers a window to be top most on the solid works screen.
+        /// Register all events to the event handler manager.
         /// </summary>
-        /// <param name="window">The window.</param>
-        protected void RegisterWindow(object window)
-        {
-            if (Type.GetType("System.Windows.Interop.WindowInteropHelper") is Type interopHelperType &&
-                interopHelperType.GetProperty("Owner") is PropertyInfo pi)
-            {
-                var interopHelper = Activator.CreateInstance(interopHelperType, new object[] { window });
-                pi.SetValue(interopHelper, System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle);
-            }
-        }
-
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            // this.LogException(e.ExceptionObject as Exception);
-        }
+        /// <param name="eventHandlerManager">The event handler manager.</param>
+        protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
     }
 }

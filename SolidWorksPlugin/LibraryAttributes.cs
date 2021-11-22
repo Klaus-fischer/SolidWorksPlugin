@@ -5,3 +5,4 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("SolidWorksPlugin_Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
