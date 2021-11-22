@@ -30,6 +30,7 @@ namespace SIM.SolidWorksPlugin
             this.commandHandlers = new Dictionary<string, ICommandHandler>();
             this.documentManager = documentManager;
             this.SwCommandManager = swApplication.GetCommandManager(cookie);
+            swApplication.SetAddinCallbackInfo2(0, this, cookie);
         }
 
         /// <summary>
@@ -118,24 +119,24 @@ namespace SIM.SolidWorksPlugin
 
             if (this.commandHandlers.ContainsKey(typeof(T).Name))
             {
-                throw new Exception("CommandHandler for this type of Enumeration is already defined.");
+                throw new InvalidOperationException("CommandHandler for this type of Enumeration is already defined.");
             }
 
             var title = $"{path}{info.Title}";
             var cmdGroupErr = 0;
             var swCommandGroup = this.SwCommandManager.CreateCommandGroup2(
-                info.CommandGroupId,
-                title,
-                info.ToolTip,
-                info.Hint,
-                info.Position,
-                true,
-                ref cmdGroupErr);
+                UserID: info.CommandGroupId,
+                Title: title,
+                ToolTip: info.ToolTip,
+                Hint: info.Hint,
+                Position: info.Position,
+                IgnorePreviousVersion: true,
+                Errors: ref cmdGroupErr);
 
             if (icons is not null)
             {
                 swCommandGroup.IconList = icons.GetIconsList();
-                swCommandGroup.MainIconList = icons.MainIconPath.Split('|');
+                swCommandGroup.MainIconList = icons.GetMainIconList();
             }
 
             var commandHandler = new CommandHandler<T>(this, swCommandGroup, title, info.CommandGroupId);
@@ -190,20 +191,16 @@ namespace SIM.SolidWorksPlugin
             return (handler, command);
         }
 
-        private (CommandGroupInfoAttribute Info, CommandGroupIconsAttribute Icons) GetIconsAndInfo(Type enumType)
+        private (CommandGroupInfoAttribute Info, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(Type enumType)
         {
             if (enumType.GetCustomAttribute<CommandGroupInfoAttribute>() is not CommandGroupInfoAttribute info)
             {
                 throw new ArgumentException($"Attribute {nameof(CommandGroupInfoAttribute)} is not defined on Enum '{enumType.Name}'");
             }
 
-            if (enumType.GetCustomAttribute<CommandGroupIconsAttribute>() is not CommandGroupIconsAttribute icons)
-            {
-                icons = new CommandGroupIconsAttribute();
-            }
+            var icons = enumType.GetCustomAttribute<CommandGroupIconsAttribute>();
 
             return (info, icons);
         }
-
     }
 }

@@ -55,7 +55,7 @@
             Assert.AreSame(propMan.Object, manager);
         }
 
-        private class SwMockDocument : SwDocument
+        internal class SwMockDocument : SwDocument
         {
             public SwMockDocument(IModelDoc2 model) : base(model)
             {
