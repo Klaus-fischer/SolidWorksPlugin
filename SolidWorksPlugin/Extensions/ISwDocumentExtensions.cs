@@ -14,14 +14,14 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="document">The document.</param>
         /// <param name="topOnly">True to rebuild all sub documents.</param>
-        public static void RebuildDocument(ISwDocument document, bool topOnly)
+        public static void RebuildDocument(this ISwDocument document, bool topOnly)
             => document.Model.ForceRebuild3(topOnly);
 
         /// <summary>
         /// Sets the save flag for the current document.
         /// </summary>
         /// <param name="document">The document.</param>
-        public static void SetSaveIndicatorFlag(ISwDocument document)
+        public static void SetSaveIndicatorFlag(this ISwDocument document)
             => document.Model.SetSaveFlag();
     }
 }
