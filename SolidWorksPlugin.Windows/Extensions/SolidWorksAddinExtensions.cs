@@ -2,10 +2,10 @@
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
-namespace SIM.SolidWorksPlugin.Extensions
+namespace SIM.SolidWorksPlugin.Windows
 {
-    using System;
-    using System.Reflection;
+    using System.Windows;
+    using System.Windows.Interop;
 
     /// <summary>
     /// Extension methods for <see cref="SolidWorksAddin"/> class.
@@ -17,14 +17,12 @@ namespace SIM.SolidWorksPlugin.Extensions
         /// </summary>
         /// <param name="addIn">The add-in to extend.</param>
         /// <param name="window">The window.</param>
-        public static void RegisterWindow(this SolidWorksAddin addIn, object window)
+        public static void RegisterWindow(this SolidWorksAddin addIn, Window window)
         {
-            if (Type.GetType("System.Windows.Interop.WindowInteropHelper") is Type interopHelperType &&
-                interopHelperType.GetProperty("Owner") is PropertyInfo pi)
+            new WindowInteropHelper(window)
             {
-                var interopHelper = Activator.CreateInstance(interopHelperType, new object[] { window });
-                pi.SetValue(interopHelper, System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle);
-            }
+                Owner = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle,
+            };
         }
     }
 }
