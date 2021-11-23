@@ -4,7 +4,7 @@
     using System;
 
     [TestClass]
-    public class CommandInfo_Tests
+    public class CommandInfoAttribute_Tests
     {
         [TestMethod]
         public void Constructor()

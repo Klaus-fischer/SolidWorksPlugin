@@ -15,10 +15,10 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandInfoAttribute"/> class.
         /// </summary>
-        /// <param name="title">Title of the command.</param>
-        public CommandInfoAttribute(string title)
+        /// <param name="name">Title of the command.</param>
+        public CommandInfoAttribute(string name)
         {
-            this.Name = title ?? throw new ArgumentNullException(nameof(title));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
         }
 
         /// <summary>

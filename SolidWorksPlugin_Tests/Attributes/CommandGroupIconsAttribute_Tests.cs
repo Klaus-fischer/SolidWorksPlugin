@@ -5,7 +5,7 @@
     using System.IO;
 
     [TestClass]
-    public class CommandGroupIcons_Tests
+    public class CommandGroupIconsAttribute_Tests
     {
         [TestMethod]
         public void Constructor()

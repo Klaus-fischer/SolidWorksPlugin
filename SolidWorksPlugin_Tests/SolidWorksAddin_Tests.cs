@@ -48,6 +48,14 @@
         }
 
         [TestMethod]
+        [ExpectedException(typeof(NullReferenceException))]
+        public void AccessToEmptyCommandHandler()
+        {
+            var addin = new TestAddIn();
+            var cmdHwnd = addin.CommandHandler;
+        }
+
+        [TestMethod]
         public void Connect_Test()
         {
             var cmdInvoked = false;
