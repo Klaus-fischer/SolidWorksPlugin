@@ -17,13 +17,11 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandInfo"/> class.
         /// </summary>
-        /// <param name="command">The <see cref="Command"/>.</param>
         /// <param name="commandGroupId">The <see cref="CommandGroupId"/>.</param>
         /// <param name="name">The <see cref="Name"/>.</param>
         /// <param name="userId">The <see cref="UserId"/>.</param>
-        public CommandInfo(int userId, string name, int commandGroupId, ISwCommand command)
+        public CommandInfo(int userId, string name, int commandGroupId)
         {
-            this.Command = command ?? throw new ArgumentNullException(nameof(command));
             this.CommandGroupId = commandGroupId;
             this.Name = name;
             this.UserId = userId;
@@ -37,7 +35,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the command.
         /// </summary>
-        public ISwCommand Command { get; }
+        ISwCommand ICommandInfo.Command => this.Command;
 
         /// <summary>
         /// Gets the user id of the command.
@@ -89,6 +87,11 @@ namespace SIM.SolidWorksPlugin
         /// Gets or sets the command id.
         /// </summary>
         internal int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the command id.
+        /// </summary>
+        internal ISwCommand Command { get; set; }
 
         /// <summary>
         /// Converts the <see cref="HasMenu"/> and <see cref="Tooltip"/> values to an <see cref="swCommandItemType_e"/> value.

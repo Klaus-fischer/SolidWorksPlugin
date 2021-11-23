@@ -13,7 +13,8 @@ namespace SIM.SolidWorksPlugin
         /// Adds a command to a command group.
         /// </summary>
         /// <param name="commandInfo">The command informations.</param>
+        /// <param name="command">The command to add.</param>
         /// <returns>The command info including command id.</returns>
-        ICommandInfo AddCommand(CommandInfo commandInfo);
+        ICommandInfo AddCommand(CommandInfo commandInfo, ISwCommand command);
     }
 }

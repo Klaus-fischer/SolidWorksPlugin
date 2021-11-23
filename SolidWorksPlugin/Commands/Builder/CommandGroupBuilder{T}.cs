@@ -33,7 +33,7 @@ namespace SIM.SolidWorksPlugin
         {
             var info = this.GetCommandInfoAttribute(id);
 
-            var cmdInfo = new CommandInfo((int)(object)id, info.Name, this.commandGroupId, command)
+            var cmdInfo = new CommandInfo((int)(object)id, info.Name, this.commandGroupId)
             {
                 ImageIndex = info.ImageIndex,
                 Position = info.Position,
@@ -43,7 +43,7 @@ namespace SIM.SolidWorksPlugin
                 Tooltip = info.Tooltip,
             };
 
-            return this.commandGroupBuilder.AddCommand(cmdInfo);
+            return this.commandGroupBuilder.AddCommand(cmdInfo, command);
         }
 
         private CommandInfoAttribute GetCommandInfoAttribute(T id)

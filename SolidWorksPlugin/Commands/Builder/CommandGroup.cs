@@ -74,7 +74,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public ICommandInfo AddCommand(CommandInfo commandInfo)
+        public ICommandInfo AddCommand(CommandInfo commandInfo, ISwCommand command)
         {
             if (this.registeredCommands.ContainsKey(commandInfo.UserId))
             {
@@ -95,6 +95,7 @@ namespace SIM.SolidWorksPlugin
                 MenuTBOption: commandInfo.GetSwCommandItemType_e());
 
             commandInfo.Id = cmdId;
+            commandInfo.Command = command;
 
             this.EnableMenuOrToolbar(commandInfo);
 
