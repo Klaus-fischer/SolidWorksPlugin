@@ -7,7 +7,7 @@ namespace SIM.SolidWorksPlugin
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
-    using SolidWorks.Interop.sldworks;
+    using SW = SolidWorks.Interop.sldworks;
 
     /// <summary>
     /// Manages commands of an single command group and their behavior.
@@ -15,10 +15,10 @@ namespace SIM.SolidWorksPlugin
     internal class CommandGroup : ICommandGroupBuilder, ICommandGroup
     {
         private readonly Dictionary<int, ICommandInfo> registeredCommands = new();
-
-        private readonly SolidWorks.Interop.sldworks.CommandGroup swCommandGroup;
         private readonly int id;
-        private ICommandManager commandManager;
+
+        private readonly SW.ICommandManager swCommandManager;
+        private SW.CommandGroup swCommandGroup;
 
         private bool disposed;
 
@@ -27,10 +27,10 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="commandManager">The command manager.</param>
         /// <param name="commandGroupInfo">Th command group infos.</param>
-        public CommandGroup(ICommandManager commandManager, CommandGroupInfo commandGroupInfo)
+        public CommandGroup(SW.ICommandManager commandManager, CommandGroupInfo commandGroupInfo)
         {
             this.id = commandGroupInfo.Id;
-            this.commandManager = commandManager;
+            this.swCommandManager = commandManager;
 
             var cmdGroupErr = 0;
             this.swCommandGroup = commandManager.CreateCommandGroup2(
@@ -42,8 +42,15 @@ namespace SIM.SolidWorksPlugin
                 IgnorePreviousVersion: true,
                 Errors: ref cmdGroupErr);
 
-            this.swCommandGroup.IconList = commandGroupInfo.Icons;
-            this.swCommandGroup.MainIconList = commandGroupInfo.MainIcon;
+            if (!string.IsNullOrWhiteSpace(commandGroupInfo.IconsPath))
+            {
+                this.swCommandGroup.IconList = commandGroupInfo.GetIconsList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(commandGroupInfo.MainIconPath))
+            {
+                this.swCommandGroup.MainIconList = commandGroupInfo.GetMainIconList();
+            }
         }
 
         /// <inheritdoc/>
@@ -55,10 +62,15 @@ namespace SIM.SolidWorksPlugin
             }
 
             this.registeredCommands.Clear();
-            this.commandManager.RemoveCommandGroup2(this.id, true);
+            this.swCommandManager.RemoveCommandGroup2(this.id, true);
 
-            Marshal.FinalReleaseComObject(this.commandManager);
-            this.commandManager = default;
+            if (Marshal.IsComObject(this.swCommandGroup))
+            {
+                Marshal.FinalReleaseComObject(this.swCommandGroup);
+            }
+
+            this.swCommandGroup = default;
+
             this.disposed = true;
         }
 
@@ -76,11 +88,31 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public ICommandInfo AddCommand(CommandInfo commandInfo, ISwCommand command)
         {
+            if (commandInfo is null)
+            {
+                throw new ArgumentNullException(nameof(commandInfo));
+            }
+
+            if (command is null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
+
             if (this.registeredCommands.ContainsKey(commandInfo.UserId))
             {
                 throw new ArgumentException($"Command with id '{commandInfo.UserId}' is already defined.", nameof(commandInfo));
             }
 
+            return this.AddCommandToCommandGroup(commandInfo, command);
+        }
+
+        /// <summary>
+        /// Activates the command group.
+        /// </summary>
+        internal void Activate() => this.swCommandGroup.Activate();
+
+        private ICommandInfo AddCommandToCommandGroup(CommandInfo commandInfo, ISwCommand command)
+        {
             var callBackNames = this.GetCallbackNames(commandInfo);
 
             var cmdId = this.swCommandGroup.AddCommandItem2(
@@ -103,11 +135,6 @@ namespace SIM.SolidWorksPlugin
 
             return commandInfo;
         }
-
-        /// <summary>
-        /// Activates the command group.
-        /// </summary>
-        internal void Activate() => this.swCommandGroup.Activate();
 
         private (string OnExecute, string CanExecute) GetCallbackNames(CommandInfo commandInfo)
         {

@@ -5,7 +5,6 @@
 namespace SIM.SolidWorksPlugin
 {
     using System;
-    using SolidWorks.Interop.swconst;
 
     /// <summary>
     /// Attribute to describe a command.
@@ -51,11 +50,11 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets or sets the tool-tip of the command.
         /// </summary>
-        public string Tooltip { get; set; } = string.Empty;
+        public string? Tooltip { get; set; }
 
         /// <summary>
         /// Gets or sets the hint of the command.
         /// </summary>
-        public string Hint { get; set; } = string.Empty;
+        public string? Hint { get; set; }
     }
 }

@@ -55,7 +55,7 @@
 
             var factoryMock = new Mock<ISolidworksAddinMemberInstanceFactory>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
-            var commandManagerMock = new Mock<ICommandHandlerInternals>();
+            var commandManagerMock = new Mock<IInternalCommandHandler>();
             var eventManagerMock = new Mock<IEventHandlerManagerInternals>();
             var swApplicationMock = new Mock<SldWorks>();
             var myCookie = 42;
@@ -99,7 +99,7 @@
         {
             var factoryMock = new Mock<ISolidworksAddinMemberInstanceFactory>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
-            var commandManagerMock = new Mock<ICommandHandlerInternals>();
+            var commandManagerMock = new Mock<IInternalCommandHandler>();
             var eventManagerMock = new Mock<IEventHandlerManagerInternals>();
             var swApplicationMock = new Mock<SldWorks>();
             var myCookie = 42;

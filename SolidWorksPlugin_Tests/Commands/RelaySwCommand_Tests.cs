@@ -32,7 +32,7 @@
             Assert.IsTrue(cmd.CanExecute(null));
 
             bool invoked = false;
-            Func<SwDocument?, bool> canExecuteCallback = d =>
+            Func<ISwDocument?, bool> canExecuteCallback = d =>
             {
                 invoked = true;
                 return false;
@@ -48,7 +48,7 @@
         {
             bool invoked = false;
 
-            Action<SwDocument?> onExecute = d => invoked = true;
+            Action<ISwDocument?> onExecute = d => invoked = true;
 
             var cmd = new RelaySwCommand(onExecute);
 

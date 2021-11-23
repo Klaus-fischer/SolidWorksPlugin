@@ -36,8 +36,8 @@ namespace SIM.SolidWorksPlugin
 
             if (icons is not null)
             {
-                commandGroupInfo.Icons = icons.GetIconsList();
-                commandGroupInfo.MainIcon = icons.GetMainIconList();
+                commandGroupInfo.IconsPath = icons.IconsPath;
+                commandGroupInfo.MainIconPath = icons.MainIconPath;
             }
 
             handler.AddCommandGroup(commandGroupInfo, factoryAction);

@@ -12,8 +12,8 @@
             var ci = new CommandInfoAttribute("name");
             Assert.IsNotNull(ci);
             Assert.AreEqual("name", ci.Name);
-            Assert.IsNotNull(ci.Hint);
-            Assert.IsNotNull(ci.Tooltip);
+            Assert.IsNull(ci.Hint);
+            Assert.IsNull(ci.Tooltip);
             Assert.IsTrue(ci.HasMenu);
             Assert.IsTrue(ci.HasToolbar);
             Assert.AreEqual(-1, ci.Position);

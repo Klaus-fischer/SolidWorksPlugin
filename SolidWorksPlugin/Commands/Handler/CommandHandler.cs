@@ -50,7 +50,11 @@ namespace SIM.SolidWorksPlugin
 
             this.commandHandlers.Clear();
 
-            Marshal.FinalReleaseComObject(this.swCommandManager);
+            if (Marshal.IsComObject(this.swCommandManager))
+            {
+                Marshal.FinalReleaseComObject(this.swCommandManager);
+            }
+
             this.swCommandManager = default;
 
             this.disposed = true;
@@ -71,6 +75,11 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public void AddCommandGroup(CommandGroupInfo commandGroupInfo, CommandGroupBuilderDelegate factoryMethod)
         {
+            if (commandGroupInfo is null)
+            {
+                throw new ArgumentNullException(nameof(commandGroupInfo));
+            }
+
             if (this.commandHandlers.ContainsKey(commandGroupInfo.Id))
             {
                 throw new InvalidOperationException($"Command group with id {commandGroupInfo.Id} id already defined.");
@@ -168,18 +177,6 @@ namespace SIM.SolidWorksPlugin
             }
 
             return false;
-        }
-
-        private (CommandGroupInfoAttribute Info, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(Type enumType)
-        {
-            if (enumType.GetCustomAttribute<CommandGroupInfoAttribute>() is not CommandGroupInfoAttribute info)
-            {
-                throw new ArgumentException($"Attribute {nameof(CommandGroupInfoAttribute)} is not defined on Enum '{enumType.Name}'");
-            }
-
-            var icons = enumType.GetCustomAttribute<CommandGroupIconsAttribute>();
-
-            return (info, icons);
         }
     }
 }

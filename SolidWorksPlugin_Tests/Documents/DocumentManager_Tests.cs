@@ -39,7 +39,7 @@
             Assert.AreSame(swApplicationMock.Object, dm.GetPrivateObject("swApplication"));
             Assert.AreSame(documentFactoryMock.Object, dm.GetPrivateObject("documentFactory"));
 
-            var dict = (Dictionary<IModelDoc2, SwDocument>?)dm.GetPrivateObject("openDocuments");
+            var dict = (Dictionary<IModelDoc2, ISwDocument>?)dm.GetPrivateObject("openDocuments");
 
             Assert.IsNotNull(dict);
             Assert.AreEqual(1, dict.Count);
@@ -335,7 +335,7 @@
 
             var dm = new DocumentManager(swApplicationMock.Object, documentFactoryMock.Object, equalityComparer);
 
-            var dict = (Dictionary<IModelDoc2, SwDocument>?)dm.GetPrivateObject("openDocuments");
+            var dict = (Dictionary<IModelDoc2, ISwDocument>?)dm.GetPrivateObject("openDocuments");
             Assert.IsNotNull(dict);
             Assert.AreEqual(1, dict.Count);
 
@@ -360,7 +360,7 @@
 
             var dm = new DocumentManager(swApplicationMock.Object, documentFactoryMock.Object, equalityComparer);
 
-            var dict = (Dictionary<IModelDoc2, SwDocument>?)dm.GetPrivateObject("openDocuments");
+            var dict = (Dictionary<IModelDoc2, ISwDocument>?)dm.GetPrivateObject("openDocuments");
             Assert.IsNotNull(dict);
             Assert.AreEqual(1, dict.Count);
 
