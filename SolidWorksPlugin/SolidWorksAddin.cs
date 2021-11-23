@@ -82,6 +82,8 @@ namespace SIM.SolidWorksPlugin
         [ComUnregisterFunction]
         public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
 
+        TabCommandManager? commandTabBuilder;
+
         /// <inheritdoc/>
         public bool ConnectToSW(object ThisSW, int cookie)
         {
@@ -94,6 +96,10 @@ namespace SIM.SolidWorksPlugin
                     this.memberInstanceFactory.CreateInstances(this.swApplication, this.addInCookie);
 
                 this.RegisterCommands(this.commandHandler);
+
+                this.commandTabBuilder = new TabCommandManager(this.commandHandler.SwCommandManager);
+
+                this.AddCommandTabMenu(this.commandTabBuilder);
 
                 this.RegisterEventHandler(this.eventHandlerManager);
 
@@ -115,6 +121,9 @@ namespace SIM.SolidWorksPlugin
 
             this.eventHandlerManager?.Dispose();
             this.eventHandlerManager = null;
+
+            this.commandTabBuilder?.Dispose();
+            this.commandTabBuilder = null;
 
             this.commandHandler?.Dispose();
             this.commandHandler = null;
@@ -138,13 +147,21 @@ namespace SIM.SolidWorksPlugin
         /// Register all command groups to the command group manager.
         /// </summary>
         /// <param name="commandGroupHandler">The command group manager.</param>
-        protected abstract void RegisterCommands(ICommandGroupHandler commandGroupHandler);
+        protected virtual void RegisterCommands(ICommandGroupHandler commandGroupHandler)
+        {
+        }
+
+        protected virtual void AddCommandTabMenu(ICommandTabManager tabManager)
+        {
+        }
 
         /// <summary>
         /// Register all events to the event handler manager.
         /// </summary>
         /// <param name="eventHandlerManager">The event handler manager.</param>
-        protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
+        protected virtual void RegisterEventHandler(IEventHandlerManager eventHandlerManager)
+        {
+        }
 
         /// <summary>
         /// Callback for user methods called at the end of <see cref="ConnectToSW(object, int)"/>.

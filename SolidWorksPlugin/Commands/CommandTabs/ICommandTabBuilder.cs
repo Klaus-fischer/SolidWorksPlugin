@@ -4,69 +4,142 @@
 
 namespace SIM.SolidWorksPlugin
 {
-    using SolidWorks.Interop.swconst;
-    using SolidWorks.Interop.sldworks;
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Runtime.InteropServices;
+    using SolidWorks.Interop.sldworks;
+    using SolidWorks.Interop.swconst;
 
     public interface ICommandTabBuilder
     {
-        void AddCommandToTab(ICommandInfo commandInfom, swCommandTabButtonTextDisplay_e textDisplay);
+        void AddCommand(ICommandInfo commandInfom, swCommandTabButtonTextDisplay_e textDisplay);
 
-        void AddSpacerToTab();
+        void AddSpacer();
+
+        public void AddFlyout(
+            ICommandGroupInfo commandGroupInfo,
+            swCommandTabButtonTextDisplay_e textDisplay,
+            swCommandTabButtonFlyoutStyle_e flyoutStyle);
     }
 
     public interface ICommandTabManager
     {
-        void BuildCommandTab(Action<ICommandTabBuilder> factoryMethod, params swDocumentTypes_e[] documentTypes);
+        void BuildCommandTab(string title, Action<ICommandTabBuilder> factoryMethod, params swDocumentTypes_e[] documentTypes);
     }
 
-    public class TabCommandManager : ICommandTabManager
+    public class TabCommandManager : ICommandTabManager, IDisposable
     {
-        public void BuildCommandTab(Action<ICommandTabBuilder> factoryMethod, params swDocumentTypes_e[] documentTypes)
+        private readonly ICommandManager swCommandManager;
+        Collection<IDisposable> disposables = new();
+        private bool disposed;
+
+        public TabCommandManager(ICommandManager swCommandManager)
         {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class CommandTabBuilder : ICommandTabBuilder
-    {
-        ICommandTabBox swCommandTabBox;
-
-        List<(int CommandID, int DisplayStyle)?> CommandStyles = new();
-
-        public void AddCommandToTab(ICommandInfo commandInfo, swCommandTabButtonTextDisplay_e textDisplayStyle)
-        {
-            this.CommandStyles.Add((commandInfo.Id, (int)textDisplayStyle));
+            this.swCommandManager = swCommandManager ?? throw new ArgumentNullException(nameof(swCommandManager));
         }
 
-        public void AddSpacerToTab()
+        /// <inheritdoc/>
+        public void Dispose()
         {
-            this.CommandStyles.Add(null);
-        }
-
-        public IEnumerable<(int[] CommandIds, int[] DisplayStyles)> GetCommands()
-        {
-            List<int> commands = new();
-            List<int> styles = new();
-
-            for (int i = 0; i < this.CommandStyles.Count; i++)
+            if (this.disposed)
             {
-                var commandStyle = this.CommandStyles[i];
+                return;
+            }
 
-                if (commandStyle.HasValue)
+            while (this.disposables.Any())
+            {
+                this.disposables[0].Dispose();
+                this.disposables.RemoveAt(0);
+            }
+
+            this.disposed = true;
+        }
+
+        /// <inheritdoc/>
+        public void BuildCommandTab(string title, Action<ICommandTabBuilder> factoryMethod, params swDocumentTypes_e[] documentTypes)
+        {
+            foreach (var documentType in documentTypes)
+            {
+                var cmdTabBuilder = new CommandTabBuilder(this.swCommandManager, title, documentType);
+
+                factoryMethod(cmdTabBuilder);
+
+                this.disposables.Add(cmdTabBuilder);
+            }
+        }
+    }
+
+    public class CommandTabBuilder : ICommandTabBuilder, IDisposable
+    {
+        private readonly ICommandManager swCommandManager;
+        private readonly Stack<CommandTabBox> swCommandTabBoxes = new();
+        private CommandTab swCommandTab;
+
+        private bool disposed;
+
+        public CommandTabBuilder(ICommandManager swCommandManager, string title, swDocumentTypes_e swDocumentType)
+        {
+            if (swCommandManager.GetCommandTab((int)swDocumentType, title) is CommandTab commandTab)
+            {
+                swCommandManager.RemoveCommandTab(commandTab);
+            }
+
+            this.swCommandTab = swCommandManager.AddCommandTab((int)swDocumentType, title);
+
+            this.swCommandTabBoxes.Push(this.swCommandTab.AddCommandTabBox());
+            this.swCommandManager = swCommandManager;
+        }
+
+        private ICommandTabBox SwCommandTabBox => this.swCommandTabBoxes.Peek();
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            while (this.swCommandTabBoxes.Any())
+            {
+                var last = this.swCommandTabBoxes.Pop();
+
+                this.swCommandTab.RemoveCommandTabBox(last);
+
+                if (Marshal.IsComObject(last))
                 {
-                    commands.Add(commandStyle.Value.CommandID);
-                    styles.Add(commandStyle.Value.DisplayStyle);
-                }
-                else
-                {
-                    yield return (commands.ToArray(), styles.ToArray());
-                    commands.Clear();
-                    styles.Clear();
+                    Marshal.FinalReleaseComObject(last);
                 }
             }
+
+            this.swCommandManager.RemoveCommandTab(this.swCommandTab);
+            if (Marshal.IsComObject(this.swCommandTab))
+            {
+                Marshal.FinalReleaseComObject(this.swCommandTab);
+            }
+
+            this.disposed = true;
+        }
+
+        public void AddCommand(ICommandInfo commandInfo, swCommandTabButtonTextDisplay_e textDisplayStyle)
+        {
+            this.SwCommandTabBox.AddCommands(new int[] { commandInfo.Id }, new int[] { (int)textDisplayStyle });
+        }
+
+        public void AddSpacer()
+        {
+            this.swCommandTabBoxes.Push(this.swCommandTab.AddCommandTabBox());
+        }
+
+        public void AddFlyout(
+            ICommandGroupInfo commandGroupInfo,
+            swCommandTabButtonTextDisplay_e textDisplay,
+            swCommandTabButtonFlyoutStyle_e flyoutStyle)
+        {
+            int commandId = commandGroupInfo.ToolbarId;
+            this.SwCommandTabBox.AddCommands(new int[] { commandId }, new int[] { (int)textDisplay | (int)flyoutStyle });
         }
     }
 }
