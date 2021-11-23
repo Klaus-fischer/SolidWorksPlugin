@@ -2,7 +2,7 @@
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
-namespace SIM.SolidWorksPlugin.Extensions
+namespace SIM.SolidWorksPlugin
 {
     using System;
     using System.Reflection;
@@ -18,7 +18,7 @@ namespace SIM.SolidWorksPlugin.Extensions
         /// <typeparam name="T">Type of the command enumeration.</typeparam>
         /// <param name="handler">The command group handler to extend.</param>
         /// <param name="factoryMethod">Method to add all commands.</param>
-        public static void AddCommandGroup<T>(this ICommandGroupHandler handler, Action<ICommandGroupBuilder<T>> factoryMethod)
+        public static void AddCommandGroup<T>(this ICommandGroupHandler handler, CommandGroupBuilderDelegate<T> factoryMethod)
          where T : struct, Enum
         {
             (var info, var icons) = GetIconsAndInfo(typeof(T));
@@ -32,7 +32,7 @@ namespace SIM.SolidWorksPlugin.Extensions
                 Tooltip = info.ToolTip,
             };
 
-            Action<ICommandGroupBuilder> factoryAction = d => AddCommands(d, info.CommandGroupId, factoryMethod);
+            CommandGroupBuilderDelegate factoryAction = d => AddCommands(d, info.CommandGroupId, factoryMethod);
 
             if (icons is not null)
             {
@@ -43,7 +43,7 @@ namespace SIM.SolidWorksPlugin.Extensions
             handler.AddCommandGroup(commandGroupInfo, factoryAction);
         }
 
-        private static void AddCommands<T>(ICommandGroupBuilder d, int commandGroupId, Action<ICommandGroupBuilder<T>> factoryMethod)
+        private static void AddCommands<T>(ICommandGroupBuilder d, int commandGroupId, CommandGroupBuilderDelegate<T> factoryMethod)
             where T : struct, Enum
         {
             var cmdBuilder = new CommandGroupBuilder<T>(d, commandGroupId);

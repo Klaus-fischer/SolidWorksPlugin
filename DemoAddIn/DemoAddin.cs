@@ -60,7 +60,7 @@ namespace SIM.DemoAddin
                 new RelaySwCommand(this.TrialExecuted));
         }
 
-        private void TrialExecuted(SwDocument? obj)
+        private void TrialExecuted(ISwDocument? obj)
         {
             this.SwApplication.SendMsgToUser2("Executed", (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
         }

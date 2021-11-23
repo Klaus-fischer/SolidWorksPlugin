@@ -69,7 +69,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void AddCommandGroup(CommandGroupInfo commandGroupInfo, Action<ICommandGroupBuilder> factoryMethod)
+        public void AddCommandGroup(CommandGroupInfo commandGroupInfo, CommandGroupBuilderDelegate factoryMethod)
         {
             if (this.commandHandlers.ContainsKey(commandGroupInfo.Id))
             {
