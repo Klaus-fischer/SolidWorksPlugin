@@ -57,25 +57,5 @@ namespace SIM.SolidWorksPlugin
         /// Gets or sets the hint of the command.
         /// </summary>
         public string Hint { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Converts the <see cref="HasMenu"/> and <see cref="Tooltip"/> values to an <see cref="swCommandItemType_e"/> value.
-        /// </summary>
-        /// <returns>The command item type.</returns>
-        internal int GetSwCommandItemType_e()
-        {
-            swCommandItemType_e menuOptions = 0;
-            if (this.HasMenu == true)
-            {
-                menuOptions |= swCommandItemType_e.swMenuItem;
-            }
-
-            if (this.HasToolbar == true)
-            {
-                menuOptions |= swCommandItemType_e.swToolbarItem;
-            }
-
-            return (int)menuOptions;
-        }
     }
 }

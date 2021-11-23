@@ -5,12 +5,17 @@
 namespace SIM.SolidWorksPlugin
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
 
     /// <summary>
     /// Info class of a command group.
     /// </summary>
     public class CommandGroupInfo
     {
+        private static readonly int[] IconSizes = { 20, 32, 40, 64, 96, 128 };
+
         private string? tooltip;
         private string? hint;
 
@@ -36,14 +41,24 @@ namespace SIM.SolidWorksPlugin
         public string Title { get; }
 
         /// <summary>
-        /// Gets or sets the collection of file path to the tool bar icons files.
+        /// Gets or sets the path to the tool bar icons file.
+        /// Use .\ or ..\ notation to navigate relative to path of the dll.
+        /// Use {0} as placeholder for different sizes.
         /// </summary>
-        public string[] Icons { get; set; } = Array.Empty<string>();
+        /// <example>
+        /// IconsPath = ".\Icons\Toolbar{0}.png"...
+        /// </example>
+        public string IconsPath { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the collection of file path to the main icon files.
+        /// Gets or sets the path to the main icons file.
+        /// Use .\ or ..\ notation to navigate relative to path of the dll.
+        /// Use {0} as placeholder for different sizes.
         /// </summary>
-        public string[] MainIcon { get; set; } = Array.Empty<string>();
+        /// <example>
+        /// IconsPath = ".\Icons\Icon{0}.png"...
+        /// </example>
+        public string MainIconPath { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the tool tip of the command group.
@@ -65,5 +80,38 @@ namespace SIM.SolidWorksPlugin
         /// Gets or sets the position of the command group.
         /// </summary>
         public int Position { get; set; } = -1;
+
+        /// <summary>
+        /// Gets the icons list based on the <see cref="IconsPath"/> property.
+        /// </summary>
+        /// <returns>Array of string.</returns>
+        internal string[] GetIconsList() => GetFiles(this.IconsPath).ToArray();
+
+        /// <summary>
+        /// Gets the icons list based on the <see cref="MainIconPath"/> property.
+        /// </summary>
+        /// <returns>Array of string.</returns>
+        internal string[] GetMainIconList() => GetFiles(this.MainIconPath).ToArray();
+
+        private static IEnumerable<string> GetFiles(string formatedInput)
+        {
+            var icons = IconSizes.Select(o => string.Format(formatedInput, o));
+
+            foreach (var icon in icons)
+            {
+                string iconPath = icon;
+
+                // combine relative path with path to assembly.
+                if (!Path.IsPathRooted(icon))
+                {
+                    iconPath = Extensions.FilePathExtensions.GetAbsolutePath(SolidWorksAddin.AssemblyPath, icon);
+                }
+
+                if (File.Exists(iconPath))
+                {
+                    yield return iconPath;
+                }
+            }
+        }
     }
 }

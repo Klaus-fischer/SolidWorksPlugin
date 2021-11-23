@@ -10,24 +10,36 @@
         [TestMethod]
         public void Constructor()
         {
-            var command = new Mock<ISwCommand>();
-            var commandInfo = new CommandInfo(command.Object, 1, 2, "MyCommand", 15, 20);
+            var commandInfo = new CommandInfo(1, "MyCommand", 2);
 
             Assert.IsNotNull(commandInfo);
 
-            Assert.AreSame(command.Object, commandInfo.Command);
-            Assert.AreEqual(1, commandInfo.Id);
+            Assert.AreEqual(0, commandInfo.Id);
+            Assert.AreEqual(1, commandInfo.UserId);
             Assert.AreEqual(2, commandInfo.CommandGroupId);
             Assert.AreEqual("MyCommand", commandInfo.Name);
-            Assert.AreEqual(15, commandInfo.UserId);
-            Assert.AreEqual(20, commandInfo.ImageIndex);
+            Assert.AreEqual(-1, commandInfo.ImageIndex);
+            Assert.AreEqual(-1, commandInfo.Position);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void Constructor_Fail()
+        public void ToolTipAndHint_Test()
         {
-            new CommandInfo(null, 1, 2, "MyCommand", 15, 20);
+            var commandInfo = new CommandInfo(1, "MyCommand", 2);
+
+            Assert.AreEqual("MyCommand", commandInfo.Tooltip);
+            Assert.AreEqual("MyCommand", commandInfo.Hint);
+
+            commandInfo.Tooltip = "ToolTip";
+
+            Assert.AreEqual("ToolTip", commandInfo.Tooltip);
+            Assert.AreEqual("ToolTip", commandInfo.Hint);
+
+            commandInfo.Hint = "Hint";
+
+            Assert.AreEqual("ToolTip", commandInfo.Tooltip);
+            Assert.AreEqual("Hint", commandInfo.Hint);
         }
     }
 }

@@ -35,7 +35,8 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the command.
         /// </summary>
-        ISwCommand ICommandInfo.Command => this.Command;
+        ISwCommand ICommandInfo.Command => this.Command 
+            ?? throw new NullReferenceException("Command property ha not been set yet.");
 
         /// <summary>
         /// Gets the user id of the command.
@@ -91,7 +92,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets or sets the command id.
         /// </summary>
-        internal ISwCommand Command { get; set; }
+        internal ISwCommand? Command { get; set; }
 
         /// <summary>
         /// Converts the <see cref="HasMenu"/> and <see cref="Tooltip"/> values to an <see cref="swCommandItemType_e"/> value.
