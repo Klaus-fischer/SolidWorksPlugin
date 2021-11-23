@@ -45,6 +45,7 @@ namespace SIM.SolidWorksPlugin
 
             var description = string.Empty;
             var title = t.Name;
+            var loadAtStartUp = true;
 
             if (t.GetCustomAttribute<DescriptionAttribute>() is DescriptionAttribute desc)
             {
@@ -56,6 +57,14 @@ namespace SIM.SolidWorksPlugin
                 title = name.DisplayName;
             }
 
+            if (t.GetCustomAttributes<SolidWorksPluginAttribute>() is SolidWorksPluginAttribute swAttr)
+            {
+                description = swAttr.Description ?? description;
+                title = swAttr.Title;
+                loadAtStartUp = swAttr.LoadAtStartupByDefault;
+            }
+
+            addinKey.SetValue("Default", loadAtStartUp ? 1 : 0, RegistryValueKind.DWord);
             addinKey.SetValue("Description", description);
             addinKey.SetValue("Title", title);
         }

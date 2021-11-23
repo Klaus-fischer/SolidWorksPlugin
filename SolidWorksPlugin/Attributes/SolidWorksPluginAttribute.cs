@@ -9,6 +9,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// The attribute that describes the title and description of an add-in.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
     public class SolidWorksPluginAttribute : Attribute
     {
         /// <summary>
@@ -29,5 +30,10 @@ namespace SIM.SolidWorksPlugin
         /// Gets or sets the description of the add-in.
         /// </summary>
         public string? Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether add-in should be load at startup.
+        /// </summary>
+        public bool LoadAtStartupByDefault { get; set; } = true;
     }
 }
