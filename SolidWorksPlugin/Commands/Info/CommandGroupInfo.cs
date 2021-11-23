@@ -12,7 +12,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// Info class of a command group.
     /// </summary>
-    public class CommandGroupInfo
+    public class CommandGroupInfo : ICommandGroupInfo
     {
         private static readonly int[] IconSizes = { 20, 32, 40, 64, 96, 128 };
 
@@ -22,18 +22,23 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandGroupInfo"/> class.
         /// </summary>
-        /// <param name="id">The unique user id of the command group.</param>
+        /// <param name="userId">The unique user id of the command group.</param>
         /// <param name="title">The title of the command group.</param>
-        public CommandGroupInfo(int id, string title)
+        public CommandGroupInfo(int userId, string title)
         {
-            this.Id = id;
+            this.UserId = userId;
             this.Title = title ?? throw new ArgumentNullException(nameof(title));
         }
 
         /// <summary>
         /// Gets the unique user id of the command group.
         /// </summary>
-        public int Id { get; }
+        public int UserId { get; }
+
+        /// <summary>
+        /// Gets the tool bar id.
+        /// </summary>
+        public int ToolbarId { get; internal set; }
 
         /// <summary>
         /// Gets the title of the command group.

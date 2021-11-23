@@ -6,6 +6,7 @@ namespace SIM.SolidWorksPlugin
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using SW = SolidWorks.Interop.sldworks;
 
@@ -15,9 +16,9 @@ namespace SIM.SolidWorksPlugin
     internal class CommandGroup : ICommandGroupBuilder, ICommandGroup
     {
         private readonly Dictionary<int, ICommandInfo> registeredCommands = new();
-        private readonly int id;
 
         private readonly SW.ICommandManager swCommandManager;
+        private readonly CommandGroupInfo commandGroupInfo;
         private SW.CommandGroup swCommandGroup;
 
         private bool disposed;
@@ -29,12 +30,13 @@ namespace SIM.SolidWorksPlugin
         /// <param name="commandGroupInfo">Th command group infos.</param>
         public CommandGroup(SW.ICommandManager commandManager, CommandGroupInfo commandGroupInfo)
         {
-            this.id = commandGroupInfo.Id;
             this.swCommandManager = commandManager;
+            this.commandGroupInfo = commandGroupInfo;
 
             var cmdGroupErr = 0;
+
             this.swCommandGroup = commandManager.CreateCommandGroup2(
-                UserID: commandGroupInfo.Id,
+                UserID: commandGroupInfo.UserId,
                 Title: commandGroupInfo.Title,
                 ToolTip: commandGroupInfo.Tooltip,
                 Hint: commandGroupInfo.Hint,
@@ -54,6 +56,9 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
+        public ICommandGroupInfo Info => this.commandGroupInfo;
+
+        /// <inheritdoc/>
         public void Dispose()
         {
             if (this.disposed)
@@ -62,7 +67,7 @@ namespace SIM.SolidWorksPlugin
             }
 
             this.registeredCommands.Clear();
-            this.swCommandManager.RemoveCommandGroup2(this.id, true);
+            this.swCommandManager.RemoveCommandGroup2(this.commandGroupInfo.UserId, true);
 
             if (Marshal.IsComObject(this.swCommandGroup))
             {
@@ -109,13 +114,25 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Activates the command group.
         /// </summary>
-        internal void Activate() => this.swCommandGroup.Activate();
+        internal void Activate()
+        {
+            this.swCommandGroup.Activate();
+
+            foreach (var command in this.registeredCommands.Values.OfType<CommandInfo>())
+            {
+                command.Id = this.swCommandGroup.CommandID[command.Id];
+            }
+
+            this.commandGroupInfo.ToolbarId = this.swCommandGroup.ToolbarId;
+        }
 
         private ICommandInfo AddCommandToCommandGroup(CommandInfo commandInfo, ISwCommand command)
         {
             var callBackNames = this.GetCallbackNames(commandInfo);
 
-            var cmdId = this.swCommandGroup.AddCommandItem2(
+            int cmdId;
+
+            cmdId = this.swCommandGroup.AddCommandItem2(
                 Name: commandInfo.Name,
                 Position: commandInfo.Position,
                 HintString: commandInfo.Hint,

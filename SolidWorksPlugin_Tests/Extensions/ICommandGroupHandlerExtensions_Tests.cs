@@ -20,7 +20,7 @@
                 {
                     Assert.IsNotNull(info);
                     Assert.IsNotNull(del);
-                    Assert.AreEqual(1, info.Id);
+                    Assert.AreEqual(1, info.UserId);
                     Assert.AreEqual("Group Title", info.Title);
                     Assert.AreEqual("Group Hint", info.Hint);
                     Assert.AreEqual("Group ToolTip", info.Tooltip);

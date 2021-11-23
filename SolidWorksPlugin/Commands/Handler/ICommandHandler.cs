@@ -12,9 +12,16 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the command info by group id and command user id.
         /// </summary>
-        /// <param name="commandGroupId">The id of the command group.</param>
+        /// <param name="commandGroupId">The user id of the command group.</param>
         /// <param name="commandUserId">The user id of the command.</param>
         /// <returns>The command group.</returns>
         ICommandInfo? GetCommand(int commandGroupId, int commandUserId);
+
+        /// <summary>
+        /// Gets the command group by user id.
+        /// </summary>
+        /// <param name="commandGroupId">The user id of the command group.</param>
+        /// <returns>The command group informations.</returns>
+        ICommandGroupInfo? GetCommandGroup(int commandGroupId);
     }
 }

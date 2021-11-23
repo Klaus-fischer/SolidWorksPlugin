@@ -19,6 +19,6 @@ namespace SIM.SolidWorksPlugin
         /// <param name="id">The unique command id. (Must be an enumeration).</param>
         /// <param name="command">The command to register.</param>
         /// <returns>The command info of the entry.</returns>
-        ICommandInfo? AddCommand(T id, ISwCommand command);
+        ICommandInfo AddCommand(T id, ISwCommand command);
     }
 }

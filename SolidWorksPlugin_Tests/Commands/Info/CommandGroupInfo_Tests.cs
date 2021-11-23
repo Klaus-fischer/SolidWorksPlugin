@@ -12,7 +12,7 @@
         {
             var cgi = new CommandGroupInfo(42, "MyCommandGroup");
             Assert.IsNotNull(cgi);
-            Assert.AreEqual(42, cgi.Id);
+            Assert.AreEqual(42, cgi.UserId);
             Assert.AreEqual("MyCommandGroup", cgi.Title);
             Assert.IsNotNull(cgi.Hint);
             Assert.IsNotNull(cgi.Tooltip);
@@ -38,7 +38,7 @@
             };
 
             Assert.IsNotNull(cgi);
-            Assert.AreEqual(41, cgi.Id);
+            Assert.AreEqual(41, cgi.UserId);
             Assert.AreEqual("MyCommandGrou1p", cgi.Title);
             Assert.AreEqual("hint", cgi.Hint);
             Assert.AreEqual("tooltip", cgi.Tooltip);

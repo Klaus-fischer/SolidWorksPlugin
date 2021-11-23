@@ -24,7 +24,7 @@ namespace SIM.SolidWorksPlugin
             (var info, var icons) = GetIconsAndInfo(typeof(T));
 
             var commandGroupInfo = new CommandGroupInfo(
-                id: info.CommandGroupId,
+                userId: info.CommandGroupId,
                 title: info.Title)
             {
                 Position = info.Position,
@@ -51,7 +51,7 @@ namespace SIM.SolidWorksPlugin
             factoryMethod(cmdBuilder);
         }
 
-        private static (CommandGroupInfoAttribute Info, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(Type enumType)
+        internal static (CommandGroupInfoAttribute Info, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(this Type enumType)
         {
             if (enumType.GetCustomAttribute<CommandGroupInfoAttribute>() is not CommandGroupInfoAttribute info)
             {

@@ -29,7 +29,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public ICommandInfo? AddCommand(T id, ISwCommand command)
+        public ICommandInfo AddCommand(T id, ISwCommand command)
         {
             var info = this.GetCommandInfoAttribute(id);
 

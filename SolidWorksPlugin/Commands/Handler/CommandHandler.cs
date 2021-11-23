@@ -7,8 +7,6 @@ namespace SIM.SolidWorksPlugin
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
     using System.Runtime.InteropServices;
     using SolidWorks.Interop.sldworks;
 
@@ -34,6 +32,8 @@ namespace SIM.SolidWorksPlugin
             this.swCommandManager = swApplication.GetCommandManager(cookie);
             swApplication.SetAddinCallbackInfo2(0, this, cookie);
         }
+
+        ICommandManager IInternalCommandHandler.SwCommandManager => this.swCommandManager;
 
         /// <inheritdoc/>
         public void Dispose()
@@ -72,6 +72,16 @@ namespace SIM.SolidWorksPlugin
             return null;
         }
 
+        public ICommandGroupInfo? GetCommandGroup(int commandGroupId)
+        {
+            if (this.commandHandlers.TryGetValue(commandGroupId, out var handler))
+            {
+                return handler.Info;
+            }
+
+            return null;
+        }
+
         /// <inheritdoc/>
         public void AddCommandGroup(CommandGroupInfo commandGroupInfo, CommandGroupBuilderDelegate factoryMethod)
         {
@@ -80,9 +90,9 @@ namespace SIM.SolidWorksPlugin
                 throw new ArgumentNullException(nameof(commandGroupInfo));
             }
 
-            if (this.commandHandlers.ContainsKey(commandGroupInfo.Id))
+            if (this.commandHandlers.ContainsKey(commandGroupInfo.UserId))
             {
-                throw new InvalidOperationException($"Command group with id {commandGroupInfo.Id} id already defined.");
+                throw new InvalidOperationException($"Command group with id {commandGroupInfo.UserId} id already defined.");
             }
 
             var commandHandler = new CommandGroup(this.swCommandManager, commandGroupInfo);
@@ -91,7 +101,7 @@ namespace SIM.SolidWorksPlugin
 
             commandHandler.Activate();
 
-            this.commandHandlers.Add(commandGroupInfo.Id, commandHandler);
+            this.commandHandlers.Add(commandGroupInfo.UserId, commandHandler);
         }
 
         /// <summary>
@@ -140,6 +150,16 @@ namespace SIM.SolidWorksPlugin
             {
                 command.Execute(activeDoc);
             }
+        }
+
+        public int FlyoutEnabled(string commandName)
+        {
+            return 1;
+        }
+
+        public void FlyoutExecute(string commandName)
+        {
+
         }
 
         private bool TryGetCommandFromHandler(string handlerAndCommandName, [NotNullWhen(true)] out ICommandInfo? command)
