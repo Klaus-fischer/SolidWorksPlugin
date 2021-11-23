@@ -11,24 +11,24 @@ namespace SIM.SolidWorksPlugin.Commands
     /// </summary>
     public class RelaySwCommand : ISwCommand
     {
-        private readonly Func<SwDocument?, bool> canExecute;
-        private readonly Action<SwDocument?> onExecute;
+        private readonly Func<ISwDocument?, bool> canExecute;
+        private readonly Action<ISwDocument?> onExecute;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RelaySwCommand"/> class.
         /// </summary>
         /// <param name="onExecute">Handler to execute command.</param>
         /// <param name="canExecute">Handler to validate command state.</param>
-        public RelaySwCommand(Action<SwDocument?> onExecute, Func<SwDocument?, bool>? canExecute = null)
+        public RelaySwCommand(Action<ISwDocument?> onExecute, Func<ISwDocument?, bool>? canExecute = null)
         {
             this.onExecute = onExecute ?? throw new ArgumentNullException(nameof(onExecute));
-            this.canExecute = canExecute ?? new Func<SwDocument?, bool>(d => true);
+            this.canExecute = canExecute ?? new Func<ISwDocument?, bool>(d => true);
         }
 
         /// <inheritdoc/>
-        public bool CanExecute(SwDocument? document) => this.canExecute(document);
+        public bool CanExecute(ISwDocument? document) => this.canExecute(document);
 
         /// <inheritdoc/>
-        public void Execute(SwDocument? document) => this.onExecute(document);
+        public void Execute(ISwDocument? document) => this.onExecute(document);
     }
 }

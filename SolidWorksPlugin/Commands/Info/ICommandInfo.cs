@@ -4,17 +4,15 @@
 
 namespace SIM.SolidWorksPlugin
 {
+    /// <summary>
+    /// The read only command info.
+    /// </summary>
     public interface ICommandInfo
     {
         /// <summary>
         /// Gets the order of the command.
         /// </summary>
         int UserId { get; }
-
-        /// <summary>
-        /// Gets the image index.
-        /// </summary>
-        int ImageIndex { get; }
 
         /// <summary>
         /// Gets the command of this entry.

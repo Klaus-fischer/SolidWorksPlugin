@@ -6,15 +6,28 @@ namespace SIM.SolidWorksPlugin
 {
     using System;
 
+    /// <summary>
+    /// The attribute that describes the title and description of an add-in.
+    /// </summary>
     public class SolidWorksPluginAttribute : Attribute
     {
-        public SolidWorksPluginAttribute(string title, string description)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SolidWorksPluginAttribute"/> class.
+        /// </summary>
+        /// <param name="title">The title of the add-in.</param>
+        public SolidWorksPluginAttribute(string title)
         {
             this.Title = title;
-            this.Description = description;
         }
 
+        /// <summary>
+        /// Gets the title of the add-in.
+        /// </summary>
         public string Title { get; }
-        public string Description { get;  }
+
+        /// <summary>
+        /// Gets or sets the description of the add-in.
+        /// </summary>
+        public string? Description { get; set; }
     }
 }

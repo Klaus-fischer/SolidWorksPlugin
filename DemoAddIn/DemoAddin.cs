@@ -38,29 +38,29 @@ namespace SIM.DemoAddin
             var cmdTabBox = cmdTab.AddCommandTabBox();
         }
 
-        private void BuildCommands(ICommandHandler<Commands> commandHandler)
+        private void BuildCommands(ICommandGroupBuilder<Commands> commandHandler)
         {
-            commandHandler.RegisterCommand(
+            commandHandler.AddCommand(
                  Commands.TrialCommand,
                  new RelaySwCommand(this.TrialExecuted));
 
-            commandHandler.RegisterCommand(
+            commandHandler.AddCommand(
                 Commands.TrialCommand2,
                 new RelaySwCommand(this.TrialExecuted));
         }
 
-        private void BuildSubCommands(ICommandHandler<SubCommands> commandHandler)
+        private void BuildSubCommands(ICommandGroupBuilder<SubCommands> commandHandler)
         {
-            commandHandler.RegisterCommand(
+            commandHandler.AddCommand(
                  SubCommands.TrialCommand,
                  new RelaySwCommand(this.TrialExecuted));
 
-            commandHandler.RegisterCommand(
+            commandHandler.AddCommand(
                 SubCommands.TrialCommand2,
                 new RelaySwCommand(this.TrialExecuted));
         }
 
-        private void TrialExecuted(SwDocument? obj)
+        private void TrialExecuted(ISwDocument? obj)
         {
             this.SwApplication.SendMsgToUser2("Executed", (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
         }

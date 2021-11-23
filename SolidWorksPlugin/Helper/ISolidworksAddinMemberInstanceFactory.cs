@@ -19,7 +19,7 @@ namespace SIM.SolidWorksPlugin
         /// <returns>The created instances.</returns>
         (
             IDocumentManagerInternals DocumentManager,
-            ICommandHandlerInternals CommandManager,
+            IInternalCommandHandler CommandManager,
             IEventHandlerManagerInternals EventHandler) CreateInstances(SldWorks swApplication, Cookie cookie);
     }
 }

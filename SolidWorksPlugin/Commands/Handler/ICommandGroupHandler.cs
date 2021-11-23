@@ -7,19 +7,15 @@ namespace SIM.SolidWorksPlugin
     using System;
 
     /// <summary>
-    /// Declares the command manager for add in callback.
+    /// Allows to add commands to command group.
     /// </summary>
     public interface ICommandGroupHandler
     {
         /// <summary>
         /// Adds an command group to the command handler.
         /// </summary>
-        /// <typeparam name="T">Type of the command enumeration.</typeparam>
+        /// <param name="commandGroupInfo">The command group info.</param>
         /// <param name="factoryMethod">Method to add all commands.</param>
-        void AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod)
-            where T : struct, Enum;
-
-        ICommandInfo GetCommandInfo<T>(T id)
-            where T : struct, Enum;
+        void AddCommandGroup(CommandGroupInfo commandGroupInfo, CommandGroupBuilderDelegate factoryMethod);
     }
 }

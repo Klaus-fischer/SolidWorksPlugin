@@ -23,7 +23,7 @@ namespace SIM.SolidWorksPlugin
 
         private readonly ISolidworksAddinMemberInstanceFactory memberInstanceFactory;
         private Cookie addInCookie;
-        private ICommandHandlerInternals? commandHandler;
+        private IInternalCommandHandler? commandHandler;
         private IEventHandlerManagerInternals? eventHandlerManager;
         private IDocumentManagerInternals? documentManager;
         private SldWorks? swApplication;
@@ -50,12 +50,6 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         public static string AssemblyPath { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
 
-        [ComRegisterFunction]
-        public static void RegisterFunction(Type t) => SwComInterop.RegisterFunction(t);
-
-        [ComUnregisterFunction]
-        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
-
         /// <summary>
         /// Gets the reference to the current Solid-Works application.
         /// </summary>
@@ -67,6 +61,26 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         public IDocumentManager DocumentManager => this.documentManager
             ?? throw new NullReferenceException($"DocumentManager is not defined. Call {nameof(this.ConnectToSW)} first.");
+
+        /// <summary>
+        /// Gets the command handler.
+        /// </summary>
+        public ICommandHandler CommandHandler => this.commandHandler
+            ?? throw new NullReferenceException($"CommandHandler is not defined. Call {nameof(this.ConnectToSW)} first.");
+
+        /// <summary>
+        /// Com register function for types derived from <see cref="SolidWorksAddin"/>.
+        /// </summary>
+        /// <param name="t">Type to register.</param>
+        [ComRegisterFunction]
+        public static void RegisterFunction(Type t) => SwComInterop.RegisterFunction(t);
+
+        /// <summary>
+        /// Com unregister function for types derived from <see cref="SolidWorksAddin"/>.
+        /// </summary>
+        /// <param name="t">Type to unregister.</param>
+        [ComUnregisterFunction]
+        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
 
         /// <inheritdoc/>
         public bool ConnectToSW(object ThisSW, int cookie)
@@ -97,6 +111,8 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public bool DisconnectFromSW()
         {
+            this.OnDisconnectFromSW();
+
             this.eventHandlerManager?.Dispose();
             this.eventHandlerManager = null;
 
@@ -130,6 +146,20 @@ namespace SIM.SolidWorksPlugin
         /// <param name="eventHandlerManager">The event handler manager.</param>
         protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
 
-        protected abstract void OnConnectToSW(SldWorks swApplication, Cookie addInCookie);
+        /// <summary>
+        /// Callback for user methods called at the end of <see cref="ConnectToSW(object, int)"/>.
+        /// </summary>
+        /// <param name="swApplication">The SolidWorks application.</param>
+        /// <param name="addInCookie">The Add-In cookie.</param>
+        protected virtual void OnConnectToSW(SldWorks swApplication, Cookie addInCookie)
+        {
+        }
+
+        /// <summary>
+        /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
+        /// </summary>
+        protected virtual void OnDisconnectFromSW()
+        {
+        }
     }
 }

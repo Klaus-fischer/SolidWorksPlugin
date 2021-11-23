@@ -1,4 +1,4 @@
-﻿// <copyright file="ICommandHandler.cs" company="SIM Automation">
+﻿// <copyright file="ICommandGroup.cs" company="SIM Automation">
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
@@ -9,16 +9,13 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// Interface to allow access to commands.
     /// </summary>
-    internal interface ICommandHandler : IDisposable
+    internal interface ICommandGroup : IDisposable
     {
         /// <summary>
         /// Gets the command based on its name.
         /// </summary>
-        /// <param name="name">Name of the command.</param>
+        /// <param name="userId">User Id of the command.</param>
         /// <returns>The command if defined, or null.</returns>
-        ICommandInfo? GetCommand(string name);
-
-        ICommandInfo? GetCommand<T>(T id)
-            where T : struct, Enum;
+        ICommandInfo? GetCommand(int userId);
     }
 }
