@@ -26,10 +26,13 @@
 
   <ItemGroup>
     <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\..\..\Program Files\Solidworks_2016\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll</HintPath>
+      <HintPath>..\_Shared\SolidWorks.Interop.sldworks.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
+
     <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\..\..\Program Files\SOLIDWORKS_2016\SOLIDWORKS\api\redist\SolidWorks.Interop.swconst.dll</HintPath>
+      <HintPath>..\_Shared\SolidWorks.Interop.swconst.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
   </ItemGroup>
 
