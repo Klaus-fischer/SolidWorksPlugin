@@ -14,6 +14,9 @@ namespace SIM.SolidWorksPlugin
     [DebuggerDisplay("{Name}")]
     public class CommandInfo : ICommandInfo
     {
+        private string? tooltip;
+        private string? hint;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandInfo"/> class.
         /// </summary>
@@ -35,7 +38,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets the command.
         /// </summary>
-        ISwCommand ICommandInfo.Command => this.Command 
+        ISwCommand ICommandInfo.Command => this.Command
             ?? throw new NullReferenceException("Command property ha not been set yet.");
 
         /// <summary>
@@ -75,14 +78,24 @@ namespace SIM.SolidWorksPlugin
         public int Position { get; set; } = -1;
 
         /// <summary>
-        /// Gets or sets the tool-tip of the command.
+        /// Gets or sets the tool tip of the command group.
+        /// If default, the title will be returned.
         /// </summary>
-        public string? Tooltip { get; set; }
+        public string Tooltip
+        {
+            get => this.tooltip ?? this.Name;
+            set => this.tooltip = value;
+        }
 
         /// <summary>
-        /// Gets or sets the hint of the command.
+        /// Gets or sets the hint of the command group.
+        /// If default, the tool tip will be returned.
         /// </summary>
-        public string? Hint { get; set; }
+        public string Hint
+        {
+            get => this.hint ?? this.Tooltip;
+            set => this.hint = value;
+        }
 
         /// <summary>
         /// Gets or sets the command id.

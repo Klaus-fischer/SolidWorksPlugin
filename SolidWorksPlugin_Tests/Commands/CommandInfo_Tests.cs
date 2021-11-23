@@ -2,6 +2,7 @@
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using SolidWorks.Interop.swconst;
     using System;
 
     [TestClass]
@@ -23,7 +24,6 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void ToolTipAndHint_Test()
         {
             var commandInfo = new CommandInfo(1, "MyCommand", 2);
@@ -40,6 +40,34 @@
 
             Assert.AreEqual("ToolTip", commandInfo.Tooltip);
             Assert.AreEqual("Hint", commandInfo.Hint);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NullReferenceException))]
+        public void AccessToUnsetCommand()
+        {
+            ICommandInfo commandInfo = new CommandInfo(1, "MyCommand", 2);
+            Assert.IsNull(commandInfo.Command);
+        }
+
+        [TestMethod]
+        public void GetSwCommandItemType_e_Test()
+        {
+            var ci = new CommandInfo(1, "name2", 2) { HasMenu = false, HasToolbar = false, };
+
+            Assert.AreEqual(0, ci.GetSwCommandItemType_e());
+
+            ci = new CommandInfo(1, "name2", 2) { HasMenu = true, HasToolbar = false, };
+
+            Assert.AreEqual((int)swCommandItemType_e.swMenuItem, ci.GetSwCommandItemType_e());
+
+            ci = new CommandInfo(1, "name2", 2) { HasMenu = false, HasToolbar = true, };
+
+            Assert.AreEqual((int)swCommandItemType_e.swToolbarItem, ci.GetSwCommandItemType_e());
+
+            ci = new CommandInfo(1, "name2", 2) { HasMenu = true, HasToolbar = true, };
+
+            Assert.AreEqual((int)(swCommandItemType_e.swMenuItem | swCommandItemType_e.swToolbarItem), ci.GetSwCommandItemType_e());
         }
     }
 }

@@ -27,7 +27,7 @@ namespace SIM.SolidWorksPlugin
         public CommandGroupInfo(int id, string title)
         {
             this.Id = id;
-            this.Title = title;
+            this.Title = title ?? throw new ArgumentNullException(nameof(title));
         }
 
         /// <summary>
@@ -74,7 +74,11 @@ namespace SIM.SolidWorksPlugin
         /// Gets or sets the hint of the command group.
         /// If default, the tool tip will be returned.
         /// </summary>
-        public string Hint { get => this.hint ?? this.Tooltip; set => this.hint = value; }
+        public string Hint
+        {
+            get => this.hint ?? this.Tooltip;
+            set => this.hint = value;
+        }
 
         /// <summary>
         /// Gets or sets the position of the command group.
