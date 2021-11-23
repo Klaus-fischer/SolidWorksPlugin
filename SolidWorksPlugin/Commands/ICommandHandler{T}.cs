@@ -10,7 +10,7 @@ namespace SIM.SolidWorksPlugin
     /// Declares command manager for commands.
     /// </summary>
     /// <typeparam name="T">Type of the command enumeration.</typeparam>
-    public interface ICommandHandler<T> : ICommandGroupHandler
+    public interface ICommandHandler<T>
         where T : struct, Enum
     {
         /// <summary>
@@ -19,6 +19,6 @@ namespace SIM.SolidWorksPlugin
         /// <param name="id">The unique command id. (Must be an enumeration).</param>
         /// <param name="command">The command to register.</param>
         /// <returns>The command info of the entry.</returns>
-        CommandInfo RegisterCommand(T id, ISwCommand command);
+        ICommandInfo? RegisterCommand(T id, ISwCommand command);
     }
 }

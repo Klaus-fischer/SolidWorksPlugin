@@ -16,6 +16,9 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="name">Name of the command.</param>
         /// <returns>The command if defined, or null.</returns>
-        ISwCommand? GetCommand(string name);
+        ICommandInfo? GetCommand(string name);
+
+        ICommandInfo? GetCommand<T>(T id)
+            where T : struct, Enum;
     }
 }

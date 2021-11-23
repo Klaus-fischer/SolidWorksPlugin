@@ -7,6 +7,7 @@ namespace SIM.SolidWorksPlugin
     using System;
     using System.IO;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swpublished;
 
@@ -49,6 +50,12 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         public static string AssemblyPath { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
 
+        [ComRegisterFunction]
+        public static void RegisterFunction(Type t) => SwComInterop.RegisterFunction(t);
+
+        [ComUnregisterFunction]
+        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
+
         /// <summary>
         /// Gets the reference to the current Solid-Works application.
         /// </summary>
@@ -75,6 +82,8 @@ namespace SIM.SolidWorksPlugin
                 this.RegisterCommands(this.commandHandler);
 
                 this.RegisterEventHandler(this.eventHandlerManager);
+
+                this.OnConnectToSW(this.swApplication, this.addInCookie);
             }
             catch (Exception)
             {
@@ -120,5 +129,7 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="eventHandlerManager">The event handler manager.</param>
         protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
+
+        protected abstract void OnConnectToSW(SldWorks swApplication, Cookie addInCookie);
     }
 }

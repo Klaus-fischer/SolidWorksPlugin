@@ -7,6 +7,7 @@
 namespace SIM.SolidWorksPlugin
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swconst;
@@ -14,6 +15,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// The base document class.
     /// </summary>
+    [DebuggerDisplay("{Filename}")]
     public abstract class SwDocument : ISwDocument
     {
         /// <summary>

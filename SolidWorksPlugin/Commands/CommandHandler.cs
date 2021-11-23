@@ -61,7 +61,7 @@ namespace SIM.SolidWorksPlugin
         public int CanExecute(string commandName)
         {
             var result = CommandCanExecuteState.Disabled;
-            if (!this.TryGetCommandFromHandler(commandName, out var command))
+            if (!this.TryGetCommandFromHandler(commandName, out var commandInfo) || commandInfo.Command is not ISwCommand command)
             {
                 return (int)result;
             }
@@ -89,7 +89,7 @@ namespace SIM.SolidWorksPlugin
         /// <param name="commandName">Name of the target command.</param>
         public void OnExecute(string commandName)
         {
-            if (!this.TryGetCommandFromHandler(commandName, out var command))
+            if (!this.TryGetCommandFromHandler(commandName, out var commandInfo) || commandInfo.Command is not ISwCommand command)
             {
                 throw new ArgumentException($"Command '{commandName}' not defined.");
             }
@@ -141,9 +141,10 @@ namespace SIM.SolidWorksPlugin
 
             factoryMethod.Invoke(commandHandler);
 
+            swCommandGroup.Activate();
+
             this.commandHandlers.Add(typeof(T).Name, commandHandler);
 
-            swCommandGroup.Activate();
         }
 
         /// <summary>
@@ -158,12 +159,12 @@ namespace SIM.SolidWorksPlugin
                     $"{nameof(this.CanExecute)}({typeof(T).Name}:{id})");
         }
 
-        private bool TryGetCommandFromHandler(string handlerAndCommandName, [NotNullWhen(true)] out ISwCommand? command)
+        private bool TryGetCommandFromHandler(string handlerAndCommandName, [NotNullWhen(true)] out ICommandInfo? command)
         {
             (var handlerName, var commandName) = this.SplitHandlerAndCommandName(handlerAndCommandName);
 
             if (this.commandHandlers.TryGetValue(handlerName, out var handler) &&
-                handler.GetCommand(commandName) is ISwCommand cmd)
+                handler.GetCommand(commandName) is ICommandInfo cmd)
             {
                 command = cmd;
                 return true;
@@ -199,6 +200,18 @@ namespace SIM.SolidWorksPlugin
             var icons = enumType.GetCustomAttribute<CommandGroupIconsAttribute>();
 
             return (info, icons);
+        }
+
+        /// <inheritdoc/>
+        public ICommandInfo? GetCommandInfo<T>(T id)
+            where T : struct, Enum
+        {
+            if (this.commandHandlers.TryGetValue(typeof(T).Name, out var handler))
+            {
+                return handler.GetCommand(id);
+            }
+
+            return null;
         }
     }
 }

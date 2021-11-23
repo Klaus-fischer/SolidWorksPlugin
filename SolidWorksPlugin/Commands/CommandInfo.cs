@@ -11,7 +11,7 @@ namespace SIM.SolidWorksPlugin
     /// The return value of the <see cref="ICommandHandler{T}.RegisterCommand(T, ISwCommand)"/> method.
     /// </summary>
     [DebuggerDisplay("{Name}")]
-    public class CommandInfo
+    public class CommandInfo : ICommandInfo
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandInfo"/> class.

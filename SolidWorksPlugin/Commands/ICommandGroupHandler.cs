@@ -18,5 +18,8 @@ namespace SIM.SolidWorksPlugin
         /// <param name="factoryMethod">Method to add all commands.</param>
         void AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod)
             where T : struct, Enum;
+
+        ICommandInfo GetCommandInfo<T>(T id)
+            where T : struct, Enum;
     }
 }

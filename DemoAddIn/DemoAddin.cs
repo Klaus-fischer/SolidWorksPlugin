@@ -2,46 +2,40 @@
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
-#if QUICKDRAWMOCK
-namespace SIM.QuickDraw
-#else
 namespace SIM.DemoAddin
-#endif
 {
     using System;
     using System.ComponentModel;
     using System.Runtime.InteropServices;
     using SIM.SolidWorksPlugin;
     using SIM.SolidWorksPlugin.Commands;
+    using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swconst;
 
-#if QUICKDRAWMOCK
-    [Guid("7ccf38b9-39af-3fc1-8bdc-a4a41ade8bbe")]
-    [ComVisible(true)]
-    public class QuickDrawAddinIntegration : SwAddin<Commands>
-#else
     [Guid("C0E8D5B0-5773-4FDD-9ECE-C2C570CA1F65")]
     [ComVisible(true)]
     [DisplayName("Demo Addin")]
     [Description("Default description.")]
-
     public class DemoAddin : SolidWorksAddin
-#endif
     {
-        [ComRegisterFunction]
-        public static void RegisterFunction(Type t) => SwComInterop.RegisterFunction(t);
-
-        [ComUnregisterFunction]
-        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
-
         /// <inheritdoc/>
         protected override void RegisterCommands(ICommandGroupHandler commandManager)
         {
             commandManager.AddCommandGroup<Commands>(this.BuildCommands);
+            commandManager.AddCommandGroup<SubCommands>(this.BuildSubCommands);
         }
 
         protected override void RegisterEventHandler(IEventHandlerManager eventHandlerManager)
         {
+        }
+
+        protected override void OnConnectToSW(SldWorks swApplication, Cookie addInCookie)
+        {
+            var cmdMan = swApplication.GetCommandManager(addInCookie);
+
+            var cmdTab = cmdMan.AddCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "AssemblyTabName");
+
+            var cmdTabBox = cmdTab.AddCommandTabBox();
         }
 
         private void BuildCommands(ICommandHandler<Commands> commandHandler)
@@ -55,6 +49,17 @@ namespace SIM.DemoAddin
                 new RelaySwCommand(this.TrialExecuted));
         }
 
+        private void BuildSubCommands(ICommandHandler<SubCommands> commandHandler)
+        {
+            commandHandler.RegisterCommand(
+                 SubCommands.TrialCommand,
+                 new RelaySwCommand(this.TrialExecuted));
+
+            commandHandler.RegisterCommand(
+                SubCommands.TrialCommand2,
+                new RelaySwCommand(this.TrialExecuted));
+        }
+
         private void TrialExecuted(SwDocument? obj)
         {
             this.SwApplication.SendMsgToUser2("Executed", (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
@@ -63,14 +68,27 @@ namespace SIM.DemoAddin
 
     [CommandGroupInfo(1, "Main Commands", ToolTip = "Mein erstes Demo Projekt")]
     [CommandGroupIcons(
-        IconsPath = @".\Icons\Toolbar20.png|.\Icons\Toolbar32.png|.\Icons\Toolbar40.png|.\Icons\Toolbar64.png",
-        MainIconPath = @".\Icons\Icon20.png|.\Icons\Icon32.png|.\Icons\Icon40.png|.\Icons\Icon64.png")]
+        IconsPath = @".\Icons\Toolbar{0}.png",
+        MainIconPath = @".\Icons\Icon{0}.png")]
     public enum Commands
     {
         [CommandInfo("Trial Command", ImageIndex = 1, HasMenu = true, HasToolbar = true)]
         TrialCommand,
 
         [CommandInfo("Trial Command 2", ImageIndex = 2, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
+        TrialCommand2,
+    }
+
+    [CommandGroupInfo(2, "Main Commands\\Sub Commands", ToolTip = "Mein erstes Demo Projekt")]
+    [CommandGroupIcons(
+    IconsPath = @".\Icons\Toolbar{0}.png",
+    MainIconPath = @".\Icons\Icon{0}.png")]
+    public enum SubCommands
+    {
+        [CommandInfo("Trial Command", ImageIndex = 3, HasMenu = true, HasToolbar = true)]
+        TrialCommand,
+
+        [CommandInfo("Trial Command 2", ImageIndex = 4, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
         TrialCommand2,
     }
 }

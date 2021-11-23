@@ -19,10 +19,10 @@ namespace SIM.DemoAddin
     public class Demo2Class : ISwAddin
     {
         [ComRegisterFunction]
-        public static void RegisterFcuntion(Type t) => SwComInterop.RegisterFunction(t);
+        public static void RegisterFunction(Type t) => SwComInterop.RegisterFunction(t);
 
         [ComUnregisterFunction]
-        public static void Unregisterfunction(Type t) => SwComInterop.UnregisterFunction(t);
+        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
 
         public bool ConnectToSW(object swApp, int cookie)
         {

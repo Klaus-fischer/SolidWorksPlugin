@@ -17,7 +17,7 @@ namespace SIM.SolidWorksPlugin
     internal class CommandHandler<T> : ICommandHandler<T>, ICommandHandler
         where T : struct, Enum
     {
-        private readonly Dictionary<T, ISwCommand> registeredCommands = new Dictionary<T, ISwCommand>();
+        private readonly Dictionary<T, ICommandInfo> registeredCommands = new Dictionary<T, ICommandInfo>();
 
         private readonly ICommandHandlerInternals commandHandler;
         private readonly CommandGroup swCommandGroup;
@@ -55,21 +55,30 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public ISwCommand? GetCommand(string name)
+        public ICommandInfo? GetCommand(string name)
         {
-            if (Enum.TryParse(name, out T commandKey))
+            if (Enum.TryParse(name, out T id))
             {
-                if (this.registeredCommands.TryGetValue(commandKey, out var command))
-                {
-                    return command;
-                }
+                return this.GetCommand(id);
             }
 
             return null;
         }
 
         /// <inheritdoc/>
-        public CommandInfo RegisterCommand(T id, ISwCommand command)
+        public ICommandInfo? GetCommand<Tid>(Tid id)
+            where Tid : struct, Enum
+        {
+            if (id is T key && this.registeredCommands.TryGetValue(key, out var commandInfo))
+            {
+                return commandInfo;
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public ICommandInfo RegisterCommand(T id, ISwCommand command)
         {
             if (this.registeredCommands.ContainsKey(id))
             {
@@ -93,15 +102,17 @@ namespace SIM.SolidWorksPlugin
 
             this.EnableMenuOrToolbar(info);
 
-            this.registeredCommands.Add(id, command);
+            var cmdInfo = new CommandInfo(command, cmdId, this.id, info.Name, (int)(object)id, info.ImageIndex);
 
-            return new CommandInfo(command, cmdId, this.id, info.Name, (int)(object)id, info.ImageIndex);
+            this.registeredCommands.Add(id, cmdInfo);
+
+            return cmdInfo;
         }
 
-        /// <inheritdoc/>
-        public void AddCommandGroup<TCommand>(Action<ICommandHandler<TCommand>> factoryMethod)
-            where TCommand : struct, Enum
-             => this.commandHandler.AddCommandGroup(factoryMethod, this.path);
+        ///// <inheritdoc/>
+        //public void AddCommandGroup<TCommand>(Action<ICommandHandler<TCommand>> factoryMethod)
+        //    where TCommand : struct, Enum
+        //     => this.commandHandler.AddCommandGroup(factoryMethod, this.path);
 
         private CommandInfoAttribute GetCommandInfo(T id)
         {

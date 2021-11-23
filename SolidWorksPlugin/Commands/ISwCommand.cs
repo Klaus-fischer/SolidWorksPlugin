@@ -1,4 +1,4 @@
-﻿// <copyright file="ICommand.cs" company="SIM Automation">
+﻿// <copyright file="ISwCommand.cs" company="SIM Automation">
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
