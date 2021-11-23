@@ -9,16 +9,18 @@ namespace SIM.SolidWorksPlugin
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using SolidWorks.Interop.sldworks;
 
     /// <summary>
     /// Manages commands and their behavior.
     /// </summary>
-    public class CommandHandler : ICommandHandlerInternals, ICommandGroupHandler, IDisposable
+    public class CommandHandler : IInternalCommandHandler, ICommandHandler, ICommandGroupHandler, IDisposable
     {
-        private readonly Dictionary<string, ICommandHandler> commandHandlers;
+        private readonly Dictionary<int, ICommandGroup> commandHandlers = new();
         private readonly IDocumentManager documentManager;
-        private readonly ICommandManager swCommandManager;
+        private ICommandManager swCommandManager;
+        private bool disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandHandler"/> class.
@@ -28,19 +30,15 @@ namespace SIM.SolidWorksPlugin
         /// <param name="cookie">The cookie of the add-in.</param>
         internal CommandHandler(ISldWorks swApplication, IDocumentManager documentManager, Cookie cookie)
         {
-            this.commandHandlers = new Dictionary<string, ICommandHandler>();
             this.documentManager = documentManager;
             this.swCommandManager = swApplication.GetCommandManager(cookie);
             swApplication.SetAddinCallbackInfo2(0, this, cookie);
         }
 
         /// <inheritdoc/>
-        ICommandManager ICommandHandlerInternals.SwCommandManager => this.swCommandManager;
-
-        /// <inheritdoc/>
         public void Dispose()
         {
-            if (!this.commandHandlers.Any())
+            if (this.disposed)
             {
                 return;
             }
@@ -51,6 +49,40 @@ namespace SIM.SolidWorksPlugin
             }
 
             this.commandHandlers.Clear();
+
+            Marshal.FinalReleaseComObject(this.swCommandManager);
+            this.swCommandManager = default;
+
+            this.disposed = true;
+        }
+
+        /// <inheritdoc/>
+        public ICommandInfo? GetCommand(int commandGroupId, int commandUserId)
+        {
+            if (this.commandHandlers.TryGetValue(commandGroupId, out var handler) &&
+                handler.GetCommand(commandUserId) is ICommandInfo cmd)
+            {
+                return cmd;
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public void AddCommandGroup(CommandGroupInfo commandGroupInfo, Action<ICommandGroupBuilder> factoryMethod)
+        {
+            if (this.commandHandlers.ContainsKey(commandGroupInfo.Id))
+            {
+                throw new InvalidOperationException($"Command group with id {commandGroupInfo.Id} id already defined.");
+            }
+
+            var commandHandler = new CommandGroup(this.swCommandManager, commandGroupInfo);
+
+            factoryMethod.Invoke(commandHandler);
+
+            commandHandler.Activate();
+
+            this.commandHandlers.Add(commandGroupInfo.Id, commandHandler);
         }
 
         /// <summary>
@@ -101,93 +133,41 @@ namespace SIM.SolidWorksPlugin
             }
         }
 
-        /// <inheritdoc/>
-        public void AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod)
-            where T : struct, Enum => ((ICommandHandlerInternals)this).AddCommandGroup(factoryMethod, string.Empty);
-
-        /// <summary>
-        /// Adds an command group to the command handler.
-        /// </summary>
-        /// <typeparam name="T">Type of the command enumeration.</typeparam>
-        /// <param name="factoryMethod">Method to add all commands.</param>
-        /// <param name="path">relative path to build sub menus.</param>
-        void ICommandHandlerInternals.AddCommandGroup<T>(Action<ICommandHandler<T>> factoryMethod, string path)
-        {
-            (var info, var icons) = this.GetIconsAndInfo(typeof(T));
-
-            if (this.commandHandlers.ContainsKey(typeof(T).Name))
-            {
-                throw new InvalidOperationException("CommandHandler for this type of Enumeration is already defined.");
-            }
-
-            var title = $"{path}{info.Title}";
-            var cmdGroupErr = 0;
-            var swCommandGroup = this.swCommandManager.CreateCommandGroup2(
-                UserID: info.CommandGroupId,
-                Title: title,
-                ToolTip: info.ToolTip,
-                Hint: info.Hint,
-                Position: info.Position,
-                IgnorePreviousVersion: true,
-                Errors: ref cmdGroupErr);
-
-            if (icons is not null)
-            {
-                swCommandGroup.IconList = icons.GetIconsList();
-                swCommandGroup.MainIconList = icons.GetMainIconList();
-            }
-
-            var commandHandler = new CommandHandler<T>(this, swCommandGroup, title, info.CommandGroupId);
-
-            factoryMethod.Invoke(commandHandler);
-
-            swCommandGroup.Activate();
-
-            this.commandHandlers.Add(typeof(T).Name, commandHandler);
-
-        }
-
-        /// <summary>
-        /// Generates the callback method names.
-        /// </summary>
-        /// <typeparam name="T">Type of the enumeration.</typeparam>
-        /// <param name="id">Value of the enumeration.</param>
-        /// <returns>both method names.</returns>
-        (string OnExecute, string CanExecute) ICommandHandlerInternals.GetCallbackNames<T>(T id)
-        {
-            return ($"{nameof(this.OnExecute)}({typeof(T).Name}:{id})",
-                    $"{nameof(this.CanExecute)}({typeof(T).Name}:{id})");
-        }
-
         private bool TryGetCommandFromHandler(string handlerAndCommandName, [NotNullWhen(true)] out ICommandInfo? command)
         {
-            (var handlerName, var commandName) = this.SplitHandlerAndCommandName(handlerAndCommandName);
-
-            if (this.commandHandlers.TryGetValue(handlerName, out var handler) &&
-                handler.GetCommand(commandName) is ICommandInfo cmd)
+            if (this.SplitHandlerAndCommandName(handlerAndCommandName, out int handlerId, out int commandId))
             {
-                command = cmd;
-                return true;
+                if (this.commandHandlers.TryGetValue(handlerId, out var handler) &&
+                    handler.GetCommand(commandId) is ICommandInfo cmd)
+                {
+                    command = cmd;
+                    return true;
+                }
             }
 
             command = null;
             return false;
         }
 
-        private (string Handler, string Command) SplitHandlerAndCommandName(string handlerAndCommandName)
+        private bool SplitHandlerAndCommandName(string handlerAndCommandName, out int handlerId, out int commandId)
         {
+            handlerId = -1;
+            commandId = -1;
             int indexOfColon = handlerAndCommandName.IndexOf(':');
 
             // abort if index not found.
             if (indexOfColon == -1)
             {
-                return (string.Empty, string.Empty);
+                return false;
             }
 
-            string handler = new string(handlerAndCommandName.AsSpan(0, indexOfColon));
-            string command = new string(handlerAndCommandName.AsSpan(indexOfColon + 1));
+            if (int.TryParse(handlerAndCommandName.AsSpan(0, indexOfColon), out handlerId) &&
+                int.TryParse(handlerAndCommandName.AsSpan(indexOfColon + 1), out commandId))
+            {
+                return true;
+            }
 
-            return (handler, command);
+            return false;
         }
 
         private (CommandGroupInfoAttribute Info, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(Type enumType)
@@ -200,18 +180,6 @@ namespace SIM.SolidWorksPlugin
             var icons = enumType.GetCustomAttribute<CommandGroupIconsAttribute>();
 
             return (info, icons);
-        }
-
-        /// <inheritdoc/>
-        public ICommandInfo? GetCommandInfo<T>(T id)
-            where T : struct, Enum
-        {
-            if (this.commandHandlers.TryGetValue(typeof(T).Name, out var handler))
-            {
-                return handler.GetCommand(id);
-            }
-
-            return null;
         }
     }
 }

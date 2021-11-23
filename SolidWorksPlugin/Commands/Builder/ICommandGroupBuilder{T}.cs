@@ -1,4 +1,4 @@
-﻿// <copyright file="ICommandHandler{T}.cs" company="SIM Automation">
+﻿// <copyright file="ICommandGroupBuilder{T}.cs" company="SIM Automation">
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
@@ -7,10 +7,10 @@ namespace SIM.SolidWorksPlugin
     using System;
 
     /// <summary>
-    /// Declares command manager for commands.
+    /// Declares command builder with for command enumerations.
     /// </summary>
     /// <typeparam name="T">Type of the command enumeration.</typeparam>
-    public interface ICommandHandler<T>
+    public interface ICommandGroupBuilder<T>
         where T : struct, Enum
     {
         /// <summary>
@@ -19,6 +19,6 @@ namespace SIM.SolidWorksPlugin
         /// <param name="id">The unique command id. (Must be an enumeration).</param>
         /// <param name="command">The command to register.</param>
         /// <returns>The command info of the entry.</returns>
-        ICommandInfo? RegisterCommand(T id, ISwCommand command);
+        ICommandInfo? AddCommand(T id, ISwCommand command);
     }
 }

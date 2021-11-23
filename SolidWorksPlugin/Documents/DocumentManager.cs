@@ -18,7 +18,7 @@ namespace SIM.SolidWorksPlugin
     {
         private readonly ISldWorks swApplication;
         private readonly ISwDocumentFactory documentFactory;
-        private readonly Dictionary<IModelDoc2, SwDocument> openDocuments;
+        private readonly Dictionary<IModelDoc2, ISwDocument> openDocuments;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentManager"/> class.
@@ -30,7 +30,7 @@ namespace SIM.SolidWorksPlugin
         {
             this.swApplication = swApplication;
             this.documentFactory = factory;
-            this.openDocuments = new Dictionary<IModelDoc2, SwDocument>(comparer);
+            this.openDocuments = new Dictionary<IModelDoc2, ISwDocument>(comparer);
 
             // loop through all unknown documents to add them to the dictionary.
             foreach (var doc in this.GetAllUnknownDocuments())
@@ -44,7 +44,7 @@ namespace SIM.SolidWorksPlugin
         public event EventHandler<ISwDocument>? OnDocumentAdded;
 
         /// <inheritdoc/>
-        public SwDocument? ActiveDocument
+        public ISwDocument? ActiveDocument
         {
             get
             {
@@ -75,7 +75,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public SwDocument OpenDocument(string filename, out bool wasOpen, swOpenDocOptions_e options = swOpenDocOptions_e.swOpenDocOptions_Silent)
+        public ISwDocument OpenDocument(string filename, out bool wasOpen, swOpenDocOptions_e options = swOpenDocOptions_e.swOpenDocOptions_Silent)
         {
             var modelDoc = this.swApplication.GetOpenDocumentByName(filename) as IModelDoc2;
             wasOpen = true;
@@ -90,7 +90,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void SaveDocument(SwDocument document, string? filename = null, bool saveAsCopy = false, object? exportData = null)
+        public void SaveDocument(ISwDocument document, string? filename = null, bool saveAsCopy = false, object? exportData = null)
         {
             int error = 0, warnings = 0;
             var options = saveAsCopy
@@ -116,13 +116,13 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void ReloadDocument(SwDocument document, bool readOnly)
+        public void ReloadDocument(ISwDocument document, bool readOnly)
         {
             document.Model.ReloadOrReplace(readOnly, document.FilePath, true);
         }
 
         /// <inheritdoc/>
-        public void CloseDocument(SwDocument document)
+        public void CloseDocument(ISwDocument document)
         {
             this.swApplication.CloseDoc(document.FilePath);
         }
@@ -156,7 +156,7 @@ namespace SIM.SolidWorksPlugin
             this.openDocuments.Remove(swDocument.Model);
         }
 
-        private SwDocument GetDocument(IModelDoc2 model)
+        private ISwDocument GetDocument(IModelDoc2 model)
         {
             if (this.openDocuments.TryGetValue(model, out var document))
             {

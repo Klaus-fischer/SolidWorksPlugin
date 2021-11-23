@@ -12,10 +12,10 @@ namespace SIM.SolidWorksPlugin
     internal interface ISwDocumentFactory
     {
         /// <summary>
-        /// Creates a <see cref="SwDocument"/> based on the model type.
+        /// Creates a <see cref="ISwDocument"/> based on the model type.
         /// </summary>
         /// <param name="model">SolidWorks model to check.</param>
         /// <returns>The created document.</returns>
-        SwDocument Create(IModelDoc2 model);
+        ISwDocument Create(IModelDoc2 model);
     }
 }

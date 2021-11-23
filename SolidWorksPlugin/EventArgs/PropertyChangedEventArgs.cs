@@ -8,7 +8,7 @@ namespace SIM.SolidWorksPlugin
     using SolidWorks.Interop.swconst;
 
     /// <summary>
-    /// Event arguments for <see cref="SwDocument.OnPropertyChanged"/> event.
+    /// Event arguments for <see cref="ISwDocument.OnPropertyChanged"/> event.
     /// </summary>
     public class PropertyChangedEventArgs : EventArgs
     {

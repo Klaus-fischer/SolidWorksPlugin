@@ -18,7 +18,7 @@ namespace SIM.SolidWorksPlugin
         /// <param name="cookie">The cookie of the add-in.</param>
         /// <returns>The created instances.</returns>
         public (IDocumentManagerInternals DocumentManager,
-            ICommandHandlerInternals CommandManager,
+            IInternalCommandHandler CommandManager,
             IEventHandlerManagerInternals EventHandler) CreateInstances(SldWorks swApplication, Cookie cookie)
         {
             var documentFactory = new SwDocumentFactory();

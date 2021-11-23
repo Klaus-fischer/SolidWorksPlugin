@@ -40,7 +40,7 @@
 
             var cmd = new CommandHandler<CommandEnum>(commandHandlerMock.Object, swCommandGroupMock.Object, "Test", 155);
 
-            var cmdInfo = cmd.RegisterCommand(CommandEnum.FirstCommand, commandMock.Object);
+            var cmdInfo = cmd.AddCommand(CommandEnum.FirstCommand, commandMock.Object);
 
             swCommandGroupMock.Verify(o => o.AddCommandItem2("My Command", 12, "Hint", "ToolTip", 5, It.IsAny<string>(), It.IsAny<string>(), 15, 3), Times.Once);
 
@@ -64,9 +64,9 @@
 
             var cmd = new CommandHandler<CommandEnum>(commandHandlerMock.Object, swCommandGroupMock.Object, "Test", 155);
 
-            cmd.RegisterCommand(CommandEnum.FirstCommand, commandMock.Object);
+            cmd.AddCommand(CommandEnum.FirstCommand, commandMock.Object);
 
-            cmd.RegisterCommand(CommandEnum.FirstCommand, commandMock.Object);
+            cmd.AddCommand(CommandEnum.FirstCommand, commandMock.Object);
         }
 
         [TestMethod]
@@ -87,7 +87,7 @@
 
             var cmd = new CommandHandler<CommandEnum>(commandHandlerMock.Object, swCommandGroupMock.Object, "Test", 155);
 
-            var cmdInfo = cmd.RegisterCommand(CommandEnum.CommandWithoutAttribute, new RelaySwCommand(d => { }));
+            var cmdInfo = cmd.AddCommand(CommandEnum.CommandWithoutAttribute, new RelaySwCommand(d => { }));
 
             swCommandGroupMock.Verify(o => o.AddCommandItem2(It.IsAny<string>(), -1, "", "", -1, It.IsAny<string>(), It.IsAny<string>(), 18, 3), Times.Once);
 
@@ -120,7 +120,7 @@
 
             var cmd = new CommandHandler<CommandEnum>(commandHandlerMock.Object, swCommandGroupMock.Object, "Test", 155);
 
-            var cmdInfo = cmd.RegisterCommand(CommandEnum.CommandWithoutMenu, new RelaySwCommand(d => { }));
+            var cmdInfo = cmd.AddCommand(CommandEnum.CommandWithoutMenu, new RelaySwCommand(d => { }));
 
             swCommandGroupMock.Verify(o => o.AddCommandItem2(It.IsAny<string>(), -1, "", "", -1, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Once);
 
@@ -146,7 +146,7 @@
 
             var cmd = new CommandHandler<CommandEnum>(commandHandlerMock.Object, swCommandGroupMock.Object, "Test", 155);
 
-            var cmdInfo = cmd.RegisterCommand(CommandEnum.CommandWithoutToolbar, new RelaySwCommand(d => { }));
+            var cmdInfo = cmd.AddCommand(CommandEnum.CommandWithoutToolbar, new RelaySwCommand(d => { }));
 
             swCommandGroupMock.Verify(o => o.AddCommandItem2(It.IsAny<string>(), -1, "", "", -1, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Once);
 
@@ -160,7 +160,7 @@
             var commandHandlerMock = new Mock<ICommandHandlerInternals>();
             var swCommandGroupMock = new Mock<CommandGroup>();
 
-            Action<ICommandHandler<CommandEnum>> factoryMethod = d => { };
+            Action<ICommandGroupBuilder<CommandEnum>> factoryMethod = d => { };
 
             var cmd = new CommandHandler<CommandEnum>(commandHandlerMock.Object, swCommandGroupMock.Object, "Test", 42);
             commandHandlerMock.Setup(o => o.AddCommandGroup(factoryMethod, @"Test\"));
@@ -177,7 +177,7 @@
             var swCommandGroupMock = new Mock<CommandGroup>();
             var cmd = new RelaySwCommand(d => { });
 
-            Action<ICommandHandler<CommandEnum>> factoryMethod = d => { };
+            Action<ICommandGroupBuilder<CommandEnum>> factoryMethod = d => { };
 
             var cmdHwnd = new CommandHandler<CommandEnum>(commandHandlerMock.Object, swCommandGroupMock.Object, "Test", 42);
 

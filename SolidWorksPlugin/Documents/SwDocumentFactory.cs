@@ -8,18 +8,18 @@ namespace SIM.SolidWorksPlugin
     using SolidWorks.Interop.sldworks;
 
     /// <summary>
-    /// Factory of <see cref="SwDocument"/> classes.
+    /// Factory of <see cref="ISwDocument"/> classes.
     /// </summary>
     internal class SwDocumentFactory : ISwDocumentFactory
     {
         private readonly PropertyManager propertyManager = new();
 
         /// <summary>
-        /// Creates a <see cref="SwDocument"/> based on the model type.
+        /// Creates a <see cref="ISwDocument"/> based on the model type.
         /// </summary>
         /// <param name="model">SolidWorks model to check.</param>
         /// <returns>The created document.</returns>
-        public SwDocument Create(IModelDoc2 model)
+        public ISwDocument Create(IModelDoc2 model)
         {
             return model switch
             {

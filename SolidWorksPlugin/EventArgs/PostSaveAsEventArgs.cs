@@ -8,7 +8,7 @@ namespace SIM.SolidWorksPlugin
     using SolidWorks.Interop.swconst;
 
     /// <summary>
-    /// Event arguments for <see cref="SwDocument.OnPostSaveAs"/> event.
+    /// Event arguments for <see cref="ISwDocument.OnPostSaveAs"/> event.
     /// </summary>
     public class PostSaveAsEventArgs : EventArgs
     {

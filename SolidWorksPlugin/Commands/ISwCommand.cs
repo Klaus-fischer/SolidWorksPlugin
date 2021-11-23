@@ -4,6 +4,9 @@
 
 namespace SIM.SolidWorksPlugin
 {
+    /// <summary>
+    /// Defines a basic SolidWorks Command.
+    /// </summary>
     public interface ISwCommand
     {
         /// <summary>
@@ -11,12 +14,12 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <returns>True on valid call.</returns>
         /// <param name="document">The current active document.</param>
-        bool CanExecute(SwDocument? document);
+        bool CanExecute(ISwDocument? document);
 
         /// <summary>
         /// Execute method of the command.
         /// </summary>
         /// <param name="document">The current active document.</param>
-        void Execute(SwDocument? document);
+        void Execute(ISwDocument? document);
     }
 }
