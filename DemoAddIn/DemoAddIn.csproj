@@ -12,12 +12,6 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <!--<OutputPath>C:\Source\QuickDraw\QuickDraw.SIM\bin\Release\</OutputPath>
-    <OutputPath>\\zion\DemoAddin-Debug</OutputPath>
-    <DefineConstants>TRACE;QUICKDRAWMOCK</DefineConstants>-->
-  </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Icons\Icon20.png" />
     <None Remove="Icons\Icon32.png" />
