@@ -25,17 +25,41 @@ namespace SIM.DemoAddin
             commandManager.AddCommandGroup<SubCommands>(this.BuildSubCommands);
         }
 
+        protected override void AddCommandTabMenu(ICommandTabManager tabManager)
+        {
+            tabManager.BuildCommandTab(
+                "Mein Makro",
+                builder =>
+                {
+                    builder.AddCommand(
+                        this.CommandHandler.GetCommand(Commands.TrialCommand)!,
+                        swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow);
+
+                    builder.AddCommand(
+                        this.CommandHandler.GetCommand(Commands.TrialCommand2)!,
+                        swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow);
+
+                    builder.AddSpacer();
+
+                    builder.AddFlyout(this.CommandHandler.GetCommandGroup(2)!,
+                        swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow,
+                        swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout);
+
+                },
+
+                swDocumentTypes_e.swDocASSEMBLY, swDocumentTypes_e.swDocPART);
+        }
+
         protected override void RegisterEventHandler(IEventHandlerManager eventHandlerManager)
         {
         }
 
         protected override void OnConnectToSW(SldWorks swApplication, Cookie addInCookie)
         {
-            var cmdMan = swApplication.GetCommandManager(addInCookie);
+        }
 
-            var cmdTab = cmdMan.AddCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "AssemblyTabName");
-
-            var cmdTabBox = cmdTab.AddCommandTabBox();
+        protected override void OnDisconnectFromSW()
+        {
         }
 
         private void BuildCommands(ICommandGroupBuilder<Commands> commandHandler)
@@ -49,13 +73,13 @@ namespace SIM.DemoAddin
                 new RelaySwCommand(this.TrialExecuted));
         }
 
-        private void BuildSubCommands(ICommandGroupBuilder<SubCommands> commandHandler)
+        private void BuildSubCommands(ICommandGroupBuilder<SubCommands> builder)
         {
-            commandHandler.AddCommand(
+            builder.AddCommand(
                  SubCommands.TrialCommand,
                  new RelaySwCommand(this.TrialExecuted));
 
-            commandHandler.AddCommand(
+            builder.AddCommand(
                 SubCommands.TrialCommand2,
                 new RelaySwCommand(this.TrialExecuted));
         }
@@ -64,31 +88,33 @@ namespace SIM.DemoAddin
         {
             this.SwApplication.SendMsgToUser2("Executed", (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
         }
+
+
     }
 
-    [CommandGroupInfo(1, "Main Commands", ToolTip = "Mein erstes Demo Projekt")]
+    [CommandGroupSpec(1, "Main Commands", ToolTip = "Mein erstes Demo Projekt")]
     [CommandGroupIcons(
         IconsPath = @".\Icons\Toolbar{0}.png",
         MainIconPath = @".\Icons\Icon{0}.png")]
     public enum Commands
     {
-        [CommandInfo("Trial Command", ImageIndex = 1, HasMenu = true, HasToolbar = true)]
+        [CommandSpec("Trial Command", ImageIndex = 1, HasMenu = true, HasToolbar = true)]
         TrialCommand,
 
-        [CommandInfo("Trial Command 2", ImageIndex = 2, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
+        [CommandSpec("Trial Command 2", ImageIndex = 2, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
         TrialCommand2,
     }
 
-    [CommandGroupInfo(2, "Main Commands\\Sub Commands", ToolTip = "Mein erstes Demo Projekt")]
+    [CommandGroupSpec(2, "Main Commands\\Sub Commands", ToolTip = "Mein erstes Demo Projekt")]
     [CommandGroupIcons(
     IconsPath = @".\Icons\Toolbar{0}.png",
     MainIconPath = @".\Icons\Icon{0}.png")]
     public enum SubCommands
     {
-        [CommandInfo("Trial Command", ImageIndex = 3, HasMenu = true, HasToolbar = true)]
+        [CommandSpec("Trial Command", ImageIndex = 3, HasMenu = true, HasToolbar = true)]
         TrialCommand,
 
-        [CommandInfo("Trial Command 2", ImageIndex = 4, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
+        [CommandSpec("Trial Command 2", ImageIndex = 4, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
         TrialCommand2,
     }
 }

@@ -29,11 +29,11 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public ICommandInfo? AddCommand(T id, ISwCommand command)
+        public ICommandInfo AddCommand(T id, ISwCommand command)
         {
             var info = this.GetCommandInfoAttribute(id);
 
-            var cmdInfo = new CommandInfo((int)(object)id, info.Name, this.commandGroupId)
+            var commandSpec = new CommandSpec((int)(object)id, info.Name, this.commandGroupId)
             {
                 ImageIndex = info.ImageIndex,
                 Position = info.Position,
@@ -43,14 +43,14 @@ namespace SIM.SolidWorksPlugin
                 Tooltip = info.Tooltip,
             };
 
-            return this.commandGroupBuilder.AddCommand(cmdInfo, command);
+            return this.commandGroupBuilder.AddCommand(commandSpec, command);
         }
 
-        private CommandInfoAttribute GetCommandInfoAttribute(T id)
+        private CommandSpecAttribute GetCommandInfoAttribute(T id)
         {
-            if (typeof(T).GetField($"{id}")!.GetCustomAttribute<CommandInfoAttribute>() is not CommandInfoAttribute info)
+            if (typeof(T).GetField($"{id}")!.GetCustomAttribute<CommandSpecAttribute>() is not CommandSpecAttribute info)
             {
-                info = new CommandInfoAttribute($"{id}");
+                info = new CommandSpecAttribute($"{id}");
             }
 
             return info;

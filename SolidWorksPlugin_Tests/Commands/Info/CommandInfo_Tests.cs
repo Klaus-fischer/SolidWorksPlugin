@@ -1,9 +1,7 @@
 ﻿namespace SIM.SolidWorksPlugin.Tests.Commands
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-    using SolidWorks.Interop.swconst;
-    using System;
+    using SIM.SolidWorksPlugin.Commands;
 
     [TestClass]
     public class CommandInfo_Tests
@@ -11,63 +9,34 @@
         [TestMethod]
         public void Constructor()
         {
-            var commandInfo = new CommandInfo(1, "MyCommand", 2);
+            var command = new RelaySwCommand(d => { });
+            var commandInfo = new CommandInfo("MyCommand", command);
 
             Assert.IsNotNull(commandInfo);
 
+            Assert.AreEqual(0, commandInfo.UserId);
             Assert.AreEqual(0, commandInfo.Id);
-            Assert.AreEqual(1, commandInfo.UserId);
-            Assert.AreEqual(2, commandInfo.CommandGroupId);
             Assert.AreEqual("MyCommand", commandInfo.Name);
-            Assert.AreEqual(-1, commandInfo.ImageIndex);
-            Assert.AreEqual(-1, commandInfo.Position);
+            Assert.AreSame(command, commandInfo.Command);
         }
 
-        [TestMethod]
-        public void ToolTipAndHint_Test()
-        {
-            var commandInfo = new CommandInfo(1, "MyCommand", 2);
-
-            Assert.AreEqual("MyCommand", commandInfo.Tooltip);
-            Assert.AreEqual("MyCommand", commandInfo.Hint);
-
-            commandInfo.Tooltip = "ToolTip";
-
-            Assert.AreEqual("ToolTip", commandInfo.Tooltip);
-            Assert.AreEqual("ToolTip", commandInfo.Hint);
-
-            commandInfo.Hint = "Hint";
-
-            Assert.AreEqual("ToolTip", commandInfo.Tooltip);
-            Assert.AreEqual("Hint", commandInfo.Hint);
-        }
 
         [TestMethod]
-        [ExpectedException(typeof(NullReferenceException))]
-        public void AccessToUnsetCommand()
+        public void ConstructorWithParameter()
         {
-            ICommandInfo commandInfo = new CommandInfo(1, "MyCommand", 2);
-            Assert.IsNull(commandInfo.Command);
-        }
+            var command = new RelaySwCommand(d => { });
+            var commandInfo = new CommandInfo("MyCommand", command)
+            {
+                Id = 200,
+                UserId = 12,
+            };
 
-        [TestMethod]
-        public void GetSwCommandItemType_e_Test()
-        {
-            var ci = new CommandInfo(1, "name2", 2) { HasMenu = false, HasToolbar = false, };
+            Assert.IsNotNull(commandInfo);
 
-            Assert.AreEqual(0, ci.GetSwCommandItemType_e());
-
-            ci = new CommandInfo(1, "name2", 2) { HasMenu = true, HasToolbar = false, };
-
-            Assert.AreEqual((int)swCommandItemType_e.swMenuItem, ci.GetSwCommandItemType_e());
-
-            ci = new CommandInfo(1, "name2", 2) { HasMenu = false, HasToolbar = true, };
-
-            Assert.AreEqual((int)swCommandItemType_e.swToolbarItem, ci.GetSwCommandItemType_e());
-
-            ci = new CommandInfo(1, "name2", 2) { HasMenu = true, HasToolbar = true, };
-
-            Assert.AreEqual((int)(swCommandItemType_e.swMenuItem | swCommandItemType_e.swToolbarItem), ci.GetSwCommandItemType_e());
+            Assert.AreEqual(12, commandInfo.UserId);
+            Assert.AreEqual(200, commandInfo.Id);
+            Assert.AreEqual("MyCommand", commandInfo.Name);
+            Assert.AreSame(command, commandInfo.Command);
         }
     }
 }

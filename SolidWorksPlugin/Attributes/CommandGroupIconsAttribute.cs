@@ -5,9 +5,11 @@
 namespace SIM.SolidWorksPlugin
 {
     using System;
+
     /// <summary>
     /// Attribute to attach path to icon files to an command enumeration.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Enum)]
     public class CommandGroupIconsAttribute : Attribute
     {
         /// <summary>

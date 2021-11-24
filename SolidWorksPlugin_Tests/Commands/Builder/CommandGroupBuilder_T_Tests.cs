@@ -27,9 +27,9 @@
             var commandGroupBuilderMock = new Mock<ICommandGroupBuilder>();
             var command = new RelaySwCommand(d => { });
 
-            commandGroupBuilderMock.Setup(o => o.AddCommand(It.IsAny<CommandInfo>(), It.IsAny<ISwCommand>()))
-                .Returns(new CommandInfo(1, "test", 42))
-                .Callback((CommandInfo cmdInfo, ISwCommand cmd) =>
+            commandGroupBuilderMock.Setup(o => o.AddCommand(It.IsAny<CommandSpec>(), It.IsAny<ISwCommand>()))
+                .Returns(new CommandInfo("CmdTitle", command))
+                .Callback((CommandSpec cmdInfo, ISwCommand cmd) =>
                 {
                     Assert.AreEqual(command, cmd);
                     Assert.AreEqual(55, cmdInfo.UserId);
@@ -45,7 +45,7 @@
 
             cmdHwnd.AddCommand(CommandEnum.FirstCommand, command);
 
-            commandGroupBuilderMock.Verify(o => o.AddCommand(It.IsAny<CommandInfo>(), It.IsAny<ISwCommand>()), Times.Once);
+            commandGroupBuilderMock.Verify(o => o.AddCommand(It.IsAny<CommandSpec>(), It.IsAny<ISwCommand>()), Times.Once);
         }
 
         [TestMethod]
@@ -54,9 +54,9 @@
             var commandGroupBuilderMock = new Mock<ICommandGroupBuilder>();
             var command = new RelaySwCommand(d => { });
 
-            commandGroupBuilderMock.Setup(o => o.AddCommand(It.IsAny<CommandInfo>(), It.IsAny<ISwCommand>()))
-                .Returns(new CommandInfo(1, "test", 42))
-                .Callback((CommandInfo cmdInfo, ISwCommand cmd) =>
+            commandGroupBuilderMock.Setup(o => o.AddCommand(It.IsAny<CommandSpec>(), It.IsAny<ISwCommand>()))
+                .Returns(new CommandInfo("CmdTitle", command))
+                .Callback((CommandSpec cmdInfo, ISwCommand cmd) =>
                 {
                     Assert.AreEqual(command, cmd);
                     Assert.AreEqual(56, cmdInfo.UserId);
@@ -72,12 +72,12 @@
 
             cmdHwnd.AddCommand(CommandEnum.SecondCommand, command);
 
-            commandGroupBuilderMock.Verify(o => o.AddCommand(It.IsAny<CommandInfo>(), It.IsAny<ISwCommand>()), Times.Once);
+            commandGroupBuilderMock.Verify(o => o.AddCommand(It.IsAny<CommandSpec>(), It.IsAny<ISwCommand>()), Times.Once);
         }
 
         public enum CommandEnum
         {
-            [CommandInfo("CmdTitle", ImageIndex = 15, Position = 5, Hint = "Hint", Tooltip = "Tooltip")]
+            [CommandSpec("CmdTitle", ImageIndex = 15, Position = 5, Hint = "Hint", Tooltip = "Tooltip")]
             FirstCommand = 55,
             SecondCommand = 56,
         }

@@ -55,7 +55,7 @@
             var cmd = new CommandHandler(swApplicationMock.Object, documentManagerMock.Object, new Cookie(42));
 
             bool callbackInvoked = false;
-            cmd.AddCommandGroup(new CommandGroupInfo(1, "commands")
+            cmd.AddCommandGroup(new CommandGroupSpec(1, "commands")
             {
                 Hint = "group hint",
                 Tooltip = "group tooltip",
@@ -68,6 +68,8 @@
 
             swCommandGroupMock.VerifySet(o => o.IconList = It.IsAny<string[]>(), Times.Never);
             swCommandGroupMock.VerifySet(o => o.MainIconList = It.IsAny<string[]>(), Times.Never);
+
+            Assert.AreSame(swCommandGroupMock.Object, cmd.SwCommandManager);
         }
 
         [TestMethod]
@@ -91,7 +93,7 @@
 
             bool callbackInvoked = false;
             cmd.AddCommandGroup(
-                new CommandGroupInfo(0, "CommandGroup")
+                new CommandGroupSpec(0, "CommandGroup")
                 {
                     IconsPath = "./icons{0}.png",
                     MainIconPath = "./mainicon{0}.png",
@@ -121,7 +123,7 @@
             var dictionary = (Dictionary<int, ICommandGroup>)cmd.GetPrivateObject("commandHandlers")!;
             dictionary.Add(0, null);
 
-            cmd.AddCommandGroup(new CommandGroupInfo(0, ""), o => { });
+            cmd.AddCommandGroup(new CommandGroupSpec(0, ""), o => { });
         }
 
         [TestMethod]
@@ -421,6 +423,30 @@
             Assert.AreEqual(commandInfoMock.Object, cmd.GetCommand(0, 0));
             Assert.IsNull(cmd.GetCommand(0, 1));
             Assert.IsNull(cmd.GetCommand(1, 0));
+        }
+
+        [TestMethod]
+        public void GetCommandGroup_Test()
+        {
+            var swApplicationMock = new Mock<SW.ISldWorks>();
+            var swCommandManagerMock = new Mock<SW.CommandManager>();
+            var documentManagerMock = new Mock<IDocumentManager>();
+            var commandHandlerMock = new Mock<ICommandGroup>();
+            var info = new CommandGroupInfo();
+
+            swApplicationMock.Setup(o => o.GetCommandManager(It.IsAny<int>())).Returns(swCommandManagerMock.Object);
+            commandHandlerMock.SetupGet(o => o.Info).Returns(info);
+
+            var cmd = new CommandHandler(swApplicationMock.Object, documentManagerMock.Object, new Cookie(42));
+
+            // get command handler dictionary
+            var dictionary = (Dictionary<int, ICommandGroup>)cmd.GetPrivateObject("commandHandlers")!;
+
+            // add mock entry to handler collection.
+            dictionary!.Add(0, commandHandlerMock.Object);
+
+            Assert.AreEqual(info, cmd.GetCommandGroup(0));
+            Assert.IsNull(cmd.GetCommandGroup(1));
         }
 
         private delegate void CreateCommandGroup2Callback(int userId, string title, string tooltip, string hint, int position, bool ignore, ref int errors);

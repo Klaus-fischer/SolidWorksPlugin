@@ -19,7 +19,8 @@ namespace SIM.SolidWorksPlugin
         /// <returns>The created instances.</returns>
         public (IDocumentManagerInternals DocumentManager,
             IInternalCommandHandler CommandManager,
-            IEventHandlerManagerInternals EventHandler) CreateInstances(SldWorks swApplication, Cookie cookie)
+            IEventHandlerManagerInternals EventHandler,
+            IInternalCommandTabManager TabManager) CreateInstances(SldWorks swApplication, Cookie cookie)
         {
             var documentFactory = new SwDocumentFactory();
             var iModelDocComparer = new SwModelDocPointerEqualityComparer(swApplication);
@@ -27,8 +28,9 @@ namespace SIM.SolidWorksPlugin
             var documentManager = new DocumentManager(swApplication, documentFactory, iModelDocComparer);
             var commandHandler = new CommandHandler(swApplication, documentManager, cookie);
             var eventHandlerManager = new EventHandlerManager(swApplication, documentManager);
+            var commandTabManager = new TabCommandManager(commandHandler);
 
-            return (documentManager, commandHandler, eventHandlerManager);
+            return (documentManager, commandHandler, eventHandlerManager, commandTabManager);
         }
     }
 }

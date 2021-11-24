@@ -1,4 +1,4 @@
-﻿// <copyright file="CommandGroupInfoAttribute.cs" company="SIM Automation">
+﻿// <copyright file="CommandGroupSpecAttribute.cs" company="SIM Automation">
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
@@ -10,14 +10,14 @@ namespace SIM.SolidWorksPlugin
     /// Attribute to describe a command enumeration.
     /// </summary>
     [AttributeUsage(AttributeTargets.Enum)]
-    public class CommandGroupInfoAttribute : Attribute
+    public class CommandGroupSpecAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandGroupInfoAttribute"/> class.
+        /// Initializes a new instance of the <see cref="CommandGroupSpecAttribute"/> class.
         /// </summary>
         /// <param name="commandGroupId">The Id of the command group.</param>
         /// <param name="title">The title of the command group.</param>
-        public CommandGroupInfoAttribute(int commandGroupId, string title)
+        public CommandGroupSpecAttribute(int commandGroupId, string title)
         {
             this.CommandGroupId = commandGroupId;
             this.Title = title ?? throw new ArgumentNullException(nameof(title));

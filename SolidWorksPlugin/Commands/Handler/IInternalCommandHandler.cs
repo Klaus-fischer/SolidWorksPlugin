@@ -4,6 +4,7 @@
 
 namespace SIM.SolidWorksPlugin
 {
+    using SolidWorks.Interop.sldworks;
     using System;
 
     /// <summary>
@@ -11,5 +12,6 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     internal interface IInternalCommandHandler : ICommandHandler, ICommandGroupHandler, IDisposable
     {
+        ICommandManager SwCommandManager { get; }
     }
 }

@@ -6,6 +6,7 @@ namespace SIM.SolidWorksPlugin
 {
     using System;
     using System.ComponentModel;
+    using System.Linq;
     using System.Reflection;
     using Microsoft.Win32;
     using SolidWorks.Interop.sldworks;
@@ -16,18 +17,6 @@ namespace SIM.SolidWorksPlugin
     public class SwComInterop
     {
         private const string Key = @"SOFTWARE\SolidWorks\Addins\";
-
-        /// <summary>
-        /// To register <see cref="ISldWorks"/> class.
-        /// </summary>
-        /// <param name="t">Type to register.</param>
-        public static void RegisterFunction(Type t) => RegisterToKey(Registry.LocalMachine, t);
-
-        /// <summary>
-        /// To unregister <see cref="ISldWorks"/> class.
-        /// </summary>
-        /// <param name="t">Type to unregister.</param>
-        public static void UnregisterFunction(Type t) => UnregisterFromKey(Registry.LocalMachine, t);
 
         /// <summary>
         /// Allows testing the registration to an different root key.
@@ -45,6 +34,7 @@ namespace SIM.SolidWorksPlugin
 
             var description = string.Empty;
             var title = t.Name;
+            var loadAtStartUp = true;
 
             if (t.GetCustomAttribute<DescriptionAttribute>() is DescriptionAttribute desc)
             {
@@ -56,6 +46,16 @@ namespace SIM.SolidWorksPlugin
                 title = name.DisplayName;
             }
 
+            var attibute = t.GetCustomAttributes().OfType<SolidWorksPluginAttribute>().FirstOrDefault();
+
+            if (attibute is SolidWorksPluginAttribute swAttr)
+            {
+                description = swAttr.Description ?? description;
+                title = swAttr.Title;
+                loadAtStartUp = swAttr.LoadAtStartupByDefault;
+            }
+
+            addinKey.SetValue("Default", loadAtStartUp ? 1 : 0, RegistryValueKind.DWord);
             addinKey.SetValue("Description", description);
             addinKey.SetValue("Title", title);
         }

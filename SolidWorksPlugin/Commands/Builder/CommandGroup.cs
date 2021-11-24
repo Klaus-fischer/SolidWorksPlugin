@@ -6,6 +6,7 @@ namespace SIM.SolidWorksPlugin
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using SW = SolidWorks.Interop.sldworks;
 
@@ -15,9 +16,9 @@ namespace SIM.SolidWorksPlugin
     internal class CommandGroup : ICommandGroupBuilder, ICommandGroup
     {
         private readonly Dictionary<int, ICommandInfo> registeredCommands = new();
-        private readonly int id;
 
         private readonly SW.ICommandManager swCommandManager;
+        private readonly CommandGroupInfo commandGroupInfo;
         private SW.CommandGroup swCommandGroup;
 
         private bool disposed;
@@ -26,32 +27,40 @@ namespace SIM.SolidWorksPlugin
         /// Initializes a new instance of the <see cref="CommandGroup"/> class.
         /// </summary>
         /// <param name="commandManager">The command manager.</param>
-        /// <param name="commandGroupInfo">Th command group infos.</param>
-        public CommandGroup(SW.ICommandManager commandManager, CommandGroupInfo commandGroupInfo)
+        /// <param name="commandGroupSpec">Th command group infos.</param>
+        public CommandGroup(SW.ICommandManager commandManager, CommandGroupSpec commandGroupSpec)
         {
-            this.id = commandGroupInfo.Id;
             this.swCommandManager = commandManager;
+            this.commandGroupInfo = new CommandGroupInfo()
+            {
+                Title = commandGroupSpec.Title,
+                UserId = commandGroupSpec.UserId,
+            };
 
             var cmdGroupErr = 0;
+
             this.swCommandGroup = commandManager.CreateCommandGroup2(
-                UserID: commandGroupInfo.Id,
-                Title: commandGroupInfo.Title,
-                ToolTip: commandGroupInfo.Tooltip,
-                Hint: commandGroupInfo.Hint,
-                Position: commandGroupInfo.Position,
+                UserID: commandGroupSpec.UserId,
+                Title: commandGroupSpec.Title,
+                ToolTip: commandGroupSpec.Tooltip,
+                Hint: commandGroupSpec.Hint,
+                Position: commandGroupSpec.Position,
                 IgnorePreviousVersion: true,
                 Errors: ref cmdGroupErr);
 
-            if (!string.IsNullOrWhiteSpace(commandGroupInfo.IconsPath))
+            if (!string.IsNullOrWhiteSpace(commandGroupSpec.IconsPath))
             {
-                this.swCommandGroup.IconList = commandGroupInfo.GetIconsList();
+                this.swCommandGroup.IconList = commandGroupSpec.GetIconsList();
             }
 
-            if (!string.IsNullOrWhiteSpace(commandGroupInfo.MainIconPath))
+            if (!string.IsNullOrWhiteSpace(commandGroupSpec.MainIconPath))
             {
-                this.swCommandGroup.MainIconList = commandGroupInfo.GetMainIconList();
+                this.swCommandGroup.MainIconList = commandGroupSpec.GetMainIconList();
             }
         }
+
+        /// <inheritdoc/>
+        public ICommandGroupInfo Info => this.commandGroupInfo;
 
         /// <inheritdoc/>
         public void Dispose()
@@ -62,7 +71,7 @@ namespace SIM.SolidWorksPlugin
             }
 
             this.registeredCommands.Clear();
-            this.swCommandManager.RemoveCommandGroup2(this.id, true);
+            this.swCommandManager.RemoveCommandGroup2(this.commandGroupInfo.UserId, true);
 
             if (Marshal.IsComObject(this.swCommandGroup))
             {
@@ -86,11 +95,11 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public ICommandInfo AddCommand(CommandInfo commandInfo, ISwCommand command)
+        public ICommandInfo AddCommand(CommandSpec commandSpec, ISwCommand command)
         {
-            if (commandInfo is null)
+            if (commandSpec is null)
             {
-                throw new ArgumentNullException(nameof(commandInfo));
+                throw new ArgumentNullException(nameof(commandSpec));
             }
 
             if (command is null)
@@ -98,58 +107,73 @@ namespace SIM.SolidWorksPlugin
                 throw new ArgumentNullException(nameof(command));
             }
 
-            if (this.registeredCommands.ContainsKey(commandInfo.UserId))
+            if (this.registeredCommands.ContainsKey(commandSpec.UserId))
             {
-                throw new ArgumentException($"Command with id '{commandInfo.UserId}' is already defined.", nameof(commandInfo));
+                throw new ArgumentException($"Command with id '{commandSpec.UserId}' is already defined.", nameof(commandSpec));
             }
 
-            return this.AddCommandToCommandGroup(commandInfo, command);
+            return this.AddCommandToCommandGroup(commandSpec, command);
         }
 
         /// <summary>
         /// Activates the command group.
         /// </summary>
-        internal void Activate() => this.swCommandGroup.Activate();
-
-        private ICommandInfo AddCommandToCommandGroup(CommandInfo commandInfo, ISwCommand command)
+        internal void Activate()
         {
-            var callBackNames = this.GetCallbackNames(commandInfo);
+            this.swCommandGroup.Activate();
 
-            var cmdId = this.swCommandGroup.AddCommandItem2(
-                Name: commandInfo.Name,
-                Position: commandInfo.Position,
-                HintString: commandInfo.Hint,
-                ToolTip: commandInfo.Tooltip,
-                ImageListIndex: commandInfo.ImageIndex,
+            foreach (var command in this.registeredCommands.Values.OfType<CommandInfo>())
+            {
+                command.Id = this.swCommandGroup.CommandID[command.Id];
+            }
+
+            this.commandGroupInfo.ToolbarId = this.swCommandGroup.ToolbarId;
+        }
+
+        private ICommandInfo AddCommandToCommandGroup(CommandSpec commandSpec, ISwCommand command)
+        {
+            var callBackNames = this.GetCallbackNames(commandSpec);
+
+            int cmdId;
+
+            cmdId = this.swCommandGroup.AddCommandItem2(
+                Name: commandSpec.Name,
+                Position: commandSpec.Position,
+                HintString: commandSpec.Hint,
+                ToolTip: commandSpec.Tooltip,
+                ImageListIndex: commandSpec.ImageIndex,
                 CallbackFunction: callBackNames.OnExecute,
                 EnableMethod: callBackNames.CanExecute,
-                UserID: commandInfo.UserId,
-                MenuTBOption: commandInfo.GetSwCommandItemType_e());
+                UserID: commandSpec.UserId,
+                MenuTBOption: commandSpec.GetSwCommandItemType_e());
 
-            commandInfo.Id = cmdId;
-            commandInfo.Command = command;
+            var commandInfo = new CommandInfo(commandSpec.Name, command)
+            {
+                Id = cmdId,
+                UserId = commandSpec.UserId,
+            };
 
-            this.EnableMenuOrToolbar(commandInfo);
+            this.EnableMenuOrToolbar(commandSpec);
 
-            this.registeredCommands.Add(commandInfo.UserId, commandInfo);
+            this.registeredCommands.Add(commandSpec.UserId, commandInfo);
 
             return commandInfo;
         }
 
-        private (string OnExecute, string CanExecute) GetCallbackNames(CommandInfo commandInfo)
+        private (string OnExecute, string CanExecute) GetCallbackNames(CommandSpec commandSpec)
         {
-            return ($"{nameof(CommandHandler.OnExecute)}({commandInfo.CommandGroupId}:{commandInfo.UserId})",
-                    $"{nameof(CommandHandler.CanExecute)}({commandInfo.CommandGroupId}:{commandInfo.UserId})");
+            return ($"{nameof(CommandHandler.OnExecute)}({commandSpec.CommandGroupId}:{commandSpec.UserId})",
+                    $"{nameof(CommandHandler.CanExecute)}({commandSpec.CommandGroupId}:{commandSpec.UserId})");
         }
 
-        private void EnableMenuOrToolbar(CommandInfo info)
+        private void EnableMenuOrToolbar(CommandSpec commandSpec)
         {
-            if (info.HasMenu)
+            if (commandSpec.HasMenu)
             {
                 this.swCommandGroup.HasMenu = true;
             }
 
-            if (info.HasToolbar)
+            if (commandSpec.HasToolbar)
             {
                 this.swCommandGroup.HasToolbar = true;
             }

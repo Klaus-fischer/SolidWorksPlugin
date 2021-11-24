@@ -7,8 +7,6 @@ namespace SIM.SolidWorksPlugin
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
     using System.Runtime.InteropServices;
     using SolidWorks.Interop.sldworks;
 
@@ -34,6 +32,9 @@ namespace SIM.SolidWorksPlugin
             this.swCommandManager = swApplication.GetCommandManager(cookie);
             swApplication.SetAddinCallbackInfo2(0, this, cookie);
         }
+
+        /// <inheritdoc/>
+        public ICommandManager SwCommandManager => this.swCommandManager;
 
         /// <inheritdoc/>
         public void Dispose()
@@ -72,26 +73,36 @@ namespace SIM.SolidWorksPlugin
             return null;
         }
 
-        /// <inheritdoc/>
-        public void AddCommandGroup(CommandGroupInfo commandGroupInfo, CommandGroupBuilderDelegate factoryMethod)
+        public ICommandGroupInfo? GetCommandGroup(int commandGroupId)
         {
-            if (commandGroupInfo is null)
+            if (this.commandHandlers.TryGetValue(commandGroupId, out var handler))
             {
-                throw new ArgumentNullException(nameof(commandGroupInfo));
+                return handler.Info;
             }
 
-            if (this.commandHandlers.ContainsKey(commandGroupInfo.Id))
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public void AddCommandGroup(CommandGroupSpec commandGroupSpec, CommandGroupBuilderDelegate factoryMethod)
+        {
+            if (commandGroupSpec is null)
             {
-                throw new InvalidOperationException($"Command group with id {commandGroupInfo.Id} id already defined.");
+                throw new ArgumentNullException(nameof(commandGroupSpec));
             }
 
-            var commandHandler = new CommandGroup(this.swCommandManager, commandGroupInfo);
+            if (this.commandHandlers.ContainsKey(commandGroupSpec.UserId))
+            {
+                throw new InvalidOperationException($"Command group with id {commandGroupSpec.UserId} id already defined.");
+            }
+
+            var commandHandler = new CommandGroup(this.swCommandManager, commandGroupSpec);
 
             factoryMethod.Invoke(commandHandler);
 
             commandHandler.Activate();
 
-            this.commandHandlers.Add(commandGroupInfo.Id, commandHandler);
+            this.commandHandlers.Add(commandGroupSpec.UserId, commandHandler);
         }
 
         /// <summary>

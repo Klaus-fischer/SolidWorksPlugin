@@ -14,8 +14,8 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Adds an command group to the command handler.
         /// </summary>
-        /// <param name="commandGroupInfo">The command group info.</param>
+        /// <param name="commandGroupSpec">The command group info.</param>
         /// <param name="factoryMethod">Method to add all commands.</param>
-        void AddCommandGroup(CommandGroupInfo commandGroupInfo, CommandGroupBuilderDelegate factoryMethod);
+        void AddCommandGroup(CommandGroupSpec commandGroupSpec, CommandGroupBuilderDelegate factoryMethod);
     }
 }

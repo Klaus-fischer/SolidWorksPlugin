@@ -60,21 +60,25 @@
         {
             var cmdInvoked = false;
             var eventInvoked = false;
+            var cmdTabInvoked = false;
+            var onConnectInvoked = false;
 
             var factoryMock = new Mock<ISolidworksAddinMemberInstanceFactory>();
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var commandManagerMock = new Mock<IInternalCommandHandler>();
             var eventManagerMock = new Mock<IEventHandlerManagerInternals>();
+            var commandTabManagerMock = new Mock<IInternalCommandTabManager>();
             var swApplicationMock = new Mock<SldWorks>();
             var myCookie = 42;
 
             factoryMock.Setup(o => o.CreateInstances(It.IsAny<SldWorks>(), It.IsAny<Cookie>()))
-                .Returns((documentManagerMock.Object, commandManagerMock.Object, eventManagerMock.Object))
+                .Returns((documentManagerMock.Object, commandManagerMock.Object, eventManagerMock.Object, commandTabManagerMock.Object))
                 .Callback<SldWorks, Cookie>((swApp, cookie) =>
                 {
                     Assert.AreSame(swApplicationMock.Object, swApp);
                     Assert.AreEqual(myCookie, cookie.Value);
                 });
+
 
             var addin = new TestAddIn(factoryMock.Object);
 
@@ -84,10 +88,23 @@
                 Assert.AreSame(commandManagerMock.Object, cmd);
             };
 
+            addin.OnAddCommandTabMenu = ctm =>
+            {
+                cmdTabInvoked = true;
+                Assert.AreSame(commandTabManagerMock.Object, ctm);
+            };
+
             addin.OnRegisterEventHandler = evt =>
             {
                 eventInvoked = true;
                 Assert.AreSame(eventManagerMock.Object, evt);
+            };
+
+            addin.OnOnConnectToSW = (swAddin, cookie) =>
+            {
+                onConnectInvoked = true;
+                Assert.AreSame(swApplicationMock.Object, swAddin);
+                Assert.AreEqual(myCookie, cookie.Value);
             };
 
             var result = addin.ConnectToSW(swApplicationMock.Object, myCookie);
@@ -96,9 +113,12 @@
 
             Assert.AreSame(swApplicationMock.Object, addin.SwApplication);
             Assert.AreSame(documentManagerMock.Object, addin.DocumentManager);
+            Assert.AreSame(commandManagerMock.Object, addin.CommandHandler);
 
             Assert.IsTrue(cmdInvoked);
             Assert.IsTrue(eventInvoked);
+            Assert.IsTrue(onConnectInvoked);
+            Assert.IsTrue(cmdTabInvoked);
             factoryMock.Verify(o => o.CreateInstances(It.IsAny<SldWorks>(), It.IsAny<Cookie>()), Times.AtLeastOnce());
         }
 
@@ -109,11 +129,12 @@
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var commandManagerMock = new Mock<IInternalCommandHandler>();
             var eventManagerMock = new Mock<IEventHandlerManagerInternals>();
+            var commandTabManagerMock = new Mock<IInternalCommandTabManager>();
             var swApplicationMock = new Mock<SldWorks>();
             var myCookie = 42;
 
             factoryMock.Setup(o => o.CreateInstances(It.IsAny<SldWorks>(), It.IsAny<Cookie>()))
-                .Returns((documentManagerMock.Object, commandManagerMock.Object, eventManagerMock.Object))
+                .Returns((documentManagerMock.Object, commandManagerMock.Object, eventManagerMock.Object, commandTabManagerMock.Object))
                 .Callback<SldWorks, Cookie>((swApp, cookie) =>
                 {
                     Assert.AreSame(swApplicationMock.Object, swApp);
@@ -144,9 +165,18 @@
         [TestMethod]
         public void DisconnectEmpty_Test()
         {
+            var onDisconnectInvoked = false;
+
             var factoryMock = new Mock<ISolidworksAddinMemberInstanceFactory>();
             var addin = new TestAddIn(factoryMock.Object);
+
+            addin.OnOnDisconnectFromSW = () =>
+            {
+                onDisconnectInvoked = true;
+            };
+
             Assert.IsTrue(addin.DisconnectFromSW());
+            Assert.IsTrue(onDisconnectInvoked);
         }
 
         private class TestAddIn : SolidWorksAddin
@@ -171,6 +201,24 @@
             protected override void RegisterEventHandler(IEventHandlerManager eventHandlerManager)
             {
                 this.OnRegisterEventHandler(eventHandlerManager);
+            }
+
+            public Action<ICommandTabManager> OnAddCommandTabMenu;
+            protected override void AddCommandTabMenu(ICommandTabManager tabManager)
+            {
+                OnAddCommandTabMenu?.Invoke(tabManager);
+            }
+
+            public Action<SldWorks, Cookie> OnOnConnectToSW;
+            protected override void OnConnectToSW(SldWorks swApplication, Cookie addInCookie)
+            {
+                OnOnConnectToSW?.Invoke(swApplication, addInCookie);
+            }
+
+            public Action OnOnDisconnectFromSW;
+            protected override void OnDisconnectFromSW()
+            {
+                OnOnDisconnectFromSW?.Invoke();
             }
         }
     }

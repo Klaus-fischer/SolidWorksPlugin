@@ -21,10 +21,10 @@ namespace SIM.SolidWorksPlugin
         public static void AddCommandGroup<T>(this ICommandGroupHandler handler, CommandGroupBuilderDelegate<T> factoryMethod)
          where T : struct, Enum
         {
-            (var info, var icons) = GetIconsAndInfo(typeof(T));
+            (var info, var icons) = GetSpecAndIconsAttribute(typeof(T));
 
-            var commandGroupInfo = new CommandGroupInfo(
-                id: info.CommandGroupId,
+            var commandGroupSpec = new CommandGroupSpec(
+                userId: info.CommandGroupId,
                 title: info.Title)
             {
                 Position = info.Position,
@@ -36,11 +36,11 @@ namespace SIM.SolidWorksPlugin
 
             if (icons is not null)
             {
-                commandGroupInfo.IconsPath = icons.IconsPath;
-                commandGroupInfo.MainIconPath = icons.MainIconPath;
+                commandGroupSpec.IconsPath = icons.IconsPath;
+                commandGroupSpec.MainIconPath = icons.MainIconPath;
             }
 
-            handler.AddCommandGroup(commandGroupInfo, factoryAction);
+            handler.AddCommandGroup(commandGroupSpec, factoryAction);
         }
 
         private static void AddCommands<T>(ICommandGroupBuilder d, int commandGroupId, CommandGroupBuilderDelegate<T> factoryMethod)
@@ -51,16 +51,16 @@ namespace SIM.SolidWorksPlugin
             factoryMethod(cmdBuilder);
         }
 
-        private static (CommandGroupInfoAttribute Info, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(Type enumType)
+        internal static (CommandGroupSpecAttribute Spec, CommandGroupIconsAttribute? Icons) GetSpecAndIconsAttribute(this Type enumType)
         {
-            if (enumType.GetCustomAttribute<CommandGroupInfoAttribute>() is not CommandGroupInfoAttribute info)
+            if (enumType.GetCustomAttribute<CommandGroupSpecAttribute>() is not CommandGroupSpecAttribute spec)
             {
-                throw new ArgumentException($"Attribute {nameof(CommandGroupInfoAttribute)} is not defined on Enum '{enumType.Name}'");
+                throw new ArgumentException($"Attribute {nameof(CommandGroupSpecAttribute)} is not defined on Enum '{enumType.Name}'");
             }
 
             var icons = enumType.GetCustomAttribute<CommandGroupIconsAttribute>();
 
-            return (info, icons);
+            return (spec, icons);
         }
     }
 }

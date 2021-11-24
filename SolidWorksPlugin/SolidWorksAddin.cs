@@ -8,6 +8,7 @@ namespace SIM.SolidWorksPlugin
     using System.IO;
     using System.Reflection;
     using System.Runtime.InteropServices;
+    using Microsoft.Win32;
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swpublished;
 
@@ -26,6 +27,7 @@ namespace SIM.SolidWorksPlugin
         private IInternalCommandHandler? commandHandler;
         private IEventHandlerManagerInternals? eventHandlerManager;
         private IDocumentManagerInternals? documentManager;
+        private IInternalCommandTabManager? commandTabManager;
         private SldWorks? swApplication;
 
         /// <summary>
@@ -73,14 +75,14 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="t">Type to register.</param>
         [ComRegisterFunction]
-        public static void RegisterFunction(Type t) => SwComInterop.RegisterFunction(t);
+        public static void RegisterFunction(Type t) => SwComInterop.RegisterToKey(Registry.LocalMachine, t);
 
         /// <summary>
         /// Com unregister function for types derived from <see cref="SolidWorksAddin"/>.
         /// </summary>
         /// <param name="t">Type to unregister.</param>
         [ComUnregisterFunction]
-        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
+        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFromKey(Registry.LocalMachine, t);
 
         /// <inheritdoc/>
         public bool ConnectToSW(object ThisSW, int cookie)
@@ -90,10 +92,12 @@ namespace SIM.SolidWorksPlugin
                 this.swApplication = (SldWorks)ThisSW;
                 this.addInCookie = new Cookie(cookie);
 
-                (this.documentManager, this.commandHandler, this.eventHandlerManager) =
+                (this.documentManager, this.commandHandler, this.eventHandlerManager, this.commandTabManager) =
                     this.memberInstanceFactory.CreateInstances(this.swApplication, this.addInCookie);
 
                 this.RegisterCommands(this.commandHandler);
+
+                this.AddCommandTabMenu(this.commandTabManager);
 
                 this.RegisterEventHandler(this.eventHandlerManager);
 
@@ -115,6 +119,9 @@ namespace SIM.SolidWorksPlugin
 
             this.eventHandlerManager?.Dispose();
             this.eventHandlerManager = null;
+
+            this.commandTabManager?.Dispose();
+            this.commandTabManager = null;
 
             this.commandHandler?.Dispose();
             this.commandHandler = null;
@@ -141,6 +148,12 @@ namespace SIM.SolidWorksPlugin
         protected abstract void RegisterCommands(ICommandGroupHandler commandGroupHandler);
 
         /// <summary>
+        /// Builds the tab menu for the command manager.
+        /// </summary>
+        /// <param name="tabManager">The tab manager.</param>
+        protected abstract void AddCommandTabMenu(ICommandTabManager tabManager);
+
+        /// <summary>
         /// Register all events to the event handler manager.
         /// </summary>
         /// <param name="eventHandlerManager">The event handler manager.</param>
@@ -151,15 +164,11 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="swApplication">The SolidWorks application.</param>
         /// <param name="addInCookie">The Add-In cookie.</param>
-        protected virtual void OnConnectToSW(SldWorks swApplication, Cookie addInCookie)
-        {
-        }
+        protected abstract void OnConnectToSW(SldWorks swApplication, Cookie addInCookie);
 
         /// <summary>
         /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
         /// </summary>
-        protected virtual void OnDisconnectFromSW()
-        {
-        }
+        protected abstract void OnDisconnectFromSW();
     }
 }

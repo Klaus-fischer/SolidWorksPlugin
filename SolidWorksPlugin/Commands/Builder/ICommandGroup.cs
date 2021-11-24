@@ -12,6 +12,11 @@ namespace SIM.SolidWorksPlugin
     internal interface ICommandGroup : IDisposable
     {
         /// <summary>
+        /// Gets the info of the command group.
+        /// </summary>
+        ICommandGroupInfo Info { get; }
+
+        /// <summary>
         /// Gets the command based on its name.
         /// </summary>
         /// <param name="userId">User Id of the command.</param>

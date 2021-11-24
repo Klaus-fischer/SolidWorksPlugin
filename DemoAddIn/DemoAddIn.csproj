@@ -12,12 +12,6 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <!--<OutputPath>C:\Source\QuickDraw\QuickDraw.SIM\bin\Release\</OutputPath>
-    <OutputPath>\\zion\DemoAddin-Debug</OutputPath>
-    <DefineConstants>TRACE;QUICKDRAWMOCK</DefineConstants>-->
-  </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Icons\Icon20.png" />
     <None Remove="Icons\Icon32.png" />
@@ -75,21 +69,21 @@
 
   <ItemGroup>
     <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>c:\Program Files\Solidworks_2016\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll</HintPath>
+      <HintPath>..\_Shared\SolidWorks.Interop.sldworks.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>c:\Program Files\Solidworks_2016\SOLIDWORKS\api\redist\SolidWorks.Interop.swcommands.dll</HintPath>
+      <HintPath>..\_Shared\SolidWorks.Interop.swcommands.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>c:\Program Files\Solidworks_2016\SOLIDWORKS\api\redist\SolidWorks.Interop.swconst.dll</HintPath>
+      <HintPath>..\_Shared\SolidWorks.Interop.swconst.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swpublished">
-      <HintPath>c:\Program Files\Solidworks_2016\SOLIDWORKS\api\redist\SolidWorks.Interop.swpublished.dll</HintPath>
+      <HintPath>..\_Shared\SolidWorks.Interop.swpublished.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
   </ItemGroup>
-
+  
 </Project>
