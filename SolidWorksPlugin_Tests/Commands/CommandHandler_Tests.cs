@@ -423,6 +423,30 @@
             Assert.IsNull(cmd.GetCommand(1, 0));
         }
 
+        [TestMethod]
+        public void GetCommandGroup_Test()
+        {
+            var swApplicationMock = new Mock<SW.ISldWorks>();
+            var swCommandManagerMock = new Mock<SW.CommandManager>();
+            var documentManagerMock = new Mock<IDocumentManager>();
+            var commandHandlerMock = new Mock<ICommandGroup>();
+            var info = new CommandGroupInfo();
+
+            swApplicationMock.Setup(o => o.GetCommandManager(It.IsAny<int>())).Returns(swCommandManagerMock.Object);
+            commandHandlerMock.SetupGet(o => o.Info).Returns(info);
+
+            var cmd = new CommandHandler(swApplicationMock.Object, documentManagerMock.Object, new Cookie(42));
+
+            // get command handler dictionary
+            var dictionary = (Dictionary<int, ICommandGroup>)cmd.GetPrivateObject("commandHandlers")!;
+
+            // add mock entry to handler collection.
+            dictionary!.Add(0, commandHandlerMock.Object);
+
+            Assert.AreEqual(info, cmd.GetCommandGroup(0));
+            Assert.IsNull(cmd.GetCommandGroup(1));
+        }
+
         private delegate void CreateCommandGroup2Callback(int userId, string title, string tooltip, string hint, int position, bool ignore, ref int errors);
 
     }

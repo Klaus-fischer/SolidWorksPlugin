@@ -8,6 +8,7 @@ namespace SIM.SolidWorksPlugin
     using System.IO;
     using System.Reflection;
     using System.Runtime.InteropServices;
+    using Microsoft.Win32;
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swpublished;
 
@@ -74,14 +75,14 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="t">Type to register.</param>
         [ComRegisterFunction]
-        public static void RegisterFunction(Type t) => SwComInterop.RegisterFunction(t);
+        public static void RegisterFunction(Type t) => SwComInterop.RegisterToKey(Registry.LocalMachine, t);
 
         /// <summary>
         /// Com unregister function for types derived from <see cref="SolidWorksAddin"/>.
         /// </summary>
         /// <param name="t">Type to unregister.</param>
         [ComUnregisterFunction]
-        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
+        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFromKey(Registry.LocalMachine, t);
 
         /// <inheritdoc/>
         public bool ConnectToSW(object ThisSW, int cookie)

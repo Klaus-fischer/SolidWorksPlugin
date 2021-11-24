@@ -12,6 +12,7 @@
     public class SwComInterop_Tests
     {
         const string GUID = "4EE22462-7058-4A64-A492-0D19905BC783";
+        const string GUID2 = "48DF3A3C-D4DD-409B-AF6A-E5B737DB7A47";
         const string Name = "RegisterTestClass";
         const string Description = "Description of TestClass";
 
@@ -47,6 +48,28 @@
                 var key = rootKey.OpenSubKey(@$"SOFTWARE\SolidWorks\Addins\{{{GUID}}}");
                 Assert.IsNull(key);
 
+            }
+            finally
+            {
+                this.CleanupRegistry();
+            }
+        }
+
+        [TestMethod]
+        public void RegisterSolidWorksPlugin_Test()
+        {
+            try
+            {
+                var rootKey = MockRegistry();
+
+                SwComInterop.RegisterToKey(rootKey, typeof(SolidWorksPluginAttributeClass));
+
+                var key = rootKey.OpenSubKey(@$"SOFTWARE\SolidWorks\Addins\{{{GUID2}}}");
+
+                Assert.IsNotNull(key);
+                Assert.AreEqual("Hallo Welt", key.GetValue("Title"));
+                Assert.AreEqual("Beschreibung", key.GetValue("Description"));
+                Assert.AreEqual(1, key.GetValue("Default"));
             }
             finally
             {
@@ -98,7 +121,6 @@
             }
         }
 
-
         private RegistryKey MockRegistry(bool withoutCreationSubKeys = false)
         {
             var root = Registry.CurrentUser.OpenSubKey("SOFTWARE", true).CreateSubKey("SolidWorksPlugin_Tests");
@@ -114,6 +136,13 @@
         private void CleanupRegistry()
         {
             Registry.CurrentUser.OpenSubKey("SOFTWARE", true).DeleteSubKeyTree("SolidWorksPlugin_Tests");
+        }
+
+        [Guid(GUID2)]
+        [SolidWorksPlugin("Hallo Welt", Description = "Beschreibung", LoadAtStartupByDefault = true)]
+        private class SolidWorksPluginAttributeClass
+        {
+
         }
     }
 }

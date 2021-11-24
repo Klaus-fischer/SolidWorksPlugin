@@ -21,7 +21,7 @@ namespace SIM.SolidWorksPlugin
         public static void AddCommandGroup<T>(this ICommandGroupHandler handler, CommandGroupBuilderDelegate<T> factoryMethod)
          where T : struct, Enum
         {
-            (var info, var icons) = GetIconsAndInfo(typeof(T));
+            (var info, var icons) = GetSpecAndIconsAttribute(typeof(T));
 
             var commandGroupSpec = new CommandGroupSpec(
                 userId: info.CommandGroupId,
@@ -51,7 +51,7 @@ namespace SIM.SolidWorksPlugin
             factoryMethod(cmdBuilder);
         }
 
-        internal static (CommandGroupSpecAttribute Spec, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(this Type enumType)
+        internal static (CommandGroupSpecAttribute Spec, CommandGroupIconsAttribute? Icons) GetSpecAndIconsAttribute(this Type enumType)
         {
             if (enumType.GetCustomAttribute<CommandGroupSpecAttribute>() is not CommandGroupSpecAttribute spec)
             {

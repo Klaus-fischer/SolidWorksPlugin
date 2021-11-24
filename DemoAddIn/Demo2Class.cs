@@ -51,10 +51,10 @@ namespace SIM.DemoAddin
         }
 
         [ComRegisterFunctionAttribute]
-        public static void RegisterFunction(Type t) => SwComInterop.RegisterFunction(t);
+        public static void RegisterFunction(Type t) => SolidWorksAddin.RegisterFunction(t);
 
         [ComUnregisterFunctionAttribute]
-        public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
+        public static void UnregisterFunction(Type t) => SolidWorksAddin.UnregisterFunction(t);
 
         public Demo2Class()
         {

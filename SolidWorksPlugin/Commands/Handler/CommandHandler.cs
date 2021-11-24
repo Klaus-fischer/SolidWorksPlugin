@@ -153,16 +153,6 @@ namespace SIM.SolidWorksPlugin
             }
         }
 
-        public int FlyoutEnabled(string commandName)
-        {
-            return 1;
-        }
-
-        public void FlyoutExecute(string commandName)
-        {
-
-        }
-
         private bool TryGetCommandFromHandler(string handlerAndCommandName, [NotNullWhen(true)] out ICommandInfo? command)
         {
             if (this.SplitHandlerAndCommandName(handlerAndCommandName, out int handlerId, out int commandId))

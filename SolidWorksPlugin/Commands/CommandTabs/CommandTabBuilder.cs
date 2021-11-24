@@ -41,7 +41,7 @@ namespace SIM.SolidWorksPlugin
             this.swCommandManager = swCommandManager;
         }
 
-        private ICommandTabBox SwCommandTabBox => this.swCommandTabBoxes.Peek();
+        internal ICommandTabBox SwCommandTabBox => this.swCommandTabBoxes.Peek();
 
         /// <inheritdoc/>
         public void Dispose()
