@@ -4,7 +4,6 @@
 
 namespace SIM.SolidWorksPlugin
 {
-    using System;
     using SolidWorks.Interop.swconst;
 
     /// <summary>
@@ -18,6 +17,6 @@ namespace SIM.SolidWorksPlugin
         /// <param name="title">Title of the command tab page.</param>
         /// <param name="factoryMethod">The factory method.</param>
         /// <param name="documentTypes">The valid document types.</param>
-        void BuildCommandTab(string title, Action<ICommandTabBuilder> factoryMethod, params swDocumentTypes_e[] documentTypes);
+        void BuildCommandTab(string title, CommandTabBuilderDelegate factoryMethod, params swDocumentTypes_e[] documentTypes);
     }
 }

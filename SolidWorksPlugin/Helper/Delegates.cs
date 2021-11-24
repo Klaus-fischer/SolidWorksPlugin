@@ -18,16 +18,22 @@ namespace SIM.SolidWorksPlugin
     public delegate int DocumentEventHandler<TArgs>(ISwDocument document, TArgs args);
 
     /// <summary>
-    /// Delegate for <see cref="CommandHandler"/> factory method.
+    /// Delegate for <see cref="ICommandGroupHandler"/> factory method.
     /// </summary>
-    /// <param name="commandGroupBuilder">The command group builder.</param>
-    public delegate void CommandGroupBuilderDelegate(ICommandGroupBuilder commandGroupBuilder);
+    /// <param name="builder">The command group builder.</param>
+    public delegate void CommandGroupBuilderDelegate(ICommandGroupBuilder builder);
 
     /// <summary>
     /// Delegate for <see cref="ICommandGroupHandlerExtensions"/> factory method.
     /// </summary>
     /// <typeparam name="TArgs">Type of the command enumeration.</typeparam>
-    /// <param name="commandGroupBuilder">The command group builder.</param>
-    public delegate void CommandGroupBuilderDelegate<TArgs>(ICommandGroupBuilder<TArgs> commandGroupBuilder)
+    /// <param name="builder">The command group builder.</param>
+    public delegate void CommandGroupBuilderDelegate<TArgs>(ICommandGroupBuilder<TArgs> builder)
         where TArgs : struct, Enum;
+
+    /// <summary>
+    /// Delegate for <see cref="ICommandTabManager"/> factory method.
+    /// </summary>
+    /// <param name="builder">The command tab builder.</param>
+    public delegate void CommandTabBuilderDelegate(ICommandTabBuilder builder);
 }

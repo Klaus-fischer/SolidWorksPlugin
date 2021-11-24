@@ -46,7 +46,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void BuildCommandTab(string title, Action<ICommandTabBuilder> factoryMethod, params swDocumentTypes_e[] documentTypes)
+        public void BuildCommandTab(string title, CommandTabBuilderDelegate factoryMethod, params swDocumentTypes_e[] documentTypes)
         {
             foreach (var documentType in documentTypes)
             {

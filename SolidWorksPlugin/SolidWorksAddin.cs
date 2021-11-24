@@ -26,7 +26,7 @@ namespace SIM.SolidWorksPlugin
         private IInternalCommandHandler? commandHandler;
         private IEventHandlerManagerInternals? eventHandlerManager;
         private IDocumentManagerInternals? documentManager;
-        private IInternalCommandTabManager commandTabManager;
+        private IInternalCommandTabManager? commandTabManager;
         private SldWorks? swApplication;
 
         /// <summary>
@@ -148,6 +148,10 @@ namespace SIM.SolidWorksPlugin
         {
         }
 
+        /// <summary>
+        /// Builds the tab menu for the command manager.
+        /// </summary>
+        /// <param name="tabManager">The tab manager.</param>
         protected virtual void AddCommandTabMenu(ICommandTabManager tabManager)
         {
         }
