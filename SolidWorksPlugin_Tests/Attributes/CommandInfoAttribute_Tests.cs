@@ -9,7 +9,7 @@
         [TestMethod]
         public void Constructor()
         {
-            var ci = new CommandInfoAttribute("name");
+            var ci = new CommandSpecAttribute("name");
             Assert.IsNotNull(ci);
             Assert.AreEqual("name", ci.Name);
             Assert.IsNull(ci.Hint);
@@ -24,13 +24,13 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_Fail()
         {
-            new CommandInfoAttribute(null);
+            new CommandSpecAttribute(null);
         }
 
         [TestMethod]
         public void ConstructorAndParamterAssignment()
         {
-            var ci = new CommandInfoAttribute("name2")
+            var ci = new CommandSpecAttribute("name2")
             {
                 HasMenu = false,
                 HasToolbar = false,

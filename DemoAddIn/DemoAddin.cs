@@ -86,29 +86,29 @@ namespace SIM.DemoAddin
         }
     }
 
-    [CommandGroupInfo(1, "Main Commands", ToolTip = "Mein erstes Demo Projekt")]
+    [CommandGroupSpec(1, "Main Commands", ToolTip = "Mein erstes Demo Projekt")]
     [CommandGroupIcons(
         IconsPath = @".\Icons\Toolbar{0}.png",
         MainIconPath = @".\Icons\Icon{0}.png")]
     public enum Commands
     {
-        [CommandInfo("Trial Command", ImageIndex = 1, HasMenu = true, HasToolbar = true)]
+        [CommandSpec("Trial Command", ImageIndex = 1, HasMenu = true, HasToolbar = true)]
         TrialCommand,
 
-        [CommandInfo("Trial Command 2", ImageIndex = 2, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
+        [CommandSpec("Trial Command 2", ImageIndex = 2, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
         TrialCommand2,
     }
 
-    [CommandGroupInfo(2, "Main Commands\\Sub Commands", ToolTip = "Mein erstes Demo Projekt")]
+    [CommandGroupSpec(2, "Main Commands\\Sub Commands", ToolTip = "Mein erstes Demo Projekt")]
     [CommandGroupIcons(
     IconsPath = @".\Icons\Toolbar{0}.png",
     MainIconPath = @".\Icons\Icon{0}.png")]
     public enum SubCommands
     {
-        [CommandInfo("Trial Command", ImageIndex = 3, HasMenu = true, HasToolbar = true)]
+        [CommandSpec("Trial Command", ImageIndex = 3, HasMenu = true, HasToolbar = true)]
         TrialCommand,
 
-        [CommandInfo("Trial Command 2", ImageIndex = 4, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
+        [CommandSpec("Trial Command 2", ImageIndex = 4, HasMenu = true, HasToolbar = true, Tooltip = "MainMenu@Trial2")]
         TrialCommand2,
     }
 }

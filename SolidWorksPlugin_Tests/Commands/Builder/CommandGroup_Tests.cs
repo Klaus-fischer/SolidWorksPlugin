@@ -16,7 +16,7 @@
         [TestMethod]
         public void Constructor()
         {
-            var commandGroupInfo = new CommandGroupInfo(42, "MyCommandGroup");
+            var commandGroupInfo = new CommandGroupSpec(42, "MyCommandGroup");
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
@@ -32,8 +32,8 @@
         [TestMethod]
         public void RegisterCommand_Test()
         {
-            var commandGroupInfo = new CommandGroupInfo(155, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5 };
+            var commandGroupInfo = new CommandGroupSpec(155, "MyCommandGroup");
+            var commandInfo = new CommandSpec(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5 };
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
             var command = new RelaySwCommand(d => { });
@@ -70,8 +70,8 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(155, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5 };
+            var commandGroupInfo = new CommandGroupSpec(155, "MyCommandGroup");
+            var commandInfo = new CommandSpec(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5 };
             var command = new RelaySwCommand(d => { });
 
             swCommandManagerMock
@@ -90,8 +90,8 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(155, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5 };
+            var commandGroupInfo = new CommandGroupSpec(155, "MyCommandGroup");
+            var commandInfo = new CommandSpec(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5 };
             var command = new RelaySwCommand(d => { });
 
             swCommandManagerMock
@@ -110,8 +110,8 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(155, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5 };
+            var commandGroupInfo = new CommandGroupSpec(155, "MyCommandGroup");
+            var commandInfo = new CommandSpec(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5 };
             var command = new RelaySwCommand(d => { });
 
             swCommandManagerMock
@@ -133,8 +133,8 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(155, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasMenu = false };
+            var commandGroupInfo = new CommandGroupSpec(155, "MyCommandGroup");
+            var commandInfo = new CommandSpec(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasMenu = false };
             var command = new RelaySwCommand(d => { });
 
             swCommandManagerMock
@@ -163,8 +163,8 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(155, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasToolbar = false };
+            var commandGroupInfo = new CommandGroupSpec(155, "MyCommandGroup");
+            var commandInfo = new CommandSpec(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasToolbar = false };
             var command = new RelaySwCommand(d => { });
 
             swCommandManagerMock
@@ -192,10 +192,10 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(155, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 155) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasToolbar = false };
+            var commandGroupInfo = new CommandGroupSpec(155, "MyCommandGroup"); 
             var command = new RelaySwCommand(d => { });
-
+            var commandInfo = new CommandInfo("My Command", command) ;
+           
             swCommandManagerMock
                 .Setup(o => o.CreateCommandGroup2(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), ref It.Ref<int>.IsAny))
                 .Returns(swCommandGroupMock.Object);
@@ -216,9 +216,9 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(42, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasToolbar = false };
+            var commandGroupInfo = new CommandGroupSpec(42, "MyCommandGroup");
             var command = new RelaySwCommand(d => { });
+            var commandInfo = new CommandInfo("My Command", command);
 
             swCommandManagerMock
                 .Setup(o => o.CreateCommandGroup2(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), ref It.Ref<int>.IsAny))
@@ -247,8 +247,8 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(42, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 42) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasToolbar = false };
+            var commandGroupInfo = new CommandGroupSpec(42, "MyCommandGroup");
+            var commandInfo = new CommandSpec(15, "My Command", 42) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasToolbar = false };
 
             swCommandManagerMock
                 .Setup(o => o.CreateCommandGroup2(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), ref It.Ref<int>.IsAny))
@@ -268,8 +268,8 @@
             var swCommandManagerMock = new Mock<SW.ICommandManager>();
             var swCommandGroupMock = new Mock<SW.CommandGroup>();
 
-            var commandGroupInfo = new CommandGroupInfo(42, "MyCommandGroup");
-            var commandInfo = new CommandInfo(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasToolbar = false };
+            var commandGroupInfo = new CommandGroupSpec(42, "MyCommandGroup");
+            var commandInfo = new CommandSpec(15, "My Command", 1) { Hint = "Hint", Tooltip = "ToolTip", Position = 12, ImageIndex = 5, HasToolbar = false };
 
             swCommandManagerMock
                 .Setup(o => o.CreateCommandGroup2(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), ref It.Ref<int>.IsAny))

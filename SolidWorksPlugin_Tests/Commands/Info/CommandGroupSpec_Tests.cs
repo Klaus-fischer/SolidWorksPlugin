@@ -5,12 +5,12 @@
     using System.IO;
 
     [TestClass]
-    public class CommandGroupInfo_Tests
+    public class CommandGroupSpec_Tests
     {
         [TestMethod]
         public void Constructor()
         {
-            var cgi = new CommandGroupInfo(42, "MyCommandGroup");
+            var cgi = new CommandGroupSpec(42, "MyCommandGroup");
             Assert.IsNotNull(cgi);
             Assert.AreEqual(42, cgi.UserId);
             Assert.AreEqual("MyCommandGroup", cgi.Title);
@@ -24,13 +24,13 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_Fail()
         {
-            new CommandGroupInfo(42, null);
+            new CommandGroupSpec(42, null);
         }
 
         [TestMethod]
         public void ConstructorAndParamterAssignment()
         {
-            var cgi = new CommandGroupInfo(41, "MyCommandGrou1p")
+            var cgi = new CommandGroupSpec(41, "MyCommandGrou1p")
             {
                 Hint = "hint",
                 Position = 25,
@@ -48,7 +48,7 @@
         [TestMethod]
         public void ToolTipAndHint_Test()
         {
-            var commandInfo = new CommandGroupInfo(1, "MyCommand");
+            var commandInfo = new CommandGroupSpec(1, "MyCommand");
 
             Assert.AreEqual("MyCommand", commandInfo.Tooltip);
             Assert.AreEqual("MyCommand", commandInfo.Hint);
@@ -71,7 +71,7 @@
             var tempDir = this.GenerateTempIconFiles();
             try
             {
-                var cgi = new CommandGroupInfo(1, "MyCommand")
+                var cgi = new CommandGroupSpec(1, "MyCommand")
                 {
                     IconsPath = @$"{tempDir}\Icon{{0}}.png",
                 };
@@ -99,7 +99,7 @@
             var tempDir = this.GenerateTempIconFiles();
             try
             {
-                var cgi = new CommandGroupInfo(1, "MyCommand")
+                var cgi = new CommandGroupSpec(1, "MyCommand")
                 {
                     MainIconPath = @$"{tempDir}\MainIcon{{0}}.png",
                 };
@@ -128,7 +128,7 @@
 
             try
             {
-                var cgi = new CommandGroupInfo(1, "MyCommand")
+                var cgi = new CommandGroupSpec(1, "MyCommand")
                 {
                     IconsPath = @$".\Icon{{0}}.png",
                 };

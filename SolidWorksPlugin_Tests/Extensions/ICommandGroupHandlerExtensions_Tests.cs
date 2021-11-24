@@ -15,8 +15,8 @@
 
             var factoryMethod = new CommandGroupBuilderDelegate<Commands>(builder => { });
 
-            handler.Setup(o => o.AddCommandGroup(It.IsAny<CommandGroupInfo>(), It.IsAny<CommandGroupBuilderDelegate>()))
-                .Callback((CommandGroupInfo info, CommandGroupBuilderDelegate del) =>
+            handler.Setup(o => o.AddCommandGroup(It.IsAny<CommandGroupSpec>(), It.IsAny<CommandGroupBuilderDelegate>()))
+                .Callback((CommandGroupSpec info, CommandGroupBuilderDelegate del) =>
                 {
                     Assert.IsNotNull(info);
                     Assert.IsNotNull(del);
@@ -29,7 +29,7 @@
 
             ICommandGroupHandlerExtensions.AddCommandGroup(handler.Object, factoryMethod);
 
-            handler.Verify(o => o.AddCommandGroup(It.IsAny<CommandGroupInfo>(), It.IsAny<CommandGroupBuilderDelegate>()), Times.Once);
+            handler.Verify(o => o.AddCommandGroup(It.IsAny<CommandGroupSpec>(), It.IsAny<CommandGroupBuilderDelegate>()), Times.Once);
         }
 
         [TestMethod]
@@ -46,14 +46,14 @@
             });
 
 
-            handler.Setup(o => o.AddCommandGroup(It.IsAny<CommandGroupInfo>(), It.IsAny<CommandGroupBuilderDelegate>()))
-                .Callback((CommandGroupInfo info, CommandGroupBuilderDelegate callback) =>
+            handler.Setup(o => o.AddCommandGroup(It.IsAny<CommandGroupSpec>(), It.IsAny<CommandGroupBuilderDelegate>()))
+                .Callback((CommandGroupSpec info, CommandGroupBuilderDelegate callback) =>
                 {
                     callback.Invoke(builder.Object);
                 });
 
-            builder.Setup(o => o.AddCommand(It.IsAny<CommandInfo>(), command)).
-                Callback((CommandInfo info, ISwCommand cmd) =>
+            builder.Setup(o => o.AddCommand(It.IsAny<CommandSpec>(), command)).
+                Callback((CommandSpec info, ISwCommand cmd) =>
                 {
                     Assert.IsNotNull(info);
                     Assert.AreSame(command, cmd);
@@ -67,8 +67,8 @@
 
             ICommandGroupHandlerExtensions.AddCommandGroup(handler.Object, factoryMethod);
 
-            handler.Verify(o => o.AddCommandGroup(It.IsAny<CommandGroupInfo>(), It.IsAny<CommandGroupBuilderDelegate>()), Times.Once);
-            builder.Verify(o => o.AddCommand(It.IsAny<CommandInfo>(), command), Times.Once);
+            handler.Verify(o => o.AddCommandGroup(It.IsAny<CommandGroupSpec>(), It.IsAny<CommandGroupBuilderDelegate>()), Times.Once);
+            builder.Verify(o => o.AddCommand(It.IsAny<CommandSpec>(), command), Times.Once);
         }
 
         [TestMethod]
@@ -78,8 +78,8 @@
 
             var factoryMethod = new CommandGroupBuilderDelegate<CommandsWithIcons>(builder => { });
 
-            handler.Setup(o => o.AddCommandGroup(It.IsAny<CommandGroupInfo>(), It.IsAny<CommandGroupBuilderDelegate>()))
-                .Callback((CommandGroupInfo info, CommandGroupBuilderDelegate del) =>
+            handler.Setup(o => o.AddCommandGroup(It.IsAny<CommandGroupSpec>(), It.IsAny<CommandGroupBuilderDelegate>()))
+                .Callback((CommandGroupSpec info, CommandGroupBuilderDelegate del) =>
                 {
                     Assert.IsNotNull(info);
                     Assert.IsNotNull(del);
@@ -89,7 +89,7 @@
 
             ICommandGroupHandlerExtensions.AddCommandGroup(handler.Object, factoryMethod);
 
-            handler.Verify(o => o.AddCommandGroup(It.IsAny<CommandGroupInfo>(), It.IsAny<CommandGroupBuilderDelegate>()), Times.Once);
+            handler.Verify(o => o.AddCommandGroup(It.IsAny<CommandGroupSpec>(), It.IsAny<CommandGroupBuilderDelegate>()), Times.Once);
         }
 
         [TestMethod]
@@ -104,14 +104,14 @@
         }
 
 
-        [CommandGroupInfo(1, "Group Title", Hint = "Group Hint", Position = 15, ToolTip = "Group ToolTip")]
+        [CommandGroupSpec(1, "Group Title", Hint = "Group Hint", Position = 15, ToolTip = "Group ToolTip")]
         enum Commands
         {
-            [CommandInfo("First Command Name", Hint = "Command Hint", Tooltip = "Command ToolTip", ImageIndex = 5, Position = 15)]
+            [CommandSpec("First Command Name", Hint = "Command Hint", Tooltip = "Command ToolTip", ImageIndex = 5, Position = 15)]
             FirstCommand = 45,
         }
 
-        [CommandGroupInfo(1, "Group Title", Hint = "Group Hint", Position = 15, ToolTip = "Group ToolTip")]
+        [CommandGroupSpec(1, "Group Title", Hint = "Group Hint", Position = 15, ToolTip = "Group ToolTip")]
         [CommandGroupIcons(IconsPath = @".\Icons\Icons{0}.png", MainIconPath = @".\Icons\MainIcon{0}.png")]
         enum CommandsWithIcons
         {

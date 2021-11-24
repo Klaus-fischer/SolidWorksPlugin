@@ -9,7 +9,7 @@
         [TestMethod]
         public void Constructor()
         {
-            var cgi = new CommandGroupInfoAttribute(42, "MyCommandGroup");
+            var cgi = new CommandGroupSpecAttribute(42, "MyCommandGroup");
             Assert.IsNotNull(cgi);
             Assert.AreEqual(42, cgi.CommandGroupId);
             Assert.AreEqual("MyCommandGroup", cgi.Title);
@@ -23,13 +23,13 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_Fail()
         {
-            new CommandGroupInfoAttribute(42, null);
+            new CommandGroupSpecAttribute(42, null);
         }
 
         [TestMethod]
         public void ConstructorAndParamterAssignment()
         {
-            var cgi = new CommandGroupInfoAttribute(41, "MyCommandGrou1p")
+            var cgi = new CommandGroupSpecAttribute(41, "MyCommandGrou1p")
             {
                 Hint = "hint",
                 Position = 25,

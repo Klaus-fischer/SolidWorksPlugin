@@ -55,7 +55,7 @@
             var cmd = new CommandHandler(swApplicationMock.Object, documentManagerMock.Object, new Cookie(42));
 
             bool callbackInvoked = false;
-            cmd.AddCommandGroup(new CommandGroupInfo(1, "commands")
+            cmd.AddCommandGroup(new CommandGroupSpec(1, "commands")
             {
                 Hint = "group hint",
                 Tooltip = "group tooltip",
@@ -91,7 +91,7 @@
 
             bool callbackInvoked = false;
             cmd.AddCommandGroup(
-                new CommandGroupInfo(0, "CommandGroup")
+                new CommandGroupSpec(0, "CommandGroup")
                 {
                     IconsPath = "./icons{0}.png",
                     MainIconPath = "./mainicon{0}.png",
@@ -121,7 +121,7 @@
             var dictionary = (Dictionary<int, ICommandGroup>)cmd.GetPrivateObject("commandHandlers")!;
             dictionary.Add(0, null);
 
-            cmd.AddCommandGroup(new CommandGroupInfo(0, ""), o => { });
+            cmd.AddCommandGroup(new CommandGroupSpec(0, ""), o => { });
         }
 
         [TestMethod]
