@@ -26,6 +26,7 @@ namespace SIM.SolidWorksPlugin
         private IInternalCommandHandler? commandHandler;
         private IEventHandlerManagerInternals? eventHandlerManager;
         private IDocumentManagerInternals? documentManager;
+        private IInternalCommandTabManager commandTabManager;
         private SldWorks? swApplication;
 
         /// <summary>
@@ -82,8 +83,6 @@ namespace SIM.SolidWorksPlugin
         [ComUnregisterFunction]
         public static void UnregisterFunction(Type t) => SwComInterop.UnregisterFunction(t);
 
-        TabCommandManager? commandTabBuilder;
-
         /// <inheritdoc/>
         public bool ConnectToSW(object ThisSW, int cookie)
         {
@@ -92,14 +91,12 @@ namespace SIM.SolidWorksPlugin
                 this.swApplication = (SldWorks)ThisSW;
                 this.addInCookie = new Cookie(cookie);
 
-                (this.documentManager, this.commandHandler, this.eventHandlerManager) =
+                (this.documentManager, this.commandHandler, this.eventHandlerManager, this.commandTabManager) =
                     this.memberInstanceFactory.CreateInstances(this.swApplication, this.addInCookie);
 
                 this.RegisterCommands(this.commandHandler);
 
-                this.commandTabBuilder = new TabCommandManager(this.commandHandler.SwCommandManager);
-
-                this.AddCommandTabMenu(this.commandTabBuilder);
+                this.AddCommandTabMenu(this.commandTabManager);
 
                 this.RegisterEventHandler(this.eventHandlerManager);
 
@@ -122,8 +119,8 @@ namespace SIM.SolidWorksPlugin
             this.eventHandlerManager?.Dispose();
             this.eventHandlerManager = null;
 
-            this.commandTabBuilder?.Dispose();
-            this.commandTabBuilder = null;
+            this.commandTabManager?.Dispose();
+            this.commandTabManager = null;
 
             this.commandHandler?.Dispose();
             this.commandHandler = null;

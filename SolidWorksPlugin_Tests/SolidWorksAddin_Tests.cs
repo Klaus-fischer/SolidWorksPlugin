@@ -65,16 +65,18 @@
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var commandManagerMock = new Mock<IInternalCommandHandler>();
             var eventManagerMock = new Mock<IEventHandlerManagerInternals>();
+            var commandTabManagerMock = new Mock<IInternalCommandTabManager>();
             var swApplicationMock = new Mock<SldWorks>();
             var myCookie = 42;
 
             factoryMock.Setup(o => o.CreateInstances(It.IsAny<SldWorks>(), It.IsAny<Cookie>()))
-                .Returns((documentManagerMock.Object, commandManagerMock.Object, eventManagerMock.Object))
+                .Returns((documentManagerMock.Object, commandManagerMock.Object, eventManagerMock.Object, commandTabManagerMock.Object))
                 .Callback<SldWorks, Cookie>((swApp, cookie) =>
                 {
                     Assert.AreSame(swApplicationMock.Object, swApp);
                     Assert.AreEqual(myCookie, cookie.Value);
                 });
+
 
             var addin = new TestAddIn(factoryMock.Object);
 
@@ -109,11 +111,12 @@
             var documentManagerMock = new Mock<IDocumentManagerInternals>();
             var commandManagerMock = new Mock<IInternalCommandHandler>();
             var eventManagerMock = new Mock<IEventHandlerManagerInternals>();
+            var commandTabManagerMock = new Mock<IInternalCommandTabManager>();
             var swApplicationMock = new Mock<SldWorks>();
             var myCookie = 42;
 
             factoryMock.Setup(o => o.CreateInstances(It.IsAny<SldWorks>(), It.IsAny<Cookie>()))
-                .Returns((documentManagerMock.Object, commandManagerMock.Object, eventManagerMock.Object))
+                .Returns((documentManagerMock.Object, commandManagerMock.Object, eventManagerMock.Object, commandTabManagerMock.Object))
                 .Callback<SldWorks, Cookie>((swApp, cookie) =>
                 {
                     Assert.AreSame(swApplicationMock.Object, swApp);
