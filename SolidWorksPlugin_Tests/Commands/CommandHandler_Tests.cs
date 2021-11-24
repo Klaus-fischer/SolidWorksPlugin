@@ -69,7 +69,7 @@
             swCommandGroupMock.VerifySet(o => o.IconList = It.IsAny<string[]>(), Times.Never);
             swCommandGroupMock.VerifySet(o => o.MainIconList = It.IsAny<string[]>(), Times.Never);
 
-            Assert.AreSame(swCommandGroupMock.Object, cmd.SwCommandManager);
+            Assert.AreSame(swCommandManagerMock.Object, cmd.SwCommandManager);
         }
 
         [TestMethod]

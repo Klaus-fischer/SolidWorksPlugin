@@ -152,8 +152,11 @@ namespace SIM.SolidWorksPlugin
                 command.Execute(activeDoc);
             }
         }
-
+#if NETSTANDARD2_1
         private bool TryGetCommandFromHandler(string handlerAndCommandName, [NotNullWhen(true)] out ICommandInfo? command)
+#else
+        private bool TryGetCommandFromHandler(string handlerAndCommandName, out ICommandInfo? command)
+#endif
         {
             if (this.SplitHandlerAndCommandName(handlerAndCommandName, out int handlerId, out int commandId))
             {
@@ -180,12 +183,19 @@ namespace SIM.SolidWorksPlugin
             {
                 return false;
             }
-
+#if NETSTANDARD2_1
             if (int.TryParse(handlerAndCommandName.AsSpan(0, indexOfColon), out handlerId) &&
                 int.TryParse(handlerAndCommandName.AsSpan(indexOfColon + 1), out commandId))
             {
                 return true;
             }
+#else
+            if (int.TryParse(handlerAndCommandName.Substring(0, indexOfColon), out handlerId) &&
+                int.TryParse(handlerAndCommandName.Substring(indexOfColon + 1), out commandId))
+            {
+                return true;
+            }
+#endif
 
             return false;
         }
