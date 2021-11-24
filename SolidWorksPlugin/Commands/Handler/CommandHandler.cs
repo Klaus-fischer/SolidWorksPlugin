@@ -33,7 +33,8 @@ namespace SIM.SolidWorksPlugin
             swApplication.SetAddinCallbackInfo2(0, this, cookie);
         }
 
-        ICommandManager IInternalCommandHandler.SwCommandManager => this.swCommandManager;
+        /// <inheritdoc/>
+        public ICommandManager SwCommandManager => this.swCommandManager;
 
         /// <inheritdoc/>
         public void Dispose()
