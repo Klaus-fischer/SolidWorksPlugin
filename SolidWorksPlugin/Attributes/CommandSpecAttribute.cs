@@ -1,4 +1,4 @@
-﻿// <copyright file="CommandInfoAttribute.cs" company="SIM Automation">
+﻿// <copyright file="CommandSpecAttribute.cs" company="SIM Automation">
 // Copyright (c) SIM Automation. All rights reserved.
 // </copyright>
 
@@ -10,13 +10,13 @@ namespace SIM.SolidWorksPlugin
     /// Attribute to describe a command.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
-    public class CommandInfoAttribute : Attribute
+    public class CommandSpecAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandInfoAttribute"/> class.
+        /// Initializes a new instance of the <see cref="CommandSpecAttribute"/> class.
         /// </summary>
         /// <param name="name">Title of the command.</param>
-        public CommandInfoAttribute(string name)
+        public CommandSpecAttribute(string name)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
         }

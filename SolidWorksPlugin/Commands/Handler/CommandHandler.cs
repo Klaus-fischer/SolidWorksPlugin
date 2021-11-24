@@ -83,25 +83,25 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void AddCommandGroup(CommandGroupInfo commandGroupInfo, CommandGroupBuilderDelegate factoryMethod)
+        public void AddCommandGroup(CommandGroupSpec commandGroupSpec, CommandGroupBuilderDelegate factoryMethod)
         {
-            if (commandGroupInfo is null)
+            if (commandGroupSpec is null)
             {
-                throw new ArgumentNullException(nameof(commandGroupInfo));
+                throw new ArgumentNullException(nameof(commandGroupSpec));
             }
 
-            if (this.commandHandlers.ContainsKey(commandGroupInfo.UserId))
+            if (this.commandHandlers.ContainsKey(commandGroupSpec.UserId))
             {
-                throw new InvalidOperationException($"Command group with id {commandGroupInfo.UserId} id already defined.");
+                throw new InvalidOperationException($"Command group with id {commandGroupSpec.UserId} id already defined.");
             }
 
-            var commandHandler = new CommandGroup(this.swCommandManager, commandGroupInfo);
+            var commandHandler = new CommandGroup(this.swCommandManager, commandGroupSpec);
 
             factoryMethod.Invoke(commandHandler);
 
             commandHandler.Activate();
 
-            this.commandHandlers.Add(commandGroupInfo.UserId, commandHandler);
+            this.commandHandlers.Add(commandGroupSpec.UserId, commandHandler);
         }
 
         /// <summary>

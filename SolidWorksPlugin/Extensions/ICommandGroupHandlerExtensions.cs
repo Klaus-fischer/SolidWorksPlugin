@@ -23,7 +23,7 @@ namespace SIM.SolidWorksPlugin
         {
             (var info, var icons) = GetIconsAndInfo(typeof(T));
 
-            var commandGroupInfo = new CommandGroupInfo(
+            var commandGroupSpec = new CommandGroupSpec(
                 userId: info.CommandGroupId,
                 title: info.Title)
             {
@@ -36,11 +36,11 @@ namespace SIM.SolidWorksPlugin
 
             if (icons is not null)
             {
-                commandGroupInfo.IconsPath = icons.IconsPath;
-                commandGroupInfo.MainIconPath = icons.MainIconPath;
+                commandGroupSpec.IconsPath = icons.IconsPath;
+                commandGroupSpec.MainIconPath = icons.MainIconPath;
             }
 
-            handler.AddCommandGroup(commandGroupInfo, factoryAction);
+            handler.AddCommandGroup(commandGroupSpec, factoryAction);
         }
 
         private static void AddCommands<T>(ICommandGroupBuilder d, int commandGroupId, CommandGroupBuilderDelegate<T> factoryMethod)
@@ -51,16 +51,16 @@ namespace SIM.SolidWorksPlugin
             factoryMethod(cmdBuilder);
         }
 
-        internal static (CommandGroupInfoAttribute Info, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(this Type enumType)
+        internal static (CommandGroupSpecAttribute Spec, CommandGroupIconsAttribute? Icons) GetIconsAndInfo(this Type enumType)
         {
-            if (enumType.GetCustomAttribute<CommandGroupInfoAttribute>() is not CommandGroupInfoAttribute info)
+            if (enumType.GetCustomAttribute<CommandGroupSpecAttribute>() is not CommandGroupSpecAttribute spec)
             {
-                throw new ArgumentException($"Attribute {nameof(CommandGroupInfoAttribute)} is not defined on Enum '{enumType.Name}'");
+                throw new ArgumentException($"Attribute {nameof(CommandGroupSpecAttribute)} is not defined on Enum '{enumType.Name}'");
             }
 
             var icons = enumType.GetCustomAttribute<CommandGroupIconsAttribute>();
 
-            return (info, icons);
+            return (spec, icons);
         }
     }
 }

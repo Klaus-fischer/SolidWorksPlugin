@@ -10,6 +10,11 @@ namespace SIM.SolidWorksPlugin
     public interface ICommandGroupInfo
     {
         /// <summary>
+        /// Gets the title of the command group.
+        /// </summary>
+        string Title { get; }
+
+        /// <summary>
         /// Gets the unique user id of the command group.
         /// </summary>
         int UserId { get; }

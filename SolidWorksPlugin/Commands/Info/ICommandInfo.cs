@@ -15,6 +15,11 @@ namespace SIM.SolidWorksPlugin
         int UserId { get; }
 
         /// <summary>
+        /// Gets the name of the command.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
         /// Gets the command of this entry.
         /// </summary>
         ISwCommand Command { get; }
