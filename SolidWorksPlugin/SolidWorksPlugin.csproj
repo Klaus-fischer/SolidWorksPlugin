@@ -7,10 +7,15 @@
     <RootNamespace>SIM.SolidWorksPlugin</RootNamespace>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <PackageId>SIM.SolidWorksPlugin</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Klaus Fischer</Authors>
+    <Company>SIM-Automation</Company>
+    <Description>Library for add-ins for SolidWorks</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <DefineConstants>DEBUG;TRACE;DEPENDENCY_INJECTION</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,6 +24,7 @@
 
   <ItemGroup>
     <AdditionalFiles Include="..\_Shared\stylecop.json" Link="stylecop.json" />
+    <None Remove="SIM-SolidWorksPlugin.xml" />
   </ItemGroup>
 
   <ItemGroup>
