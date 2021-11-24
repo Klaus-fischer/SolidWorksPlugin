@@ -58,6 +58,10 @@ namespace SIM.DemoAddin
         {
         }
 
+        protected override void OnDisconnectFromSW()
+        {
+        }
+
         private void BuildCommands(ICommandGroupBuilder<Commands> commandHandler)
         {
             commandHandler.AddCommand(
@@ -84,6 +88,8 @@ namespace SIM.DemoAddin
         {
             this.SwApplication.SendMsgToUser2("Executed", (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
         }
+
+
     }
 
     [CommandGroupSpec(1, "Main Commands", ToolTip = "Mein erstes Demo Projekt")]

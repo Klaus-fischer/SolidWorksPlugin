@@ -35,6 +35,7 @@
                 Hint = "hint",
                 Position = 25,
                 Tooltip = "tooltip",
+                ToolbarId = 21, 
             };
 
             Assert.IsNotNull(cgi);
@@ -43,6 +44,7 @@
             Assert.AreEqual("hint", cgi.Hint);
             Assert.AreEqual("tooltip", cgi.Tooltip);
             Assert.AreEqual(25, cgi.Position);
+            Assert.AreEqual(21, cgi.ToolbarId);
         }
 
         [TestMethod]

@@ -144,40 +144,30 @@ namespace SIM.SolidWorksPlugin
         /// Register all command groups to the command group manager.
         /// </summary>
         /// <param name="commandGroupHandler">The command group manager.</param>
-        protected virtual void RegisterCommands(ICommandGroupHandler commandGroupHandler)
-        {
-        }
+        protected abstract void RegisterCommands(ICommandGroupHandler commandGroupHandler);
 
         /// <summary>
         /// Builds the tab menu for the command manager.
         /// </summary>
         /// <param name="tabManager">The tab manager.</param>
-        protected virtual void AddCommandTabMenu(ICommandTabManager tabManager)
-        {
-        }
+        protected abstract void AddCommandTabMenu(ICommandTabManager tabManager);
 
         /// <summary>
         /// Register all events to the event handler manager.
         /// </summary>
         /// <param name="eventHandlerManager">The event handler manager.</param>
-        protected virtual void RegisterEventHandler(IEventHandlerManager eventHandlerManager)
-        {
-        }
+        protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
 
         /// <summary>
         /// Callback for user methods called at the end of <see cref="ConnectToSW(object, int)"/>.
         /// </summary>
         /// <param name="swApplication">The SolidWorks application.</param>
         /// <param name="addInCookie">The Add-In cookie.</param>
-        protected virtual void OnConnectToSW(SldWorks swApplication, Cookie addInCookie)
-        {
-        }
+        protected abstract void OnConnectToSW(SldWorks swApplication, Cookie addInCookie);
 
         /// <summary>
         /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
         /// </summary>
-        protected virtual void OnDisconnectFromSW()
-        {
-        }
+        protected abstract void OnDisconnectFromSW();
     }
 }
