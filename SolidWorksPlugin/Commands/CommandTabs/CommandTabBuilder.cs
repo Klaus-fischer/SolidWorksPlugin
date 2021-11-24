@@ -17,6 +17,7 @@ namespace SIM.SolidWorksPlugin
     internal class CommandTabBuilder : ICommandTabBuilder, IDisposable
     {
         private readonly ICommandManager swCommandManager;
+        private readonly ICommandHandler commandHandler;
         private readonly Stack<CommandTabBox> swCommandTabBoxes = new();
         private CommandTab swCommandTab;
 
@@ -25,21 +26,26 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandTabBuilder"/> class.
         /// </summary>
-        /// <param name="swCommandManager">The command manager.</param>
+        /// <param name="commandHandler">The assigned command handler.</param>
         /// <param name="title">The title of the tab.</param>
         /// <param name="swDocumentType">The document type.</param>
-        public CommandTabBuilder(ICommandManager swCommandManager, string title, swDocumentTypes_e swDocumentType)
+        public CommandTabBuilder(IInternalCommandHandler commandHandler, string title, swDocumentTypes_e swDocumentType)
         {
-            if (swCommandManager.GetCommandTab((int)swDocumentType, title) is CommandTab commandTab)
+            this.commandHandler = commandHandler;
+            this.swCommandManager = commandHandler.SwCommandManager;
+
+            if (this.swCommandManager.GetCommandTab((int)swDocumentType, title) is CommandTab commandTab)
             {
-                swCommandManager.RemoveCommandTab(commandTab);
+                this.swCommandManager.RemoveCommandTab(commandTab);
             }
 
-            this.swCommandTab = swCommandManager.AddCommandTab((int)swDocumentType, title);
+            this.swCommandTab = this.swCommandManager.AddCommandTab((int)swDocumentType, title);
 
             this.swCommandTabBoxes.Push(this.swCommandTab.AddCommandTabBox());
-            this.swCommandManager = swCommandManager;
         }
+
+        /// <inheritdoc/>
+        ICommandHandler ICommandTabBuilder.CommandHandler => this.commandHandler;
 
         internal ICommandTabBox SwCommandTabBox => this.swCommandTabBoxes.Peek();
 
@@ -88,7 +94,7 @@ namespace SIM.SolidWorksPlugin
         public void AddFlyout(
             ICommandGroupInfo commandGroupInfo,
             swCommandTabButtonTextDisplay_e textDisplay,
-            swCommandTabButtonFlyoutStyle_e flyoutStyle)
+            swCommandTabButtonFlyoutStyle_e flyoutStyle = swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout)
         {
             int commandId = commandGroupInfo.ToolbarId;
             this.SwCommandTabBox.AddCommands(new int[] { commandId }, new int[] { (int)textDisplay | (int)flyoutStyle });

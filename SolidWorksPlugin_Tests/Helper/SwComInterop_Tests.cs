@@ -78,6 +78,28 @@
         }
 
         [TestMethod]
+        public void RegisterSolidWorksPlugin2_Test()
+        {
+            try
+            {
+                var rootKey = MockRegistry();
+
+                SwComInterop.RegisterToKey(rootKey, typeof(SecondSolidWorksPluginAttributeClass));
+
+                var key = rootKey.OpenSubKey(@$"SOFTWARE\SolidWorks\Addins\{{{GUID2}}}");
+
+                Assert.IsNotNull(key);
+                Assert.AreEqual("Hallo Welt", key.GetValue("Title"));
+                Assert.AreEqual(Description, key.GetValue("Description"));
+                Assert.AreEqual(0, key.GetValue("Default"));
+            }
+            finally
+            {
+                this.CleanupRegistry();
+            }
+        }
+
+        [TestMethod]
         public void Unregister_Test()
         {
             try
@@ -141,6 +163,14 @@
         [Guid(GUID2)]
         [SolidWorksPlugin("Hallo Welt", Description = "Beschreibung", LoadAtStartupByDefault = true)]
         private class SolidWorksPluginAttributeClass
+        {
+
+        }
+
+        [Guid(GUID2)]
+        [SolidWorksPlugin("Hallo Welt", LoadAtStartupByDefault = false)]
+        [System.ComponentModel.Description(Description)]
+        private class SecondSolidWorksPluginAttributeClass
         {
 
         }

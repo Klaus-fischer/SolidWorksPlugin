@@ -20,15 +20,20 @@
             var commandManagerMock = new Mock<ICommandManager>();
             var commandTabMock = new Mock<CommandTab>();
 
+            var commandHandler = new Mock<IInternalCommandHandler>();
+            commandHandler.SetupGet(o => o.SwCommandManager).Returns(commandManagerMock.Object);
+
             commandManagerMock.Setup(o => o.GetCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"));
             commandManagerMock.Setup(o => o.AddCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"))
                 .Returns(commandTabMock.Object);
 
             commandTabMock.Setup(o => o.AddCommandTabBox());
 
-            var ctb = new CommandTabBuilder(commandManagerMock.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
+            var ctb = new CommandTabBuilder(commandHandler.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
 
             Assert.IsNotNull(ctb);
+
+            Assert.AreSame(commandHandler.Object, ((ICommandTabBuilder)ctb).CommandHandler);
 
             commandManagerMock.Verify(o => o.GetCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"), Times.AtLeastOnce);
             commandManagerMock.Verify(o => o.AddCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"), Times.AtLeastOnce);
@@ -41,6 +46,9 @@
             var commandManagerMock = new Mock<ICommandManager>();
             var commandTabMock = new Mock<CommandTab>();
             var commandTabBoxMock = new Mock<CommandTabBox>();
+
+            var commandHandler = new Mock<IInternalCommandHandler>();
+            commandHandler.SetupGet(o => o.SwCommandManager).Returns(commandManagerMock.Object);
 
             commandManagerMock.Setup(o => o.GetCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"))
                 .Returns(commandTabMock.Object);
@@ -55,7 +63,7 @@
 
             commandTabMock.Setup(o => o.AddCommandTabBox()).Returns(commandTabBoxMock.Object);
 
-            var ctb = new CommandTabBuilder(commandManagerMock.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
+            var ctb = new CommandTabBuilder(commandHandler.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
 
             Assert.IsNotNull(ctb);
 
@@ -77,12 +85,15 @@
             var commandTabBoxMock = new Mock<CommandTabBox>();
             var command = new RelaySwCommand(d => { });
 
+            var commandHandler = new Mock<IInternalCommandHandler>();
+            commandHandler.SetupGet(o => o.SwCommandManager).Returns(commandManagerMock.Object);
+
             commandManagerMock.Setup(o => o.AddCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"))
                 .Returns(commandTabMock.Object);
 
             commandTabMock.Setup(o => o.AddCommandTabBox()).Returns(commandTabBoxMock.Object);
 
-            var ctb = new CommandTabBuilder(commandManagerMock.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
+            var ctb = new CommandTabBuilder(commandHandler.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
 
             commandTabBoxMock.Setup(o => o.AddCommands(It.IsAny<object>(), It.IsAny<object>()))
                 .Callback<object, object>((commandIds, displayStyles) =>
@@ -109,12 +120,15 @@
             var commandTabBoxMock = new Mock<CommandTabBox>();
             var command = new RelaySwCommand(d => { });
 
+            var commandHandler = new Mock<IInternalCommandHandler>();
+            commandHandler.SetupGet(o => o.SwCommandManager).Returns(commandManagerMock.Object);
+
             commandManagerMock.Setup(o => o.AddCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"))
                 .Returns(commandTabMock.Object);
 
             commandTabMock.Setup(o => o.AddCommandTabBox()).Returns(commandTabBoxMock.Object);
 
-            var ctb = new CommandTabBuilder(commandManagerMock.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
+            var ctb = new CommandTabBuilder(commandHandler.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
 
             // 1x is default in ctor.
             commandTabMock.Verify(o => o.AddCommandTabBox(), Times.Once);
@@ -134,12 +148,15 @@
             var commandTabBoxMock = new Mock<CommandTabBox>();
             var command = new RelaySwCommand(d => { });
 
+            var commandHandler = new Mock<IInternalCommandHandler>();
+            commandHandler.SetupGet(o => o.SwCommandManager).Returns(commandManagerMock.Object);
+
             commandManagerMock.Setup(o => o.AddCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"))
                 .Returns(commandTabMock.Object);
 
             commandTabMock.Setup(o => o.AddCommandTabBox()).Returns(commandTabBoxMock.Object);
 
-            var ctb = new CommandTabBuilder(commandManagerMock.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
+            var ctb = new CommandTabBuilder(commandHandler.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
 
             commandTabBoxMock.Setup(o => o.AddCommands(It.IsAny<object>(), It.IsAny<object>()))
                 .Callback<object, object>((commandIds, displayStyles) =>
@@ -163,13 +180,15 @@
             commandTabBoxMock.Verify(o => o.AddCommands(It.IsAny<object>(), It.IsAny<object>()), Times.Once);
         }
 
-
         [TestMethod]
         public void Dispose_Test()
         {
             var commandManagerMock = new Mock<ICommandManager>();
             var commandTabMock = new Mock<CommandTab>();
             var commandTabBoxMock = new Mock<CommandTabBox>();
+
+            var commandHandler = new Mock<IInternalCommandHandler>();
+            commandHandler.SetupGet(o => o.SwCommandManager).Returns(commandManagerMock.Object);
 
             commandManagerMock.Setup(o => o.RemoveCommandTab(commandTabMock.Object));
             commandManagerMock.Setup(o => o.GetCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"));
@@ -179,7 +198,7 @@
             commandTabMock.Setup(o => o.AddCommandTabBox()).Returns(commandTabBoxMock.Object);
             commandTabMock.Setup(o => o.RemoveCommandTabBox(commandTabBoxMock.Object));
 
-            var ctb = new CommandTabBuilder(commandManagerMock.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
+            var ctb = new CommandTabBuilder(commandHandler.Object, "MainTitle", swDocumentTypes_e.swDocASSEMBLY);
 
             // to add a new commandTabbox (the same instance in here);
             ctb.AddSpacer();

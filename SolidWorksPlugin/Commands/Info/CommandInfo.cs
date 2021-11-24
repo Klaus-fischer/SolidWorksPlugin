@@ -18,8 +18,8 @@ namespace SIM.SolidWorksPlugin
         /// <param name="command">The command.</param>
         public CommandInfo(string name, ISwCommand command)
         {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.Command = command ?? throw new ArgumentNullException(nameof(command));
+            this.Name = name;
+            this.Command = command;
         }
 
         /// <inheritdoc/>

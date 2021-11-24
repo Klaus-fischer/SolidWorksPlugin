@@ -13,13 +13,13 @@
         [TestMethod]
         public void Constructor()
         {
-            var commandManagerMock = new Mock<ICommandManager>();
+            var commandManagerMock = new Mock<IInternalCommandHandler>();
 
             var tcm = new TabCommandManager(commandManagerMock.Object);
 
             Assert.IsNotNull(tcm);
 
-            Assert.AreSame(commandManagerMock.Object, tcm.GetPrivateObject("swCommandManager"));
+            Assert.AreSame(commandManagerMock.Object, tcm.GetPrivateObject("commandHandler"));
         }
 
         [TestMethod]
@@ -36,13 +36,16 @@
             var commandManagerMock = new Mock<ICommandManager>();
             var commandTabMock = new Mock<CommandTab>();
 
+            var commandHandler = new Mock<IInternalCommandHandler>();
+            commandHandler.SetupGet(o => o.SwCommandManager).Returns(commandManagerMock.Object);
+
             commandManagerMock.Setup(o => o.GetCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"));
             commandManagerMock.Setup(o => o.AddCommandTab((int)swDocumentTypes_e.swDocASSEMBLY, "MainTitle"))
                 .Returns(commandTabMock.Object);
 
             commandTabMock.Setup(o => o.AddCommandTabBox());
 
-            var tcm = new TabCommandManager(commandManagerMock.Object);
+            var tcm = new TabCommandManager(commandHandler.Object);
 
             tcm.BuildCommandTab("MainTitle", factoryMethod, swDocumentTypes_e.swDocASSEMBLY);
 
@@ -58,9 +61,12 @@
         {
             var commandManagerMock = new Mock<ICommandManager>();
             var disposableMock = new Mock<IDisposable>();
+
+            var commandHandler = new Mock<IInternalCommandHandler>();
+            commandHandler.SetupGet(o => o.SwCommandManager).Returns(commandManagerMock.Object);
             disposableMock.Setup(o => o.Dispose());
 
-            var tcm = new TabCommandManager(commandManagerMock.Object);
+            var tcm = new TabCommandManager(commandHandler.Object);
 
             var collection = (Collection<IDisposable>)tcm.GetPrivateObject("disposables")!;
             collection.Add(disposableMock.Object);

@@ -12,6 +12,11 @@ namespace SIM.SolidWorksPlugin
     public interface ICommandTabBuilder
     {
         /// <summary>
+        /// Gets the assigned command handler.
+        /// </summary>
+        internal ICommandHandler CommandHandler { get; }
+
+        /// <summary>
         /// Adds a command to the current tab page.
         /// </summary>
         /// <param name="commandInfo">The command info.</param>

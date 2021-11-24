@@ -28,7 +28,7 @@ namespace SIM.SolidWorksPlugin
             var documentManager = new DocumentManager(swApplication, documentFactory, iModelDocComparer);
             var commandHandler = new CommandHandler(swApplication, documentManager, cookie);
             var eventHandlerManager = new EventHandlerManager(swApplication, documentManager);
-            var commandTabManager = new TabCommandManager(commandHandler.SwCommandManager);
+            var commandTabManager = new TabCommandManager(commandHandler);
 
             return (documentManager, commandHandler, eventHandlerManager, commandTabManager);
         }

@@ -15,17 +15,17 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     internal class TabCommandManager : IInternalCommandTabManager, ICommandTabManager, IDisposable
     {
-        private readonly ICommandManager swCommandManager;
+        private readonly IInternalCommandHandler commandHandler;
         private readonly Collection<IDisposable> disposables = new();
         private bool disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TabCommandManager"/> class.
         /// </summary>
-        /// <param name="swCommandManager">The command manager.</param>
-        public TabCommandManager(ICommandManager swCommandManager)
+        /// <param name="commandHandler">The command handler.</param>
+        public TabCommandManager(IInternalCommandHandler commandHandler)
         {
-            this.swCommandManager = swCommandManager;
+            this.commandHandler = commandHandler;
         }
 
         /// <inheritdoc/>
@@ -50,7 +50,7 @@ namespace SIM.SolidWorksPlugin
         {
             foreach (var documentType in documentTypes)
             {
-                var cmdTabBuilder = new CommandTabBuilder(this.swCommandManager, title, documentType);
+                var cmdTabBuilder = new CommandTabBuilder(this.commandHandler, title, documentType);
 
                 factoryMethod(cmdTabBuilder);
 
