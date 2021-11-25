@@ -31,6 +31,7 @@ namespace SIM.SolidWorksPlugin
             var commandTabManager = new TabCommandManager(commandHandler);
 
             documentFactory.OpenDocumentCallBack = s => documentManager.OpenDocument(s, out _);
+            documentFactory.GetDocumentCallBack = documentManager.GetDocument;
 
             return (documentManager, commandHandler, eventHandlerManager, commandTabManager);
         }
