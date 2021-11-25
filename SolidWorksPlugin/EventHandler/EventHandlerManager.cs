@@ -47,7 +47,7 @@ namespace SIM.SolidWorksPlugin
         public void RegisterDocumentEventHandler(IDocumentEventHandler eventHandler)
         {
             // attach events to all open documents.
-            foreach (var document in this.documentManager.GetOpenDocuments())
+            foreach (var document in this.documentManager.GetOpenDocuments(true))
             {
                 eventHandler.AttachDocumentEvents(document);
             }
@@ -68,7 +68,7 @@ namespace SIM.SolidWorksPlugin
             this.swApplication.FileNewNotify2 += this.OnNewFile;
             this.swApplication.FileOpenPostNotify += this.OnFileOpen;
 
-            foreach (var document in this.documentManager.GetOpenDocuments())
+            foreach (var document in this.documentManager.GetOpenDocuments(true))
             {
                 document.OnDestroy += this.DetachEventsFromDocument;
             }
@@ -138,7 +138,7 @@ namespace SIM.SolidWorksPlugin
 
             this.solidWorksEventHandlers.Clear();
 
-            foreach (var document in this.documentManager.GetOpenDocuments())
+            foreach (var document in this.documentManager.GetOpenDocuments(true))
             {
                 foreach (var docEventHandler in this.documentEventHandlers)
                 {

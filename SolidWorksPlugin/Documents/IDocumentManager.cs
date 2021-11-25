@@ -5,6 +5,8 @@
 namespace SIM.SolidWorksPlugin
 {
     using System;
+    using System.Collections.Generic;
+    using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swconst;
 
     /// <summary>
@@ -24,6 +26,13 @@ namespace SIM.SolidWorksPlugin
         /// <param name="model">Model of the document.</param>
         /// <returns>The document of the model.</returns>
         ISwDocument GetDocument(IModelDoc2 model);
+
+        /// <summary>
+        /// Enumerates over all open documents.
+        /// </summary>
+        /// <param name="all">If true every known document reference will be returned.</param>
+        /// <returns>Collection of open documents.</returns>
+        IEnumerable<ISwDocument> GetOpenDocuments(bool all = false);
 
         /// <summary>
         /// Opens the document from file system.

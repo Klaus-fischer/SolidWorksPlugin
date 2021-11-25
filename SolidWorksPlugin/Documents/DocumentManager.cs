@@ -148,14 +148,6 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public IEnumerable<ISwDocument> GetOpenDocuments() => this.openDocuments.Values;
-
-        /// <inheritdoc/>
-        public void DisposeDocument(ISwDocument swDocument)
-        {
-            this.openDocuments.Remove(swDocument.Model);
-        }
-
         public ISwDocument GetDocument(IModelDoc2 model)
         {
             if (this.openDocuments.TryGetValue(model, out var document))
@@ -168,6 +160,32 @@ namespace SIM.SolidWorksPlugin
             this.OnDocumentAdded?.Invoke(this, result);
 
             return result;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<ISwDocument> GetOpenDocuments()
+            => this.GetOpenDocuments(true);
+
+        /// <inheritdoc/>
+        public IEnumerable<ISwDocument> GetOpenDocuments(bool all)
+            => all ? this.openDocuments.Values : this.GetApplicationDocuments();
+
+        /// <inheritdoc/>
+        public void DisposeDocument(ISwDocument swDocument)
+        {
+            this.openDocuments.Remove(swDocument.Model);
+        }
+
+        private IEnumerable<ISwDocument> GetApplicationDocuments()
+        {
+            var swDocument = this.swApplication.GetFirstDocument();
+
+            while (swDocument is IModelDoc2 modelDocument)
+            {
+                yield return this.GetDocument(modelDocument);
+
+                swDocument = modelDocument.GetNext();
+            }
         }
 
         private IModelDoc2 OpenDocument(string filename, swOpenDocOptions_e options)

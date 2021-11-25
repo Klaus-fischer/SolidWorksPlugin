@@ -29,11 +29,5 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <returns>The collection of all unknown documents.</returns>
         IEnumerable<ISwDocument> GetAllUnknownDocuments();
-
-        /// <summary>
-        /// Enumerates all open documents.
-        /// </summary>
-        /// <returns>Collection of open documents.</returns>
-        IEnumerable<ISwDocument> GetOpenDocuments();
     }
 }
