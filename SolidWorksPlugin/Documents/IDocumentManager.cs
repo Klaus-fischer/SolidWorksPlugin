@@ -32,7 +32,7 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="all">If true every known document reference will be returned.</param>
         /// <returns>Collection of open documents.</returns>
-        IEnumerable<ISwDocument> GetOpenDocuments(bool all = false);
+        IEnumerable<ISwDocument> GetOpenDocuments(bool all);
 
         /// <summary>
         /// Opens the document from file system.

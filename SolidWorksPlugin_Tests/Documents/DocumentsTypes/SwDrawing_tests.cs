@@ -11,11 +11,30 @@
     {
         public interface DrwDoc : DrawingDoc, IModelDoc2 { };
 
+        private Func<string, ISwDocument>? callback = null;
+
         [TestMethod]
         public void Constructor()
         {
             var drwModel = new Mock<DrwDoc>();
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
+            Assert.IsNotNull(drw);
+            Assert.AreEqual(drwModel.Object, drw.Model);
+            Assert.AreEqual(drwModel.Object, drw.Drawing);
+        }
+
+        [TestMethod]
+        public void CallbackInvocationTest()
+        {
+            bool invoked = false;
+            Func<string, ISwDocument> c = s =>
+            {
+                invoked = true;
+                return null;
+            };
+
+            var drwModel = new Mock<DrwDoc>();
+            var drw = new SwDrawing(drwModel.Object, c);
             Assert.IsNotNull(drw);
             Assert.AreEqual(drwModel.Object, drw.Model);
             Assert.AreEqual(drwModel.Object, drw.Drawing);
@@ -27,7 +46,7 @@
             bool invoked = false;
             var drwModel = new Mock<DrwDoc>();
 
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
             drw.OnFileSave += (s, a) =>
             {
                 invoked = true;
@@ -46,7 +65,7 @@
         {
             bool invoked = false;
             var drwModel = new Mock<DrwDoc>();
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
 
             drw.OnPreviewSaveAs += (s, a) =>
             {
@@ -66,7 +85,7 @@
         {
             bool invoked = false;
             var drwModel = new Mock<DrwDoc>();
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
             drw.OnPostSaveAs += (s, a) =>
             {
                 invoked = true;
@@ -87,7 +106,7 @@
             bool invoked = false;
 
             var drwModel = new Mock<DrwDoc>();
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
             drw.OnPropertyChanged += (s, a) =>
             {
                 invoked = true;
@@ -110,7 +129,7 @@
         {
             bool invoked = false;
             var drwModel = new Mock<DrwDoc>();
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
             drw.OnPropertyChanged += (s, a) =>
             {
                 invoked = true;
@@ -133,7 +152,7 @@
         {
             bool invoked = false;
             var drwModel = new Mock<DrwDoc>();
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
             drw.OnPropertyChanged += (s, a) =>
             {
                 invoked = true;
@@ -157,7 +176,7 @@
         {
             bool invoked = false;
             var drwModel = new Mock<DrwDoc>();
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
             drw.OnDestroy += (s, a) =>
             {
                 invoked = true;
@@ -177,7 +196,7 @@
             bool invoked = false;
             var drwModel = new Mock<DrwDoc>();
 
-            var drw = new SwDrawing(drwModel.Object);
+            var drw = new SwDrawing(drwModel.Object, this.callback);
 
             drwModel.Raise(o => o.FileSaveNotify += null, "filename");
             drwModel.Raise(o => o.FileSaveAsNotify2 += null, "filename");
