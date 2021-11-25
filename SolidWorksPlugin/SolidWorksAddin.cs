@@ -10,6 +10,7 @@ namespace SIM.SolidWorksPlugin
     using System.Runtime.InteropServices;
     using Microsoft.Win32;
     using SolidWorks.Interop.sldworks;
+    using SolidWorks.Interop.swcommands;
     using SolidWorks.Interop.swconst;
     using SolidWorks.Interop.swpublished;
 
@@ -75,6 +76,11 @@ namespace SIM.SolidWorksPlugin
         /// Gets the default callback to send messages by calling <see cref="ISldWorks.SendMsgToUser2(string, int, int)"/>.
         /// </summary>
         public MessageToUserCallback SendMessage => this.SendMessageToUser;
+
+        /// <summary>
+        /// Gets the default callback to run a solid works command.
+        /// </summary>
+        public RunCommandDelegate RunCommand => this.RunSolidWorksCommand;
 
         /// <summary>
         /// Com register function for types derived from <see cref="SolidWorksAddin"/>.
@@ -184,5 +190,8 @@ namespace SIM.SolidWorksPlugin
         {
             return (swMessageBoxResult_e)this.SwApplication.SendMsgToUser2(message, (int)icon, (int)buttons);
         }
+
+        private bool RunSolidWorksCommand(swCommands_e command, string title)
+            => this.SwApplication.RunCommand((int)command, title);
     }
 }

@@ -6,6 +6,7 @@
 
 namespace SIM.SolidWorksPlugin
 {
+    using SolidWorks.Interop.swcommands;
     using SolidWorks.Interop.swconst;
     using System;
 
@@ -49,4 +50,12 @@ namespace SIM.SolidWorksPlugin
         string message,
         swMessageBoxIcon_e icon = swMessageBoxIcon_e.swMbInformation,
         swMessageBoxBtn_e buttons = swMessageBoxBtn_e.swMbOk);
+
+    /// <summary>
+    /// Defines a delegate to run a command on SolidWorks application.
+    /// </summary>
+    /// <param name="command">SOLIDWORKS command as defined in <see cref="swCommands_e"/>.</param>
+    /// <param name="title">Your title for the SOLIDWORKS PropertyManager page, if invoked by this command.</param>
+    /// <returns>True if the SOLIDWORKS command ran, false if not.</returns>
+    public delegate bool RunCommandDelegate(swCommands_e command, string title);
 }
