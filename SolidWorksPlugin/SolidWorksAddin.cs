@@ -10,6 +10,7 @@ namespace SIM.SolidWorksPlugin
     using System.Runtime.InteropServices;
     using Microsoft.Win32;
     using SolidWorks.Interop.sldworks;
+    using SolidWorks.Interop.swconst;
     using SolidWorks.Interop.swpublished;
 
     /// <summary>
@@ -69,6 +70,11 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         public ICommandHandler CommandHandler => this.commandHandler
             ?? throw new NullReferenceException($"CommandHandler is not defined. Call {nameof(this.ConnectToSW)} first.");
+
+        /// <summary>
+        /// Gets the default callback to send messages by calling <see cref="ISldWorks.SendMsgToUser2(string, int, int)"/>.
+        /// </summary>
+        public MessageToUserCallback SendMessage => this.SendMessageToUser;
 
         /// <summary>
         /// Com register function for types derived from <see cref="SolidWorksAddin"/>.
@@ -170,5 +176,13 @@ namespace SIM.SolidWorksPlugin
         /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
         /// </summary>
         protected abstract void OnDisconnectFromSW();
+
+        private swMessageBoxResult_e SendMessageToUser(
+            string message,
+            swMessageBoxIcon_e icon = swMessageBoxIcon_e.swMbInformation,
+            swMessageBoxBtn_e buttons = swMessageBoxBtn_e.swMbOk)
+        {
+            return (swMessageBoxResult_e)this.SwApplication.SendMsgToUser2(message, (int)icon, (int)buttons);
+        }
     }
 }

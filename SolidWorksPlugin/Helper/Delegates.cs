@@ -6,6 +6,7 @@
 
 namespace SIM.SolidWorksPlugin
 {
+    using SolidWorks.Interop.swconst;
     using System;
 
     /// <summary>
@@ -36,4 +37,16 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     /// <param name="builder">The command tab builder.</param>
     public delegate void CommandTabBuilderDelegate(ICommandTabBuilder builder);
+
+    /// <summary>
+    /// Defines a callback for user messages.
+    /// </summary>
+    /// <param name="message">The message to submit.</param>
+    /// <param name="icon">The icon to display.</param>
+    /// <param name="buttons">The message buttons.</param>
+    /// <returns>Result of the dialog.</returns>
+    public delegate swMessageBoxResult_e MessageToUserCallback(
+        string message,
+        swMessageBoxIcon_e icon = swMessageBoxIcon_e.swMbInformation,
+        swMessageBoxBtn_e buttons = swMessageBoxBtn_e.swMbOk);
 }
