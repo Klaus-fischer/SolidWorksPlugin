@@ -19,6 +19,13 @@ namespace SIM.SolidWorksPlugin
         ISwDocument? ActiveDocument { get; set; }
 
         /// <summary>
+        /// Gets the document assigned to the model.
+        /// </summary>
+        /// <param name="model">Model of the document.</param>
+        /// <returns>The document of the model.</returns>
+        ISwDocument GetDocument(IModelDoc2 model);
+
+        /// <summary>
         /// Opens the document from file system.
         /// </summary>
         /// <param name="filename">The full file name to open.</param>

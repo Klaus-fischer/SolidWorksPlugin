@@ -156,7 +156,7 @@ namespace SIM.SolidWorksPlugin
             this.openDocuments.Remove(swDocument.Model);
         }
 
-        private ISwDocument GetDocument(IModelDoc2 model)
+        public ISwDocument GetDocument(IModelDoc2 model)
         {
             if (this.openDocuments.TryGetValue(model, out var document))
             {
