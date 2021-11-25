@@ -15,8 +15,7 @@ namespace SIM.SolidWorksPlugin
         /// Attaches all events to the document event handler.
         /// </summary>
         /// <param name="sldWorks">Document to attach events to.</param>
-        /// <returns>True if connected successfully.</returns>
-        bool AttachSwEvents(SldWorks sldWorks);
+        void AttachSwEvents(SldWorks sldWorks);
 
         /// <summary>
         /// Detaches all events from the document event handler.
