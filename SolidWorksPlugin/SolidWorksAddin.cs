@@ -82,6 +82,12 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         public RunCommandDelegate RunCommand => this.RunSolidWorksCommand;
 
+        public SetUserPreferenceDoubleDelegate SetDoublePreference => this.SetUserPreferenceDouble;
+
+        public SetUserPreferenceStringDelegate SetStringPreference => this.SetUserPreferenceString;
+
+        public SetUserPreferenceIntegerDelegate SetIntegerPreference => this.SetUserPreferenceInteger;
+
         /// <summary>
         /// Com register function for types derived from <see cref="SolidWorksAddin"/>.
         /// </summary>
@@ -103,6 +109,8 @@ namespace SIM.SolidWorksPlugin
             {
                 this.swApplication = (SldWorks)ThisSW;
                 this.addInCookie = new Cookie(cookie);
+
+                this.OnPreviewConnectToSW(this.swApplication, this.addInCookie);
 
                 (this.documentManager, this.commandHandler, this.eventHandlerManager, this.commandTabManager) =
                     this.memberInstanceFactory.CreateInstances(this.swApplication, this.addInCookie);
@@ -176,7 +184,14 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="swApplication">The SolidWorks application.</param>
         /// <param name="addInCookie">The Add-In cookie.</param>
-        protected abstract void OnConnectToSW(SldWorks swApplication, Cookie addInCookie);
+        protected virtual void OnPreviewConnectToSW(SldWorks swApplication, Cookie addInCookie) { }
+
+        /// <summary>
+        /// Callback for user methods called at the end of <see cref="ConnectToSW(object, int)"/>.
+        /// </summary>
+        /// <param name="swApplication">The SolidWorks application.</param>
+        /// <param name="addInCookie">The Add-In cookie.</param>
+        protected virtual void OnConnectToSW(SldWorks swApplication, Cookie addInCookie) { }
 
         /// <summary>
         /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
@@ -193,5 +208,14 @@ namespace SIM.SolidWorksPlugin
 
         private bool RunSolidWorksCommand(swCommands_e command, string title)
             => this.SwApplication.RunCommand((int)command, title);
+
+        private bool SetUserPreferenceDouble(swUserPreferenceDoubleValue_e preference, double value)
+            => this.swApplication!.SetUserPreferenceDoubleValue((int)preference, value);
+
+        private bool SetUserPreferenceString(swUserPreferenceStringValue_e preference, string value)
+            => this.swApplication!.SetUserPreferenceStringValue((int)preference, value);
+
+        private bool SetUserPreferenceInteger(swUserPreferenceIntegerValue_e preference, int value)
+            => this.swApplication!.SetUserPreferenceIntegerValue((int)preference, value);
     }
 }

@@ -58,4 +58,8 @@ namespace SIM.SolidWorksPlugin
     /// <param name="title">Your title for the SOLIDWORKS PropertyManager page, if invoked by this command.</param>
     /// <returns>True if the SOLIDWORKS command ran, false if not.</returns>
     public delegate bool RunCommandDelegate(swCommands_e command, string title);
+
+    public delegate bool SetUserPreferenceIntegerDelegate(swUserPreferenceIntegerValue_e preference, int value);
+    public delegate bool SetUserPreferenceStringDelegate(swUserPreferenceStringValue_e preference, string value);
+    public delegate bool SetUserPreferenceDoubleDelegate(swUserPreferenceDoubleValue_e preference, double value);
 }
