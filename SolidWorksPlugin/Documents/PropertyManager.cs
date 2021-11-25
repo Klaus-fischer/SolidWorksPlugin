@@ -204,6 +204,12 @@ namespace SIM.SolidWorksPlugin
             return mass.Mass;
         }
 
+        /// <inheritdoc/>
+        public string[] GetConfigurationNames() => this.ActiveModel.GetConfigurationNameStrings();
+
+        /// <inheritdoc/>
+        public string[] GetPropertyNames() => (this.SwPropertyManager.GetNames() as object[]).OfType<string>().ToArray();
+
         private void SetActiveConfiguration(string value)
         {
             if (this.ActiveModel is null)

@@ -95,5 +95,17 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <returns>Mass in Kg.</returns>
         public double GetWeight();
+
+        /// <summary>
+        /// Gets the names of all configurations.
+        /// </summary>
+        /// <returns>Collection of strings.</returns>
+        public string[] GetConfigurationNames();
+
+        /// <summary>
+        /// Gets the names of all properties in the current active configuration.
+        /// </summary>
+        /// <returns>Collection of strings.</returns>
+        public string[] GetPropertyNames();
     }
 }
