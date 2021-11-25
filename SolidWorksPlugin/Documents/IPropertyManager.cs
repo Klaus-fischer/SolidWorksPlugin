@@ -37,6 +37,16 @@ namespace SIM.SolidWorksPlugin
         public string Comments { get; set; }
 
         /// <summary>
+        /// Gets the save date time of the summary info.
+        /// </summary>
+        public DateTime SaveDate { get; }
+
+        /// <summary>
+        /// Gets the create date time of the summary info.
+        /// </summary>
+        public DateTime CreateDate { get; }
+
+        /// <summary>
         /// Gets or sets the name of the configuration to read the custom properties from.
         /// </summary>
         string CustomPropertyConfiguration { get; set; }

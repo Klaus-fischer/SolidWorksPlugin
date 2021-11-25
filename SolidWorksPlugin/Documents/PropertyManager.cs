@@ -8,6 +8,7 @@
 namespace SIM.SolidWorksPlugin
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using SIM.SolidWorksPlugin.Extensions;
     using SolidWorks.Interop.sldworks;
@@ -78,6 +79,12 @@ namespace SIM.SolidWorksPlugin
             get => this[swSummInfoField_e.swSumInfoComment];
             set => this[swSummInfoField_e.swSumInfoComment] = value;
         }
+
+        /// <inheritdoc/>
+        public DateTime SaveDate => this.ParseSummaryDate(this[swSummInfoField_e.swSumInfoSaveDate]) ?? default;
+
+        /// <inheritdoc/>
+        public DateTime CreateDate => this.ParseSummaryDate(this[swSummInfoField_e.swSumInfoCreateDate]) ?? default;
 
         /// <inheritdoc/>
         public string? this[string propertyName]
@@ -221,6 +228,21 @@ namespace SIM.SolidWorksPlugin
             {
                 this.activeConfiguration = value;
             }
+        }
+
+        private DateTime? ParseSummaryDate(string value)
+        {
+            if (DateTime.TryParseExact(
+                value,
+                "dd.MM.yyyy HH:MM:ss",
+                CultureInfo.CurrentCulture,
+                DateTimeStyles.NoCurrentDateDefault,
+                out var result))
+            {
+                return result;
+            }
+
+            return default;
         }
     }
 }
