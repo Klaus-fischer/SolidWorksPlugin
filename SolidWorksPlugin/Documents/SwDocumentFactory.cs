@@ -14,6 +14,8 @@ namespace SIM.SolidWorksPlugin
     {
         private readonly PropertyManager propertyManager = new();
 
+        public Func<string, ISwDocument> OpenDocumentCallBack { get; set; }
+
         /// <summary>
         /// Creates a <see cref="ISwDocument"/> based on the model type.
         /// </summary>
@@ -33,7 +35,7 @@ namespace SIM.SolidWorksPlugin
                     PropertyManagerCallBack = this.GetPropertyManager,
                 },
 
-                DrawingDoc drawing => new SwDrawing(drawing)
+                DrawingDoc drawing => new SwDrawing(drawing, this.OpenDocumentCallBack)
                 {
                     PropertyManagerCallBack = this.GetPropertyManager,
                 },
