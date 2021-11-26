@@ -39,5 +39,11 @@ namespace SIM.SolidWorksPlugin
         /// by calling <see cref="ISldWorks.SetUserPreferenceStringValue(int, string)"/>.
         /// </summary>
         SetUserPreferenceStringDelegate SetStringPreference { get; }
+
+        /// <summary>
+        /// Gets the default callback replace document references
+        /// by calling <see cref="ISldWorks.ReplaceReferencedDocument(string, string, string)"/>.
+        /// </summary>
+        ReplaceReferencedDocumentDelegate ReplaceReferencedDocuments { get; }
     }
 }

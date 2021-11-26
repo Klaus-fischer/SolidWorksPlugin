@@ -34,13 +34,20 @@ namespace SIM.SolidWorksPlugin
         public RunCommandDelegate RunCommand => this.RunSolidWorksCommand;
 
         /// <inheritdoc/>
-        public SetUserPreferenceDoubleDelegate SetDoublePreference => this.SetUserPreferenceDouble;
+        public SetUserPreferenceDoubleDelegate SetDoublePreference
+            => this.SetUserPreferenceDouble;
 
         /// <inheritdoc/>
-        public SetUserPreferenceStringDelegate SetStringPreference => this.SetUserPreferenceString;
+        public SetUserPreferenceStringDelegate SetStringPreference
+            => this.SetUserPreferenceString;
 
         /// <inheritdoc/>
-        public SetUserPreferenceIntegerDelegate SetIntegerPreference => this.SetUserPreferenceInteger;
+        public SetUserPreferenceIntegerDelegate SetIntegerPreference 
+            => this.SetUserPreferenceInteger;
+
+        /// <inheritdoc/>
+        public ReplaceReferencedDocumentDelegate ReplaceReferencedDocuments 
+            => this.swApplication.ReplaceReferencedDocument;
 
         private swMessageBoxResult_e SendMessageToUser(
             string message,

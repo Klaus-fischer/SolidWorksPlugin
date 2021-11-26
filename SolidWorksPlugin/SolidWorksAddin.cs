@@ -61,7 +61,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
         /// </summary>
-        protected event EventHandler? OnDisconnect;
+        protected event EventHandler? OnDisconnecting;
 
         /// <summary>
         /// Gets the path to the current assembly directory.
@@ -141,7 +141,7 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public bool DisconnectFromSW()
         {
-            this.OnDisconnect?.Invoke(this, EventArgs.Empty);
+            this.OnDisconnecting?.Invoke(this, EventArgs.Empty);
 
             this.eventHandlerManager?.Dispose();
             this.eventHandlerManager = null;
