@@ -49,6 +49,21 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <summary>
+        /// Callback for user methods called at the end of <see cref="ConnectToSW(object, int)"/>.
+        /// </summary>
+        protected event EventHandler<ConnectEventArgs>? OnConnecting;
+
+        /// <summary>
+        /// Callback for user methods called at the end of <see cref="ConnectToSW(object, int)"/>.
+        /// </summary>
+        protected event EventHandler<ConnectEventArgs>? OnConnected;
+
+        /// <summary>
+        /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
+        /// </summary>
+        protected event EventHandler? OnDisconnect;
+
+        /// <summary>
         /// Gets the path to the current assembly directory.
         /// </summary>
         public static string AssemblyPath { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
@@ -99,7 +114,9 @@ namespace SIM.SolidWorksPlugin
                 this.swApplication = (SldWorks)ThisSW;
                 this.addInCookie = new Cookie(cookie);
 
-                this.OnPreviewConnectToSW(this.swApplication, this.addInCookie);
+                this.delegates = new SolidWorksDelegateHandler(this.swApplication);
+
+                this.OnConnecting?.Invoke(this, new ConnectEventArgs(this.swApplication, this.addInCookie));
 
                 (this.documentManager, this.commandHandler, this.eventHandlerManager, this.commandTabManager) =
                     this.memberInstanceFactory.CreateInstances(this.swApplication, this.addInCookie);
@@ -110,7 +127,7 @@ namespace SIM.SolidWorksPlugin
 
                 this.RegisterEventHandler(this.eventHandlerManager);
 
-                this.OnConnectToSW(this.swApplication, this.addInCookie);
+                this.OnConnected?.Invoke(this, new ConnectEventArgs(this.swApplication, this.addInCookie));
             }
             catch (Exception)
             {
@@ -124,7 +141,7 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public bool DisconnectFromSW()
         {
-            this.OnDisconnectFromSW();
+            this.OnDisconnect?.Invoke(this, EventArgs.Empty);
 
             this.eventHandlerManager?.Dispose();
             this.eventHandlerManager = null;
@@ -167,24 +184,5 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="eventHandlerManager">The event handler manager.</param>
         protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
-
-        /// <summary>
-        /// Callback for user methods called at the end of <see cref="ConnectToSW(object, int)"/>.
-        /// </summary>
-        /// <param name="swApplication">The SolidWorks application.</param>
-        /// <param name="addInCookie">The Add-In cookie.</param>
-        protected virtual void OnPreviewConnectToSW(SldWorks swApplication, Cookie addInCookie) { }
-
-        /// <summary>
-        /// Callback for user methods called at the end of <see cref="ConnectToSW(object, int)"/>.
-        /// </summary>
-        /// <param name="swApplication">The SolidWorks application.</param>
-        /// <param name="addInCookie">The Add-In cookie.</param>
-        protected virtual void OnConnectToSW(SldWorks swApplication, Cookie addInCookie) { }
-
-        /// <summary>
-        /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
-        /// </summary>
-        protected abstract void OnDisconnectFromSW();
     }
 }
