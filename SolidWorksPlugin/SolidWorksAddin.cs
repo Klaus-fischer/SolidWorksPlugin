@@ -10,8 +10,6 @@ namespace SIM.SolidWorksPlugin
     using System.Runtime.InteropServices;
     using Microsoft.Win32;
     using SolidWorks.Interop.sldworks;
-    using SolidWorks.Interop.swcommands;
-    using SolidWorks.Interop.swconst;
     using SolidWorks.Interop.swpublished;
 
     /// <summary>
@@ -31,6 +29,7 @@ namespace SIM.SolidWorksPlugin
         private IDocumentManagerInternals? documentManager;
         private IInternalCommandTabManager? commandTabManager;
         private SldWorks? swApplication;
+        private ISolidWorksDelegateHandler? delegates;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SolidWorksAddin"/> class.
@@ -73,20 +72,10 @@ namespace SIM.SolidWorksPlugin
             ?? throw new NullReferenceException($"CommandHandler is not defined. Call {nameof(this.ConnectToSW)} first.");
 
         /// <summary>
-        /// Gets the default callback to send messages by calling <see cref="ISldWorks.SendMsgToUser2(string, int, int)"/>.
+        /// Gets the <see cref="ISolidWorksDelegateHandler"/>.
         /// </summary>
-        public MessageToUserCallback SendMessage => this.SendMessageToUser;
-
-        /// <summary>
-        /// Gets the default callback to run a solid works command.
-        /// </summary>
-        public RunCommandDelegate RunCommand => this.RunSolidWorksCommand;
-
-        public SetUserPreferenceDoubleDelegate SetDoublePreference => this.SetUserPreferenceDouble;
-
-        public SetUserPreferenceStringDelegate SetStringPreference => this.SetUserPreferenceString;
-
-        public SetUserPreferenceIntegerDelegate SetIntegerPreference => this.SetUserPreferenceInteger;
+        public ISolidWorksDelegateHandler Delegates => this.delegates
+            ?? throw new NullReferenceException($"Delegates is not defined. Call {nameof(this.ConnectToSW)} first.");
 
         /// <summary>
         /// Com register function for types derived from <see cref="SolidWorksAddin"/>.
@@ -197,25 +186,5 @@ namespace SIM.SolidWorksPlugin
         /// Callback for user methods called at the beginning of <see cref="DisconnectFromSW()"/>.
         /// </summary>
         protected abstract void OnDisconnectFromSW();
-
-        private swMessageBoxResult_e SendMessageToUser(
-            string message,
-            swMessageBoxIcon_e icon = swMessageBoxIcon_e.swMbInformation,
-            swMessageBoxBtn_e buttons = swMessageBoxBtn_e.swMbOk)
-        {
-            return (swMessageBoxResult_e)this.SwApplication.SendMsgToUser2(message, (int)icon, (int)buttons);
-        }
-
-        private bool RunSolidWorksCommand(swCommands_e command, string title)
-            => this.SwApplication.RunCommand((int)command, title);
-
-        private bool SetUserPreferenceDouble(swUserPreferenceDoubleValue_e preference, double value)
-            => this.swApplication!.SetUserPreferenceDoubleValue((int)preference, value);
-
-        private bool SetUserPreferenceString(swUserPreferenceStringValue_e preference, string value)
-            => this.swApplication!.SetUserPreferenceStringValue((int)preference, value);
-
-        private bool SetUserPreferenceInteger(swUserPreferenceIntegerValue_e preference, int value)
-            => this.swApplication!.SetUserPreferenceIntegerValue((int)preference, value);
     }
 }

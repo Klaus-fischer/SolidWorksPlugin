@@ -60,6 +60,10 @@ namespace SIM.SolidWorksPlugin
     public delegate bool RunCommandDelegate(swCommands_e command, string title);
 
     public delegate bool SetUserPreferenceIntegerDelegate(swUserPreferenceIntegerValue_e preference, int value);
+
     public delegate bool SetUserPreferenceStringDelegate(swUserPreferenceStringValue_e preference, string value);
+
     public delegate bool SetUserPreferenceDoubleDelegate(swUserPreferenceDoubleValue_e preference, double value);
+
+    public delegate bool ReplaceReferencedDocumentDelegate(string referencingDocument, string referencedDocument, string newReference);
 }
