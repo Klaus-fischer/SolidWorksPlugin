@@ -54,14 +54,6 @@ namespace SIM.DemoAddin
         {
         }
 
-        protected override void OnConnectToSW(SldWorks swApplication, Cookie addInCookie)
-        {
-        }
-
-        protected override void OnDisconnectFromSW()
-        {
-        }
-
         private void BuildCommands(ICommandGroupBuilder<Commands> commandHandler)
         {
             commandHandler.AddCommand(
