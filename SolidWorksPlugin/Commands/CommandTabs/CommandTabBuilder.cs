@@ -33,6 +33,7 @@ namespace SIM.SolidWorksPlugin
         {
             this.commandHandler = commandHandler;
             this.swCommandManager = commandHandler.SwCommandManager;
+            this.CurrentDocumentType = swDocumentType;
 
             if (this.swCommandManager.GetCommandTab((int)swDocumentType, title) is CommandTab commandTab)
             {
@@ -46,6 +47,9 @@ namespace SIM.SolidWorksPlugin
 
         /// <inheritdoc/>
         ICommandHandler ICommandTabBuilder.CommandHandler => this.commandHandler;
+
+        /// <inheritdoc/>
+        public swDocumentTypes_e CurrentDocumentType { get; }
 
         internal ICommandTabBox SwCommandTabBox => this.swCommandTabBoxes.Peek();
 

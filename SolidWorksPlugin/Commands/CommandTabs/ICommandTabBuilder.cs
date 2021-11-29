@@ -17,6 +17,11 @@ namespace SIM.SolidWorksPlugin
         internal ICommandHandler CommandHandler { get; }
 
         /// <summary>
+        /// Gets the current document type.
+        /// </summary>
+        swDocumentTypes_e CurrentDocumentType { get; }
+
+        /// <summary>
         /// Adds a command to the current tab page.
         /// </summary>
         /// <param name="commandInfo">The command info.</param>
@@ -34,7 +39,7 @@ namespace SIM.SolidWorksPlugin
         /// <param name="commandGroupInfo">The command group info to display.</param>
         /// <param name="textDisplay">The text display style.</param>
         /// <param name="flyoutStyle">The fly out display style.</param>
-        public void AddFlyout(
+        void AddFlyout(
             ICommandGroupInfo commandGroupInfo,
             swCommandTabButtonTextDisplay_e textDisplay,
             swCommandTabButtonFlyoutStyle_e flyoutStyle);
