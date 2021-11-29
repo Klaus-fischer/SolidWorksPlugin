@@ -212,10 +212,10 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public string[] GetConfigurationNames() => this.ActiveModel.GetConfigurationNameStrings();
+        public string[] GetConfigurationNames() => this.ActiveModel.GetConfigurationNames().Enumerate<string>().ToArray();
 
         /// <inheritdoc/>
-        public string[] GetPropertyNames() => (this.SwPropertyManager.GetNames() as object[]).OfType<string>().ToArray();
+        public string[] GetPropertyNames() => this.SwPropertyManager.GetNames().Enumerate<string>().ToArray();
 
         private void SetActiveConfiguration(string value)
         {
@@ -224,7 +224,7 @@ namespace SIM.SolidWorksPlugin
                 return;
             }
 
-            if (this.activeModel.GetConfigurationNameStrings().Contains(value))
+            if (this.GetConfigurationNames().Contains(value))
             {
                 this.activeConfiguration = value;
             }
