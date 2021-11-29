@@ -46,6 +46,9 @@ namespace SIM.SolidWorksPlugin
             return this.commandGroupBuilder.AddCommand(commandSpec, command);
         }
 
+        /// <inheritdoc/>
+        public void AddSeparator() => this.commandGroupBuilder.AddSeparator();
+
         private CommandSpecAttribute GetCommandInfoAttribute(T id)
         {
             if (typeof(T).GetField($"{id}")!.GetCustomAttribute<CommandSpecAttribute>() is not CommandSpecAttribute info)

@@ -20,5 +20,10 @@ namespace SIM.SolidWorksPlugin
         /// <param name="command">The command to register.</param>
         /// <returns>The command info of the entry.</returns>
         ICommandInfo AddCommand(T id, ISwCommand command);
+
+        /// <summary>
+        /// Adds a separator to a command group.
+        /// </summary>
+        void AddSeparator();
     }
 }

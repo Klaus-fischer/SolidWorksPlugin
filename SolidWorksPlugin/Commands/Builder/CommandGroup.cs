@@ -4,6 +4,7 @@
 
 namespace SIM.SolidWorksPlugin
 {
+    using SolidWorks.Interop.swconst;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -62,6 +63,8 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public ICommandGroupInfo Info => this.commandGroupInfo;
 
+
+
         /// <inheritdoc/>
         public void Dispose()
         {
@@ -115,6 +118,14 @@ namespace SIM.SolidWorksPlugin
             return this.AddCommandToCommandGroup(commandSpec, command);
         }
 
+        /// <inheritdoc/>
+        public void AddSeparator()
+        {
+            this.swCommandGroup.AddSpacer2(
+                -1,
+                (int)(swCommandItemType_e.swMenuItem | swCommandItemType_e.swToolbarItem));
+        }
+
         /// <summary>
         /// Activates the command group.
         /// </summary>
@@ -159,6 +170,8 @@ namespace SIM.SolidWorksPlugin
 
             return commandInfo;
         }
+
+
 
         private (string OnExecute, string CanExecute) GetCallbackNames(CommandSpec commandSpec)
         {

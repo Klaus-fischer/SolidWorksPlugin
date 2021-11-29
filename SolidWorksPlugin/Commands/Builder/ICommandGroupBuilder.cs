@@ -16,5 +16,10 @@ namespace SIM.SolidWorksPlugin
         /// <param name="command">The command to add.</param>
         /// <returns>The command info including command id.</returns>
         ICommandInfo AddCommand(CommandSpec commandSpec, ISwCommand command);
+
+        /// <summary>
+        /// Adds a separator to a command group.
+        /// </summary>
+        void AddSeparator();
     }
 }
