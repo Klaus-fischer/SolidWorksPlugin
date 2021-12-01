@@ -232,11 +232,8 @@ namespace SIM.SolidWorksPlugin
 
         private DateTime? ParseSummaryDate(string value)
         {
-            if (DateTime.TryParseExact(
+            if (DateTime.TryParse(
                 value,
-                "dd.MM.yyyy HH:MM:ss",
-                CultureInfo.CurrentCulture,
-                DateTimeStyles.NoCurrentDateDefault,
                 out var result))
             {
                 return result;
