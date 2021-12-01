@@ -69,7 +69,7 @@
                 Assert.IsNotNull(key);
                 Assert.AreEqual("Hallo Welt", key.GetValue("Title"));
                 Assert.AreEqual("Beschreibung", key.GetValue("Description"));
-                Assert.AreEqual(1, key.GetValue("Default"));
+                Assert.AreEqual(1, key.GetValue(null));
             }
             finally
             {
@@ -91,7 +91,7 @@
                 Assert.IsNotNull(key);
                 Assert.AreEqual("Hallo Welt", key.GetValue("Title"));
                 Assert.AreEqual(Description, key.GetValue("Description"));
-                Assert.AreEqual(0, key.GetValue("Default"));
+                Assert.AreEqual(0, key.GetValue(null));
             }
             finally
             {

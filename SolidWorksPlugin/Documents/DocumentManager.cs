@@ -50,7 +50,10 @@ namespace SIM.SolidWorksPlugin
             {
                 if (this.swApplication.ActiveDoc is IModelDoc2 model)
                 {
-                    return this.GetDocument(model);
+                    if (this.openDocuments.TryGetValue(model, out var value))
+                    {
+                        return value;
+                    }
                 }
 
                 return null;

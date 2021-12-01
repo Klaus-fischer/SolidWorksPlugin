@@ -7,6 +7,7 @@
     using SolidWorks.Interop.swconst;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     [TestClass]
     public class PropertyManager_Tests
@@ -345,6 +346,38 @@
             Assert.AreEqual("", pm.CustomPropertyConfiguration);
         }
 
+        [TestMethod]
+        public void GetConfigurationNameStrings_Tests()
+        {
+            var configs = new string[] { "Config a", "config b" };
+
+            var modelDocMock = new Mock<IModelDoc2>();
+            modelDocMock.Setup(o => o.GetConfigurationNames()).Returns(new object[] { "Config a", 1, "config b" });
+
+            var pm = new PropertyManager();
+            pm.ActiveModel = modelDocMock.Object;
+
+            var configNames = pm.GetConfigurationNames()!;
+
+            Assert.IsNotNull(configNames);
+            Assert.IsTrue(configs.SequenceEqual(configNames));
+        }
+
+        [TestMethod]
+        public void GetConfigurationNameStrings_Fail()
+        {
+            var modelDocMock = new Mock<IModelDoc2>();
+            modelDocMock.Setup(o => o.GetConfigurationNames()).Returns(null);
+
+            var pm = new PropertyManager();
+            pm.ActiveModel = modelDocMock.Object;
+
+            var configNames = pm.GetConfigurationNames();
+
+            Assert.IsNotNull(configNames);
+            Assert.AreEqual(0, configNames.Length);
+        }
+
         public Mock<IModelDoc2> CreateMock(IDictionary<string, string> values)
         {
             var model = new Mock<IModelDoc2>();
@@ -382,7 +415,7 @@
                   valueOut = string.Empty;
                   resolvedValueOut = string.Empty;
                   wasResolved = false;
-                  if (!values.TryGetValue(propertyName, out string value))
+                  if (!values.TryGetValue(propertyName, out var value))
                   {
                       return;
                   }

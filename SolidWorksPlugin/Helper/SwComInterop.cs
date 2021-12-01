@@ -8,6 +8,7 @@ namespace SIM.SolidWorksPlugin
     using System.ComponentModel;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using Microsoft.Win32;
     using SolidWorks.Interop.sldworks;
 
@@ -55,7 +56,7 @@ namespace SIM.SolidWorksPlugin
                 loadAtStartUp = swAttr.LoadAtStartupByDefault;
             }
 
-            addinKey.SetValue("Default", loadAtStartUp ? 1 : 0, RegistryValueKind.DWord);
+            addinKey.SetValue(null, loadAtStartUp ? 1 : 0, RegistryValueKind.DWord);
             addinKey.SetValue("Description", description);
             addinKey.SetValue("Title", title);
         }
@@ -68,6 +69,25 @@ namespace SIM.SolidWorksPlugin
         internal static void UnregisterFromKey(RegistryKey hklm, Type t)
         {
             hklm.OpenSubKey(Key, true)?.DeleteSubKeyTree($"{{{t.GUID}}}", false);
+        }
+
+        /// <summary>
+        /// Checks if object is a com object, and calls <see cref="Marshal.FinalReleaseComObject(object)"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the object.</typeparam>
+        /// <param name="comObject">The object to finalize.</param>
+        /// <returns>Null by default.</returns>
+        internal static T ReleaseComObject<T>(T comObject)
+            where T : class
+        {
+            if (Marshal.IsComObject(comObject))
+            {
+                Marshal.FinalReleaseComObject(comObject);
+            }
+
+#pragma warning disable CS8603 // Mögliche Nullverweis Rückgabe.
+            return null;
+#pragma warning restore CS8603 // Mögliche Nullverweis Rückgabe.
         }
     }
 }

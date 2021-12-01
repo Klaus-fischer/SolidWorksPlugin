@@ -12,42 +12,43 @@ namespace SIM.DemoAddin
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swconst;
 
-    [Guid("C0E8D5B0-5773-4FDD-9ECE-C2C570CA1F65")]
+    [Guid("0C30D8CE-D3F5-4095-84B6-D80EF92B3A15")]
     [ComVisible(true)]
-    [DisplayName("Demo Addin")]
-    [Description("Default description.")]
+    [SolidWorksPlugin("SolidWorksPlugin_Test",
+        Description = "Test plugin für die Entwicklung der SolidWorksPlugin Bibliothek",
+        LoadAtStartupByDefault = true)]
     public class DemoAddin : SolidWorksAddin
     {
         /// <inheritdoc/>
         protected override void RegisterCommands(ICommandGroupHandler commandManager)
         {
-            commandManager.AddCommandGroup<Commands>(this.BuildCommands);
-            commandManager.AddCommandGroup<SubCommands>(this.BuildSubCommands);
+            //commandManager.AddCommandGroup<Commands>(this.BuildCommands);
+            //commandManager.AddCommandGroup<SubCommands>(this.BuildSubCommands);
         }
 
         protected override void AddCommandTabMenu(ICommandTabManager tabManager)
         {
-            tabManager.BuildCommandTab(
-                "Mein Makro",
-                builder =>
-                {
-                    builder.AddCommand(
-                        this.CommandHandler.GetCommand(Commands.TrialCommand)!,
-                        swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow);
+            //tabManager.BuildCommandTab(
+            //    "Mein Makro",
+            //    builder =>
+            //    {
+            //        builder.AddCommand(
+            //            this.CommandHandler.GetCommand(Commands.TrialCommand)!,
+            //            swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow);
 
-                    builder.AddCommand(
-                        this.CommandHandler.GetCommand(Commands.TrialCommand2)!,
-                        swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow);
+            //        builder.AddCommand(
+            //            this.CommandHandler.GetCommand(Commands.TrialCommand2)!,
+            //            swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow);
 
-                    builder.AddSpacer();
+            //        builder.AddSpacer();
 
-                    builder.AddFlyout(this.CommandHandler.GetCommandGroup(2)!,
-                        swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow,
-                        swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout);
+            //        builder.AddFlyout(this.CommandHandler.GetCommandGroup(2)!,
+            //            swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow,
+            //            swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout);
 
-                },
+            //    },
 
-                swDocumentTypes_e.swDocASSEMBLY, swDocumentTypes_e.swDocPART);
+            //    swDocumentTypes_e.swDocASSEMBLY, swDocumentTypes_e.swDocPART);
         }
 
         protected override void RegisterEventHandler(IEventHandlerManager eventHandlerManager)
@@ -80,8 +81,6 @@ namespace SIM.DemoAddin
         {
             this.SwApplication.SendMsgToUser2("Executed", (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
         }
-
-
     }
 
     [CommandGroupSpec(1, "Main Commands", ToolTip = "Mein erstes Demo Projekt")]

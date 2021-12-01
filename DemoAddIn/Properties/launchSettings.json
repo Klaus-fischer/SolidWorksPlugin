@@ -2,7 +2,7 @@
   "profiles": {
     "DemoAddIn": {
       "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\SLDWORKS.exe"
+      "executablePath": "C:\\Program Files\\SOLIDWORKS_2016\\SOLIDWORKS\\SLDWORKS.exe"
     }
   }
 }

@@ -15,7 +15,7 @@
         public void Constructor()
         {
             var asmModel = new Mock<AsmDoc>();
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
             Assert.IsNotNull(asm);
             Assert.AreEqual(asmModel.Object, asm.Model);
             Assert.AreEqual(asmModel.Object, asm.Assembly);
@@ -27,7 +27,7 @@
             bool invoked = false;
             var asmModel = new Mock<AsmDoc>();
 
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
             asm.OnFileSave += (s, a) =>
             {
                 invoked = true;
@@ -46,7 +46,7 @@
         {
             bool invoked = false;
             var asmModel = new Mock<AsmDoc>();
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
 
             asm.OnPreviewSaveAs += (s, a) =>
             {
@@ -66,7 +66,7 @@
         {
             bool invoked = false;
             var asmModel = new Mock<AsmDoc>();
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
             asm.OnPostSaveAs += (s, a) =>
             {
                 invoked = true;
@@ -87,7 +87,7 @@
             bool invoked = false;
 
             var asmModel = new Mock<AsmDoc>();
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
             asm.OnPropertyChanged += (s, a) =>
             {
                 invoked = true;
@@ -110,7 +110,7 @@
         {
             bool invoked = false;
             var asmModel = new Mock<AsmDoc>();
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
             asm.OnPropertyChanged += (s, a) =>
             {
                 invoked = true;
@@ -133,7 +133,7 @@
         {
             bool invoked = false;
             var asmModel = new Mock<AsmDoc>();
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
             asm.OnPropertyChanged += (s, a) =>
             {
                 invoked = true;
@@ -157,7 +157,7 @@
         {
             bool invoked = false;
             var asmModel = new Mock<AsmDoc>();
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
             asm.OnDestroy += (s, a) =>
             {
                 invoked = true;
@@ -177,7 +177,7 @@
             bool invoked = false;
             var asmModel = new Mock<AsmDoc>();
 
-            var asm = new SwAssembly(asmModel.Object);
+            var asm = new SwAssembly(asmModel.Object, null);
 
             asmModel.Raise(o => o.FileSaveNotify += null, "filename");
             asmModel.Raise(o => o.FileSaveAsNotify2 += null, "filename");

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
     <RootNamespace>SIM.DemoAddin</RootNamespace>
-    <AssemblyName>SIM-DemoAddin</AssemblyName>
+    <AssemblyName>SIM-SolidWorksPlugin-DemoAddin</AssemblyName>
     <EnableComHosting>true</EnableComHosting>
     <!--<langversion>8.0</langversion>-->
     <Nullable>enable</Nullable>

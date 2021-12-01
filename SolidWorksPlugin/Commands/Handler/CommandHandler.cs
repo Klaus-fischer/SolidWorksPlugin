@@ -51,12 +51,7 @@ namespace SIM.SolidWorksPlugin
 
             this.commandHandlers.Clear();
 
-            if (Marshal.IsComObject(this.swCommandManager))
-            {
-                Marshal.FinalReleaseComObject(this.swCommandManager);
-            }
-
-            this.swCommandManager = default;
+            this.swCommandManager = SwComInterop.ReleaseComObject(this.swCommandManager);
 
             this.disposed = true;
         }

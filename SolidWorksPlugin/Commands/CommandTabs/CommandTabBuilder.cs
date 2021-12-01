@@ -67,17 +67,12 @@ namespace SIM.SolidWorksPlugin
 
                 this.swCommandTab.RemoveCommandTabBox(last);
 
-                if (Marshal.IsComObject(last))
-                {
-                    Marshal.FinalReleaseComObject(last);
-                }
+                SwComInterop.ReleaseComObject(last);
             }
 
             this.swCommandManager.RemoveCommandTab(this.swCommandTab);
-            if (Marshal.IsComObject(this.swCommandTab))
-            {
-                Marshal.FinalReleaseComObject(this.swCommandTab);
-            }
+
+            this.swCommandTab = SwComInterop.ReleaseComObject(this.swCommandTab);
 
             this.disposed = true;
         }

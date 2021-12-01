@@ -76,12 +76,7 @@ namespace SIM.SolidWorksPlugin
             this.registeredCommands.Clear();
             this.swCommandManager.RemoveCommandGroup2(this.commandGroupInfo.UserId, true);
 
-            if (Marshal.IsComObject(this.swCommandGroup))
-            {
-                Marshal.FinalReleaseComObject(this.swCommandGroup);
-            }
-
-            this.swCommandGroup = default;
+            this.swCommandGroup = SwComInterop.ReleaseComObject(this.swCommandGroup);
 
             this.disposed = true;
         }

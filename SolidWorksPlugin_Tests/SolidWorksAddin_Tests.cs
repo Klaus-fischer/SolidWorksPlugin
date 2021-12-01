@@ -100,7 +100,7 @@
                 Assert.AreSame(eventManagerMock.Object, evt);
             };
 
-            addin.OnOnConnectToSW = (swAddin, cookie) =>
+            addin.OnConnectingToSW = (swAddin, cookie) =>
             {
                 onConnectInvoked = true;
                 Assert.AreSame(swApplicationMock.Object, swAddin);
@@ -184,12 +184,19 @@
             public TestAddIn()
                 : base()
             {
+                this.OnConnecting += this.OnConnectingInvoked;
+                this.OnConnected += this.OnConnectedInvoked;
+                this.OnDisconnecting += this.OnDisconnectingInvoked;
             }
 
             public TestAddIn(ISolidworksAddinMemberInstanceFactory factory)
                 : base(factory)
             {
+                this.OnConnecting += this.OnConnectingInvoked;
+                this.OnConnected += this.OnConnectedInvoked;
+                this.OnDisconnecting += this.OnDisconnectingInvoked;
             }
+
 
             public Action<ICommandGroupHandler> OnRegisterCommands;
             protected override void RegisterCommands(ICommandGroupHandler commandGroupHandler)
@@ -209,14 +216,21 @@
                 OnAddCommandTabMenu?.Invoke(tabManager);
             }
 
-            public Action<SldWorks, Cookie> OnOnConnectToSW;
-            protected override void OnConnectToSW(SldWorks swApplication, Cookie addInCookie)
+            public Action<SldWorks, Cookie> OnConnectingToSW;
+            private void OnConnectingInvoked(object? sender, ConnectEventArgs e)
             {
-                OnOnConnectToSW?.Invoke(swApplication, addInCookie);
+                OnConnectingToSW?.Invoke(e.SwApplication, e.Cookie);
+            }
+
+            public Action<SldWorks, Cookie> OnConnectedToSW;
+            private void OnConnectedInvoked(object? sender, ConnectEventArgs e)
+            {
+                OnConnectingToSW?.Invoke(e.SwApplication, e.Cookie);
             }
 
             public Action OnOnDisconnectFromSW;
-            protected override void OnDisconnectFromSW()
+
+            private void OnDisconnectingInvoked(object? sender, System.EventArgs e)
             {
                 OnOnDisconnectFromSW?.Invoke();
             }

@@ -102,7 +102,7 @@
             var dm = new DocumentManager(swApplicationMock.Object, documentFactoryMock.Object, equalityComparer);
             dm.OnDocumentAdded += (s, a) => invoked = true;
 
-            var doc = (SwDocument?)dm.InvokePrivateMethod("GetDocument", mockDocument.Model);
+            var doc = (SwDocument?)dm.GetDocument(mockDocument.Model);
 
             Assert.AreSame(mockDocument, doc);
             Assert.IsTrue(invoked);
@@ -110,7 +110,7 @@
             invoked = false;
 
             // get document from cache.
-            doc = (SwDocument?)dm.InvokePrivateMethod("GetDocument", mockDocument.Model);
+            doc = (SwDocument?)dm.GetDocument(mockDocument.Model);
 
             Assert.AreSame(mockDocument, doc);
             Assert.IsFalse(invoked);
