@@ -8,7 +8,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     <PackageId>SIM.SolidWorksPlugin</PackageId>
-    <Version>1.0.22</Version>
+    <Version>1.0.23</Version>
     <Authors>Klaus Fischer</Authors>
     <Company>SIM-Automation</Company>
     <Description>Library for add-ins for SolidWorks</Description>
