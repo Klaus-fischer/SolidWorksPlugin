@@ -10,7 +10,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// Document class for <see cref="PartDoc"/> models.
     /// </summary>
-    public sealed class SwPart : SwDocument, IDisposable
+    internal sealed class SwPart : SwDocument, IDisposable, ISwPart
     {
         private readonly PartDoc model;
 

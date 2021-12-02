@@ -4,8 +4,8 @@
 
 namespace SIM.SolidWorksPlugin
 {
-    using SolidWorks.Interop.sldworks;
     using System;
+    using SolidWorks.Interop.sldworks;
 
     /// <summary>
     /// Defines the signature for <see cref="ICommandHandler"/> interface.

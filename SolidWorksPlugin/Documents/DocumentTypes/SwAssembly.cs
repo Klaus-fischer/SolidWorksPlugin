@@ -12,7 +12,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// Document class for <see cref="AssemblyDoc"/> models.
     /// </summary>
-    public sealed class SwAssembly : SwDocument, IDisposable
+    internal sealed class SwAssembly : SwDocument, IDisposable, ISwAssembly
     {
         private readonly AssemblyDoc model;
         private readonly Func<IModelDoc2, ISwDocument>? getDocumentCallBack;

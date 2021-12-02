@@ -10,7 +10,7 @@ namespace SIM.SolidWorksPlugin
     /// <summary>
     /// Document class for <see cref="DrawingDoc"/> models.
     /// </summary>
-    public sealed class SwDrawing : SwDocument, IDisposable
+    internal sealed class SwDrawing : SwDocument, IDisposable, ISwDrawing
     {
         private readonly DrawingDoc model;
         private readonly Func<string, ISwDocument>? openDocumentCallBack;

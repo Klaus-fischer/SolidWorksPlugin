@@ -63,8 +63,6 @@ namespace SIM.SolidWorksPlugin
         /// <inheritdoc/>
         public ICommandGroupInfo Info => this.commandGroupInfo;
 
-
-
         /// <inheritdoc/>
         public void Dispose()
         {

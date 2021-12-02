@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>SIM.SolidWorksPlugin</RootNamespace>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <PackageId>SIM.SolidWorksPlugin.Abstractions</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Klaus Fischer</Authors>
+    <Company>SIM-Automation</Company>
+    <Description>Contains declarations of the SoldidWorks Library.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\_Shared\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.354">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SolidWorks.Interop.sldworks">
+      <HintPath>..\_Shared\SolidWorks.Interop.sldworks.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swcommands">
+      <HintPath>..\_Shared\SolidWorks.Interop.swcommands.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>..\_Shared\SolidWorks.Interop.swconst.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+</Project>

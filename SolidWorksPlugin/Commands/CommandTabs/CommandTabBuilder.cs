@@ -7,7 +7,6 @@ namespace SIM.SolidWorksPlugin
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swconst;
 
@@ -46,7 +45,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        ICommandHandler ICommandTabBuilder.CommandHandler => this.commandHandler;
+        public ICommandHandler CommandHandler => this.commandHandler;
 
         /// <inheritdoc/>
         public swDocumentTypes_e CurrentDocumentType { get; }
