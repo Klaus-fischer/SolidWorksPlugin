@@ -21,6 +21,6 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets or sets the logger to log to.
         /// </summary>
-        ILogger<CommandHandler>? Logger { get; set; }
+        ILogger? Logger { get; set; }
     }
 }

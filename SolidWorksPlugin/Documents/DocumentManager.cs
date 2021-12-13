@@ -70,7 +70,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public ILogger<DocumentManager>? Logger { get; set; }
+        public ILogger? Logger { get; set; }
 
         /// <inheritdoc/>
         public void Dispose()
@@ -97,7 +97,7 @@ namespace SIM.SolidWorksPlugin
                 }
                 catch (Exception ex)
                 {
-                    this.Logger.LogError(ex);
+                    this.Logger?.LogError(ex, $"Error on {nameof(this.OpenDocument)}.");
                     throw;
                 }
             }
@@ -153,7 +153,7 @@ namespace SIM.SolidWorksPlugin
             }
             catch (Exception ex)
             {
-                this.Logger.LogError(ex, $"Error on closing {document.Filename}.");
+                this.Logger?.LogError(ex, $"Error on closing {document.Filename}.");
                 throw;
             }
         }

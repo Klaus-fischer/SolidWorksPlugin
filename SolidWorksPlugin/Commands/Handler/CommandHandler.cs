@@ -36,7 +36,7 @@ namespace SIM.SolidWorksPlugin
         public ICommandManager SwCommandManager => this.swCommandManager;
 
         /// <inheritdoc/>
-        public ILogger<CommandHandler>? Logger { get; set; }
+        public ILogger? Logger { get; set; }
 
         /// <inheritdoc/>
         public void Dispose()
@@ -113,7 +113,7 @@ namespace SIM.SolidWorksPlugin
             var result = CommandCanExecuteState.Disabled;
             if (!this.TryGetCommandFromHandler(commandName, out var commandInfo) || commandInfo.Command is not ISwCommand command)
             {
-                this.Logger.LogDebug($"Command {commandName} can't be executed cause it's not defined.");
+                this.Logger?.LogDebug($"Command {commandName} can't be executed cause it's not defined.");
                 return (int)result;
             }
 
@@ -155,7 +155,7 @@ namespace SIM.SolidWorksPlugin
             }
             catch (Exception ex)
             {
-                this.Logger.LogError(ex, $"Error on executing {commandInfo.Name} command.");
+                this.Logger?.LogError(ex, $"Error on executing '{commandInfo.Name}' command.");
                 throw ex;
             }
         }

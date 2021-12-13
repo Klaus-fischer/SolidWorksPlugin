@@ -21,7 +21,7 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Gets or sets the logger to log to.
         /// </summary>
-        ILogger<DocumentManager>? Logger { get; set; }
+        ILogger? Logger { get; set; }
 
         /// <summary>
         /// Removes the document from the known documents list.

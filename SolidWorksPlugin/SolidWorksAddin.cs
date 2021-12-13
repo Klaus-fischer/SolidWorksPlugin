@@ -95,9 +95,9 @@ namespace SIM.SolidWorksPlugin
 
         /// <summary>
         /// Gets the logger for this add-in.
-        /// Can be assigned by calling the <see cref="CreateLogger(ILoggerFactory)"/> method.
+        /// Can be assigned by calling the <see cref="SetupLogging(ILoggerFactory)"/> method.
         /// </summary>
-        public ILogger<SolidWorksAddin>? Logger { get; private set; }
+        public ILogger? Logger { get; private set; }
 
         /// <summary>
         /// Com register function for types derived from <see cref="SolidWorksAddin"/>.
@@ -138,7 +138,7 @@ namespace SIM.SolidWorksPlugin
             }
             catch (Exception ex)
             {
-                this.Logger.LogError(ex);
+                this.Logger?.LogError(ex, $"Error on {nameof(this.ConnectToSW)}.");
                 this.DisconnectFromSW();
                 return false;
             }
@@ -196,19 +196,19 @@ namespace SIM.SolidWorksPlugin
         /// <summary>
         /// Creates logger for all related services.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory to build several loggers.</param>
-        protected void CreateLogger(ILoggerFactory loggerFactory)
+        /// <param name="provider">The logger factory to build several loggers.</param>
+        protected void SetupLogging(ILoggerProvider provider)
         {
-            this.Logger = loggerFactory.CreateLogger<SolidWorksAddin>();
+            this.Logger = provider.CreateLogger(nameof(SolidWorksAddin));
 
             if (this.documentManager is not null)
             {
-                this.documentManager.Logger = loggerFactory.CreateLogger<DocumentManager>();
+                this.documentManager.Logger = provider.CreateLogger(nameof(this.DocumentManager));
             }
 
             if (this.commandHandler is not null)
             {
-                this.commandHandler.Logger = loggerFactory.CreateLogger<CommandHandler>();
+                this.commandHandler.Logger = provider.CreateLogger(nameof(this.CommandHandler));
             }
         }
     }
