@@ -164,8 +164,6 @@ namespace SIM.SolidWorksPlugin
             return commandInfo;
         }
 
-
-
         private (string OnExecute, string CanExecute) GetCallbackNames(CommandSpec commandSpec)
         {
             return ($"{nameof(CommandHandler.OnExecute)}({commandSpec.CommandGroupId}:{commandSpec.UserId})",

@@ -194,10 +194,6 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public IEnumerable<ISwDocument> GetOpenDocuments()
-            => this.GetOpenDocuments(true);
-
-        /// <inheritdoc/>
         public IEnumerable<ISwDocument> GetOpenDocuments(bool all)
             => all ? this.openDocuments.Values : this.GetApplicationDocuments();
 

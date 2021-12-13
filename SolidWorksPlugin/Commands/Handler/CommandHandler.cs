@@ -6,8 +6,6 @@ namespace SIM.SolidWorksPlugin
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.InteropServices;
     using Microsoft.Extensions.Logging;
     using SolidWorks.Interop.sldworks;
 

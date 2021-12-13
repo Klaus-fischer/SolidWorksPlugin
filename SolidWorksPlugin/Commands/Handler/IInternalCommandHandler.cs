@@ -13,6 +13,9 @@ namespace SIM.SolidWorksPlugin
     /// </summary>
     internal interface IInternalCommandHandler : ICommandHandler, ICommandGroupHandler, IDisposable
     {
+        /// <summary>
+        /// Gets the SolidWorks command manager.
+        /// </summary>
         ICommandManager SwCommandManager { get; }
 
         /// <summary>
