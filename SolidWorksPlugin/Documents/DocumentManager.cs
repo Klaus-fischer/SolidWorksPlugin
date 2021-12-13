@@ -7,6 +7,7 @@ namespace SIM.SolidWorksPlugin
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Extensions.Logging;
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swconst;
 
@@ -69,6 +70,9 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
+        public ILogger<DocumentManager>? Logger { get; set; }
+
+        /// <inheritdoc/>
         public void Dispose()
         {
             if (this.openDocuments.Any())
@@ -86,8 +90,19 @@ namespace SIM.SolidWorksPlugin
             if (modelDoc == null)
             {
                 wasOpen = false;
-                modelDoc = this.OpenDocument(filename, options);
+
+                try
+                {
+                    modelDoc = this.OpenDocument(filename, options);
+                }
+                catch (Exception ex)
+                {
+                    this.Logger.LogError(ex);
+                    throw;
+                }
             }
+
+            this.Logger?.LogDebug($"File {filename} opened successfully.");
 
             return this.GetDocument(modelDoc);
         }
@@ -103,6 +118,7 @@ namespace SIM.SolidWorksPlugin
             if (filename is null)
             {
                 document.Model.Save3((int)options, ref error, ref warnings);
+                this.Logger?.LogDebug($"File {document.Filename} saved.");
             }
             else
             {
@@ -115,6 +131,8 @@ namespace SIM.SolidWorksPlugin
                     AddTextAsPrefix: false,
                     Errors: ref error,
                     Warnings: ref warnings);
+
+                this.Logger?.LogDebug($"File {document.Filename} saved as {filename}.");
             }
         }
 
@@ -122,12 +140,22 @@ namespace SIM.SolidWorksPlugin
         public void ReloadDocument(ISwDocument document, bool readOnly)
         {
             document.Model.ReloadOrReplace(readOnly, document.FilePath, true);
+            this.Logger?.LogDebug($"File {document.Filename} reloaded.");
         }
 
         /// <inheritdoc/>
         public void CloseDocument(ISwDocument document)
         {
-            this.swApplication.CloseDoc(document.FilePath);
+            try
+            {
+                this.swApplication.CloseDoc(document.FilePath);
+                this.Logger?.LogDebug($"File {document.Filename} reloaded.");
+            }
+            catch (Exception ex)
+            {
+                this.Logger.LogError(ex, $"Error on closing {document.Filename}.");
+                throw;
+            }
         }
 
         /// <inheritdoc/>

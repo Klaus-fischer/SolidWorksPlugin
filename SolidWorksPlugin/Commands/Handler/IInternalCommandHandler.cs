@@ -5,6 +5,7 @@
 namespace SIM.SolidWorksPlugin
 {
     using System;
+    using Microsoft.Extensions.Logging;
     using SolidWorks.Interop.sldworks;
 
     /// <summary>
@@ -13,5 +14,10 @@ namespace SIM.SolidWorksPlugin
     internal interface IInternalCommandHandler : ICommandHandler, ICommandGroupHandler, IDisposable
     {
         ICommandManager SwCommandManager { get; }
+
+        /// <summary>
+        /// Gets or sets the logger to log to.
+        /// </summary>
+        ILogger<CommandHandler>? Logger { get; set; }
     }
 }

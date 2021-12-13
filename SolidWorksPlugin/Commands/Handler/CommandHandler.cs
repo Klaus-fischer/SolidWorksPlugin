@@ -8,6 +8,7 @@ namespace SIM.SolidWorksPlugin
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
+    using Microsoft.Extensions.Logging;
     using SolidWorks.Interop.sldworks;
 
     /// <summary>
@@ -35,6 +36,9 @@ namespace SIM.SolidWorksPlugin
 
         /// <inheritdoc/>
         public ICommandManager SwCommandManager => this.swCommandManager;
+
+        /// <inheritdoc/>
+        public ILogger<CommandHandler>? Logger { get; set; }
 
         /// <inheritdoc/>
         public void Dispose()
@@ -68,6 +72,7 @@ namespace SIM.SolidWorksPlugin
             return null;
         }
 
+        /// <inheritdoc/>
         public ICommandGroupInfo? GetCommandGroup(int commandGroupId)
         {
             if (this.commandHandlers.TryGetValue(commandGroupId, out var handler))
@@ -110,6 +115,7 @@ namespace SIM.SolidWorksPlugin
             var result = CommandCanExecuteState.Disabled;
             if (!this.TryGetCommandFromHandler(commandName, out var commandInfo) || commandInfo.Command is not ISwCommand command)
             {
+                this.Logger.LogDebug($"Command {commandName} can't be executed cause it's not defined.");
                 return (int)result;
             }
 
@@ -141,12 +147,21 @@ namespace SIM.SolidWorksPlugin
                 throw new ArgumentException($"Command '{commandName}' not defined.");
             }
 
-            var activeDoc = this.documentManager.ActiveDocument;
-            if (command.CanExecute(activeDoc))
+            try
             {
-                command.Execute(activeDoc);
+                var activeDoc = this.documentManager.ActiveDocument;
+                if (command.CanExecute(activeDoc))
+                {
+                    command.Execute(activeDoc);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Logger.LogError(ex, $"Error on executing {commandInfo.Name} command.");
+                throw ex;
             }
         }
+
 #if NETSTANDARD2_1
         private bool TryGetCommandFromHandler(string handlerAndCommandName, [NotNullWhen(true)] out ICommandInfo? command)
 #else

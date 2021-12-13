@@ -6,6 +6,7 @@ namespace SIM.SolidWorksPlugin
 {
     using System;
     using System.Collections.Generic;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Extends <see cref="IDocumentManager"/> for internal use.
@@ -16,6 +17,11 @@ namespace SIM.SolidWorksPlugin
         /// Raises an event, if a Document was created by late access.
         /// </summary>
         event EventHandler<ISwDocument>? OnDocumentAdded;
+
+        /// <summary>
+        /// Gets or sets the logger to log to.
+        /// </summary>
+        ILogger<DocumentManager>? Logger { get; set; }
 
         /// <summary>
         /// Removes the document from the known documents list.

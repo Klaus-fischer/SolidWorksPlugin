@@ -8,6 +8,7 @@ namespace SIM.SolidWorksPlugin
     using System.IO;
     using System.Reflection;
     using System.Runtime.InteropServices;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Win32;
     using SolidWorks.Interop.sldworks;
     using SolidWorks.Interop.swpublished;
@@ -93,6 +94,12 @@ namespace SIM.SolidWorksPlugin
             ?? throw new NullReferenceException($"Delegates is not defined. Call {nameof(this.ConnectToSW)} first.");
 
         /// <summary>
+        /// Gets the logger for this add-in.
+        /// Can be assigned by calling the <see cref="CreateLogger(ILoggerFactory)"/> method.
+        /// </summary>
+        public ILogger<SolidWorksAddin>? Logger { get; private set; }
+
+        /// <summary>
         /// Com register function for types derived from <see cref="SolidWorksAddin"/>.
         /// </summary>
         /// <param name="t">Type to register.</param>
@@ -129,8 +136,9 @@ namespace SIM.SolidWorksPlugin
 
                 this.OnConnected?.Invoke(this, new ConnectEventArgs(this.swApplication, this.addInCookie));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                this.Logger.LogError(ex);
                 this.DisconnectFromSW();
                 return false;
             }
@@ -184,5 +192,24 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         /// <param name="eventHandlerManager">The event handler manager.</param>
         protected abstract void RegisterEventHandler(IEventHandlerManager eventHandlerManager);
+
+        /// <summary>
+        /// Creates logger for all related services.
+        /// </summary>
+        /// <param name="loggerFactory">The logger factory to build several loggers.</param>
+        protected void CreateLogger(ILoggerFactory loggerFactory)
+        {
+            this.Logger = loggerFactory.CreateLogger<SolidWorksAddin>();
+
+            if (this.documentManager is not null)
+            {
+                this.documentManager.Logger = loggerFactory.CreateLogger<DocumentManager>();
+            }
+
+            if (this.commandHandler is not null)
+            {
+                this.commandHandler.Logger = loggerFactory.CreateLogger<CommandHandler>();
+            }
+        }
     }
 }
