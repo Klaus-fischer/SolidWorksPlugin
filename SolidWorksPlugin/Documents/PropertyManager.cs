@@ -87,6 +87,13 @@ namespace SIM.SolidWorksPlugin
         public DateTime CreateDate => this.ParseSummaryDate(this[swSummInfoField_e.swSumInfoCreateDate]) ?? default;
 
         /// <inheritdoc/>
+        public Mass Weight
+        {
+            get => this.GetWeight();
+            set => this.SetWeight(value);
+        }
+
+        /// <inheritdoc/>
         public string? this[string propertyName]
         {
             get => this.GetStringProperty(propertyName);
@@ -179,43 +186,6 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void SetWeight(double? weight)
-        {
-            if (this.ActiveModel is DrawingDoc)
-            {
-                return;
-            }
-
-            MassProperty mass = this.ActiveModel.Extension.CreateMassProperty();
-
-            if (!weight.HasValue)
-            {
-                mass.OverrideMass = false;
-            }
-            else
-            {
-                mass.SetOverrideMassValue(
-                    Value: weight.Value,
-                    Config_option: (int)swInConfigurationOpts_e.swAllConfiguration,
-                    Config_names: string.Empty);
-            }
-
-            this.ActiveModel.SetSaveFlag();
-        }
-
-        /// <inheritdoc/>
-        public double GetWeight()
-        {
-            if (this.ActiveModel is DrawingDoc)
-            {
-                return -1;
-            }
-
-            MassProperty mass = this.ActiveModel.Extension.CreateMassProperty();
-            return mass.Mass;
-        }
-
-        /// <inheritdoc/>
         public string[] GetConfigurationNames() => this.ActiveModel.GetConfigurationNames().Enumerate<string>().ToArray();
 
         /// <inheritdoc/>
@@ -245,5 +215,42 @@ namespace SIM.SolidWorksPlugin
 
             return default;
         }
+
+
+        private void SetWeight(Mass mass)
+        {
+            if (this.ActiveModel is DrawingDoc)
+            {
+                return;
+            }
+
+            MassProperty massProperty = this.ActiveModel.Extension.CreateMassProperty();
+
+            if (!mass.IsOverridden)
+            {
+                massProperty.OverrideMass = false;
+            }
+            else
+            {
+                massProperty.SetOverrideMassValue(
+                    Value: mass.Weight,
+                    Config_option: (int)swInConfigurationOpts_e.swAllConfiguration,
+                    Config_names: string.Empty);
+            }
+
+            this.ActiveModel.SetSaveFlag();
+        }
+
+        private Mass GetWeight()
+        {
+            if (this.ActiveModel is DrawingDoc)
+            {
+                return new Mass(double.NaN, false);
+            }
+
+            MassProperty mass = this.ActiveModel.Extension.CreateMassProperty();
+            return new Mass(mass.Mass, mass.OverrideMass);
+        }
+
     }
 }

@@ -47,6 +47,11 @@ namespace SIM.SolidWorksPlugin
         public DateTime CreateDate { get; }
 
         /// <summary>
+        /// Gets or sets the mass of part or assembly.
+        /// </summary>
+        public Mass Weight { get; set; }
+
+        /// <summary>
         /// Gets or sets the name of the configuration to read the custom properties from.
         /// </summary>
         string CustomPropertyConfiguration { get; set; }
@@ -93,19 +98,6 @@ namespace SIM.SolidWorksPlugin
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="value">Value of the property.</param>
         void SetDateProperty(string propertyName, DateTime? value);
-
-        /// <summary>
-        /// Overrides mass of part or assembly.
-        /// If null the mass will be calculated.
-        /// </summary>
-        /// <param name="weight">Weight to apply in Kg.</param>
-        public void SetWeight(double? weight);
-
-        /// <summary>
-        /// Gets the mass of an assembly or a part.
-        /// </summary>
-        /// <returns>Mass in Kg.</returns>
-        public double GetWeight();
 
         /// <summary>
         /// Gets the names of all configurations.
