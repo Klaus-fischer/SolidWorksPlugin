@@ -8,7 +8,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     <PackageId>SIM.SolidWorksPlugin</PackageId>
-    <Version>1.0.28</Version>
+    <Version>1.0.29</Version>
     <Authors>Klaus Fischer</Authors>
     <Company>SIM-Automation</Company>
     <Description>Library for add-ins for SolidWorks</Description>
@@ -18,8 +18,9 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>.\SIM-SolidWorksPlugin.xml</DocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>

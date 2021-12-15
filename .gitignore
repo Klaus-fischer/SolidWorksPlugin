@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /SolidWorksPlugin/SIM-SolidWorksPlugin.xml
+/SolidWorksPlugin.Abstractions/SIM.SolidWorksPlugin.Abstractions.xml
