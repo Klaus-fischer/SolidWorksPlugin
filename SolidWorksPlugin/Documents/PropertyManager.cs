@@ -216,7 +216,6 @@ namespace SIM.SolidWorksPlugin
             return default;
         }
 
-
         private void SetWeight(Mass mass)
         {
             if (this.ActiveModel is DrawingDoc)
@@ -233,7 +232,7 @@ namespace SIM.SolidWorksPlugin
             else
             {
                 massProperty.SetOverrideMassValue(
-                    Value: mass.Weight,
+                    Value: mass.Value,
                     Config_option: (int)swInConfigurationOpts_e.swAllConfiguration,
                     Config_names: string.Empty);
             }
@@ -251,6 +250,5 @@ namespace SIM.SolidWorksPlugin
             MassProperty mass = this.ActiveModel.Extension.CreateMassProperty();
             return new Mass(mass.Mass, mass.OverrideMass);
         }
-
     }
 }
