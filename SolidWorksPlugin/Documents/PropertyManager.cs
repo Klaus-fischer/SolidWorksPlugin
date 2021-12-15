@@ -179,7 +179,7 @@ namespace SIM.SolidWorksPlugin
         }
 
         /// <inheritdoc/>
-        public void SetWeight(double weight)
+        public void SetWeight(double? weight)
         {
             if (this.ActiveModel is DrawingDoc)
             {
@@ -188,15 +188,19 @@ namespace SIM.SolidWorksPlugin
 
             MassProperty mass = this.ActiveModel.Extension.CreateMassProperty();
 
-            if (mass.OverrideMass || Math.Abs(mass.Mass - weight) / mass.Mass > 0.05)
+            if (!weight.HasValue)
+            {
+                mass.OverrideMass = false;
+            }
+            else
             {
                 mass.SetOverrideMassValue(
-                    Value: weight,
+                    Value: weight.Value,
                     Config_option: (int)swInConfigurationOpts_e.swAllConfiguration,
                     Config_names: string.Empty);
-
-                this.ActiveModel.SetSaveFlag();
             }
+
+            this.ActiveModel.SetSaveFlag();
         }
 
         /// <inheritdoc/>

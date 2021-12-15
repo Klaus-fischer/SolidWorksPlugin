@@ -95,10 +95,11 @@ namespace SIM.SolidWorksPlugin
         void SetDateProperty(string propertyName, DateTime? value);
 
         /// <summary>
-        /// Overrides mass of part of assembly if difference &gt; 5%.
+        /// Overrides mass of part or assembly.
+        /// If null the mass will be calculated.
         /// </summary>
         /// <param name="weight">Weight to apply in Kg.</param>
-        public void SetWeight(double weight);
+        public void SetWeight(double? weight);
 
         /// <summary>
         /// Gets the mass of an assembly or a part.
