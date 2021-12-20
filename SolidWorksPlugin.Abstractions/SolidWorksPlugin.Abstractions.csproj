@@ -7,7 +7,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     <PackageId>SIM.SolidWorksPlugin.Abstractions</PackageId>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
     <Authors>Klaus Fischer</Authors>
     <Company>SIM-Automation</Company>
     <Description>Contains declarations of the SoldidWorks Library.</Description>
