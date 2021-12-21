@@ -7,7 +7,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     <PackageId>SIM.SolidWorksPlugin.Abstractions</PackageId>
-    <Version>1.0.67</Version>
+    <Version>1.0.7</Version>
     <Authors>Klaus Fischer</Authors>
     <Company>SIM-Automation</Company>
     <Description>Contains declarations of the SoldidWorks Library.</Description>
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SIM.Solidworks.Interop" Version="27.5.0.72" />
+    <PackageReference Include="SIM.Solidworks.Interop" Version="27.5.0.72"/>
     <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.354">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -13,6 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidWorksPlugin.Windows", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidWorksPlugin.Abstractions", "SolidWorksPlugin.Abstractions\SolidWorksPlugin.Abstractions.csproj", "{16E20626-E4FD-4522-824B-33592CD192E1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolidWorks.Interop", "SolidWorks.Interop", "{F0F6313F-496D-47A5-A3B8-98AF2B65A906}"
+	ProjectSection(SolutionItems) = preProject
+		SIM.Solidworks.Interop\logo.png = SIM.Solidworks.Interop\logo.png
+		SIM.Solidworks.Interop\Publish.cmd = SIM.Solidworks.Interop\Publish.cmd
+		SIM.Solidworks.Interop\SIM.Solidworks.Interop.nuspec = SIM.Solidworks.Interop\SIM.Solidworks.Interop.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

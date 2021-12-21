@@ -5,14 +5,20 @@
     <version>27.5.0.72</version>
     <authors>Klaus Fischer</authors>
     <description>Contains SolidWorks Interop libraries.</description>
+    <icon>images\logo.png</icon>
     <dependencies>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="C:\Source\SolidWorksPlugin\_Shared\SolidWorks.Interop.sldworks.dll" target="lib\netstandard2.0\SolidWorks.Interop.sldworks.dll" />
-    <file src="C:\Source\SolidWorksPlugin\_Shared\SolidWorks.Interop.swcommands.dll" target="lib\netstandard2.0\SolidWorks.Interop.swcommands.dll" />
-    <file src="C:\Source\SolidWorksPlugin\_Shared\SolidWorks.Interop.swconst.dll" target="lib\netstandard2.0\SolidWorks.Interop.swconst.dll" />
-    <file src="C:\Source\SolidWorksPlugin\_Shared\SolidWorks.Interop.swpublished.dll" target="lib\netstandard2.0\SolidWorks.Interop.swpublished.dll" />
+    <file src=".\logo.png" target="images\logo.png" />
+    <file src="C:\Source\SolidWorksPlugin\_Shared\SolidWorks.Interop.sldworks.dll" 
+          target="lib\netstandard2.0\SolidWorks.Interop.sldworks.dll" />
+    <file src="C:\Source\SolidWorksPlugin\_Shared\SolidWorks.Interop.swcommands.dll" 
+          target="lib\netstandard2.0\SolidWorks.Interop.swcommands.dll" />
+    <file src="C:\Source\SolidWorksPlugin\_Shared\SolidWorks.Interop.swconst.dll" 
+          target="lib\netstandard2.0\SolidWorks.Interop.swconst.dll" />
+    <file src="C:\Source\SolidWorksPlugin\_Shared\SolidWorks.Interop.swpublished.dll"
+          target="lib\netstandard2.0\SolidWorks.Interop.swpublished.dll" />
   </files>
 </package>
