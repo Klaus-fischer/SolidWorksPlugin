@@ -23,6 +23,8 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         internal Func<IModelDoc2, IPropertyManager>? PropertyManagerCallBack;
 
+        private readonly DateTime lastModifiedDateTime;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SwDocument"/> class.
         /// </summary>
@@ -30,6 +32,7 @@ namespace SIM.SolidWorksPlugin
         protected SwDocument(IModelDoc2 model)
         {
             this.Model = model;
+            this.TryGetLastWriteTime(out this.lastModifiedDateTime);
         }
 
         /// <summary>
@@ -83,6 +86,10 @@ namespace SIM.SolidWorksPlugin
         /// Gets the file extension of the current document.
         /// </summary>
         public string FileExtension => Path.GetExtension(this.Model.GetPathName());
+
+        /// <inheritdoc/>
+        public bool FileHasChanged =>
+            this.TryGetLastWriteTime(out var date) && date != this.lastModifiedDateTime;
 
         /// <summary>
         /// Handler for <see cref="DPartDocEvents_Event.FileSaveNotify"/> events.
@@ -162,5 +169,22 @@ namespace SIM.SolidWorksPlugin
         /// <returns>0 on success.</returns>
         protected int OnDestroyNotify2(int destroyType)
             => this.OnDestroy?.Invoke(this, (swDestroyNotifyType_e)destroyType) ?? 0;
+
+        /// <summary>
+        /// Tries to get the last write time of the current file.
+        /// </summary>
+        /// <param name="lastWriteTime">Read date time.</param>
+        /// <returns>True if date time could be read.</returns>
+        private bool TryGetLastWriteTime(out DateTime lastWriteTime)
+        {
+            if (File.Exists(this.FilePath))
+            {
+                lastWriteTime = File.GetLastWriteTime(this.FilePath);
+                return true;
+            }
+
+            lastWriteTime = default;
+            return false;
+        }
     }
 }

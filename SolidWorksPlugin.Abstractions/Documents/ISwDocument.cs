@@ -63,5 +63,10 @@ namespace SIM.SolidWorksPlugin
         /// Gets the file extension of the current document.
         /// </summary>
         string FileExtension { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the file was changed by an other user.
+        /// </summary>
+        bool FileHasChanged { get; }
     }
 }

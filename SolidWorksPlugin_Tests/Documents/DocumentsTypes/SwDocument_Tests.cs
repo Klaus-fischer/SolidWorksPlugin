@@ -4,6 +4,7 @@
     using Moq;
     using SolidWorks.Interop.sldworks;
     using System;
+    using System.IO;
 
     [TestClass]
     public class SwDocument_Tests
@@ -28,6 +29,30 @@
             Assert.AreEqual(@"C:\Users\TestUser\Desktop\MyFile.moq", mock.FilePath);
             Assert.AreEqual(@"MyFile.moq", mock.Filename);
             Assert.AreEqual(@".moq", mock.FileExtension);
+        }
+
+        [TestMethod]
+        public void FileHasChanged_Test()
+        {
+            var file = Path.GetTempFileName();
+
+            try
+            {
+                var model = new Mock<IModelDoc2>();
+                model.Setup(o => o.GetPathName()).Returns(file);
+                var mock = new SwMockDocument(model.Object);
+
+                Assert.IsFalse(mock.FileHasChanged);
+
+                File.WriteAllText(file, "Hallo Welt");
+
+                Assert.IsTrue(mock.FileHasChanged);
+
+            }
+            finally
+            {
+                File.Delete(file);
+            }
         }
 
         [TestMethod]

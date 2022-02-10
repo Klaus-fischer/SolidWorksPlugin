@@ -191,7 +191,7 @@
                 ActiveModel = model.Object
             };
 
-            Assert.AreEqual(1.2345, pm.GetWeight());
+            Assert.AreEqual(1.2345, pm.Weight);
         }
 
         [TestMethod]
@@ -204,34 +204,7 @@
                 ActiveModel = model.Object
             };
 
-            Assert.AreEqual(-1, pm.GetWeight());
-        }
-
-        [TestMethod]
-        public void SetWeightLess5Percent_Test()
-        {
-            var model = new Mock<IModelDoc2>();
-            var extensions = new Mock<ModelDocExtension>();
-            var massProperty = new Mock<MassProperty>();
-
-            model.SetupGet(o => o.Extension)
-                .Returns(extensions.Object);
-            model.Setup(o => o.SetSaveFlag());
-
-            extensions.Setup(o => o.CreateMassProperty())
-                .Returns(massProperty.Object);
-
-            massProperty.SetupGet(o => o.Mass).Returns(1.2345);
-            massProperty.Setup(o => o.SetOverrideMassValue(It.IsAny<double>(), It.IsAny<int>(), It.IsAny<object>()));
-
-            var pm = new PropertyManager
-            {
-                ActiveModel = model.Object
-            };
-
-            pm.SetWeight(1.2346);
-            massProperty.Verify(o => o.SetOverrideMassValue(It.IsAny<double>(), It.IsAny<int>(), It.IsAny<object>()), Times.Never()); ;
-            model.Verify(o => o.SetSaveFlag(), Times.Never);
+            Assert.AreEqual(double.NaN, pm.Weight);
         }
 
         [TestMethod]
@@ -257,7 +230,7 @@
                 ActiveModel = model.Object
             };
 
-            pm.SetWeight(1.2346);
+            pm.Weight = new Mass(1.2346, true);
             massProperty.Verify(o => o.SetOverrideMassValue(It.IsAny<double>(), It.IsAny<int>(), It.IsAny<object>()), Times.AtLeastOnce());
             model.Verify(o => o.SetSaveFlag(), Times.AtLeastOnce);
         }
@@ -285,7 +258,7 @@
                 ActiveModel = model.Object
             };
 
-            pm.SetWeight(2.2345);
+            pm.Weight = new(2.2345, true);
 
             massProperty.Verify(o => o.SetOverrideMassValue(It.IsAny<double>(), It.IsAny<int>(), It.IsAny<object>()), Times.AtLeastOnce()); ;
             model.Verify(o => o.SetSaveFlag(), Times.AtLeastOnce);
@@ -302,7 +275,7 @@
                 ActiveModel = model.Object
             };
 
-            pm.SetWeight(2.2345);
+            pm.Weight = new Mass(2.2345, true);
 
             model.Verify(o => o.SetSaveFlag(), Times.Never);
         }

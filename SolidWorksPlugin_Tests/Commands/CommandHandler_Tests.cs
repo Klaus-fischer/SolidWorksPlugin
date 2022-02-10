@@ -265,7 +265,9 @@
             var commandHandlerMock = new Mock<ICommandGroup>();
             var commandInfoMock = new Mock<ICommandInfo>();
             var commandMock = new Mock<ISwCommand>();
-            var activeDoc = new SwDocument_Tests.SwMockDocument(null);
+            var modelMock = new Mock<SW.IModelDoc2>();
+            modelMock.Setup(o => o.GetPathName()).Returns(@"c:\Test.sldasm");
+            var activeDoc = new SwDocument_Tests.SwMockDocument(modelMock.Object);
 
             swApplicationMock.Setup(o => o.GetCommandManager(It.IsAny<int>())).Returns(swCommandManagerMock.Object);
             commandHandlerMock.Setup(o => o.GetCommand(It.IsAny<int>())).Returns(commandInfoMock.Object);
