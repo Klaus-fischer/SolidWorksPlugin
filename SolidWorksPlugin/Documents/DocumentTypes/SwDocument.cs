@@ -23,7 +23,7 @@ namespace SIM.SolidWorksPlugin
         /// </summary>
         internal Func<IModelDoc2, IPropertyManager>? PropertyManagerCallBack;
 
-        private readonly DateTime lastModifiedDateTime;
+        private DateTime lastModifiedDateTime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SwDocument"/> class.
@@ -115,6 +115,9 @@ namespace SIM.SolidWorksPlugin
         /// <returns>0 on success.</returns>
         protected int OnFileSavePostNotify(int saveType, string filename)
         {
+            // update last modified date time after document was saved.
+            this.TryGetLastWriteTime(out this.lastModifiedDateTime);
+
             var args = new PostSaveAsEventArgs(filename, (swFileSaveTypes_e)saveType);
             return this.OnPostSaveAs?.Invoke(this, args) ?? 0;
         }
