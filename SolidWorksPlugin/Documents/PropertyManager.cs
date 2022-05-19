@@ -247,6 +247,7 @@ namespace SIM.SolidWorksPlugin
                 return new Mass(double.NaN, false);
             }
 
+            this.ActiveModel.Extension.IncludeMassPropertiesOfHiddenBodies = false;
             MassProperty mass = this.ActiveModel.Extension.CreateMassProperty();
             return new Mass(mass.Mass, mass.OverrideMass);
         }
